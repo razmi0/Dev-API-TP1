@@ -27,3 +27,11 @@
     ─ Autoloader.php
     ─ README.md
 ```
+
+## TODO
+
+## Todo
+
+TP1 :
+
+- [x] (#1)Remplacer mysqli par PDO
