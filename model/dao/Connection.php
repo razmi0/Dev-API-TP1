@@ -2,44 +2,59 @@
 
 namespace Model\Dao;
 
+use PDO;
+use PDOException;
+
+
+/**
+ * Class Connection
+ *
+ * This class is responsible for managing the database connection.
+ * It provides methods to establish and close the connection to the database.
+ *
+ * @method PDO getConnection() Returns the PDO instance for database operations.
+ * @method exec($query) Executes the given query and returns the result.
+ */
 class Connection {
-    private $connection;
+    /**
+     * @access private
+     * @var PDO
+     */
+    private $connection = null;
     private $host = "localhost:3306";
     private $username = "root";
     private $password = "";
-    private $table_name;
     private $db_name = "db_labrest";
 
 
-    public function __construct($table_name) {
-        $this->table_name = $table_name;
-    }
-
-    public function getConnection() {
-        return $this->connection;
-    }
-
-    public function closeConnection() {
-        mysqli_close($this->connection);
-    }
-
-    public function startConnection() {
-        $res = $this->connection = mysqli_connect($this->host, $this->username, $this->password, $this->db_name);
-
-        if (!$res) {
-            return false;
-        } else {
-            return true;
+    public function __construct() {
+        try {
+            $this->connection = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        } catch (PDOException $e) {
+            echo "Connection failed: " . $e->getMessage();
         }
     }
 
-    public function execQuery($query) {
-        $res = mysqli_query($this->connection, $query);
-        if (!$res) {
-            return false;
-        } else {
-            return $res;
+    private function closeConnection() {
+        $this->connection = null;
+    }
+
+    public function exec($query) {
+        try {
+            $prepared = $this->connection->prepare($query);
+            $prepared->execute();
+            $result = $prepared->fetchAll();
+            // var_dump($result);
+        } catch (PDOException $e) {
+            echo "Query failed: " . $e->getMessage();
         }
+
+        $this->closeConnection();
+
+        return $result;
     }
 
 

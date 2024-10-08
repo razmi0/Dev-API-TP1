@@ -2,6 +2,14 @@
 
 namespace Model\Entities;
 
+/**
+ * Class Produit
+ * @property int $id
+ * @property string $name
+ * @property string $description
+ * @property string $prix
+ * @property string $creation_date
+ */
 class Produit {
     private $id;
     private $name;
@@ -53,4 +61,3 @@ class Produit {
 
 }
 
-?>
