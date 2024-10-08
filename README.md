@@ -25,7 +25,5 @@
     ─ .gitignore
     ─ .htaccess
     ─ Autoloader.php
-    ─ data.json
     ─ README.md
-    ─ test.php
 ```
