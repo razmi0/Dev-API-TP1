@@ -12,6 +12,7 @@ Controller::handleRequest();
 /**
  * @method setHeaders() Sets the headers for the response.
  * @method handleRequest() Handles the request.
+ * @method sendResponse($response, $code) Sends the response to the client.
  */
 class Controller {
 
@@ -28,15 +29,14 @@ class Controller {
 
     public static function handleRequest() {
         switch ($_SERVER["REQUEST_METHOD"]) {
-            
+
             /**
              * GET request : /api/v1/lire.php
              * Seulement les requêtes GET sont autorisées.
              */
             case "GET":
                 $response = ProduitDao::findAll();
-                http_response_code(200);
-                echo json_encode($response);
+                self::sendResponse($response, 200);
                 break;
 
             /**
@@ -45,10 +45,19 @@ class Controller {
              */
             default:
                 $response = ["message" => "Methode non autorisée"];
-                http_response_code(405);
-                echo json_encode($response);
+                self::sendResponse($response, 405);
                 break;
         }
+    }
+
+    /**
+     * Sends the response to the client.
+     * @param $response The response to send.
+     * @param $code The HTTP status code to send.
+     */
+    private static function sendResponse($response, $code) {
+        http_response_code($code);
+        echo json_encode($response);
     }
 
     

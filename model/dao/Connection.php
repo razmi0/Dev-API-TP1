@@ -17,7 +17,6 @@ use PDOException;
  */
 class Connection {
     /**
-     * @access private
      * @var PDO
      */
     private $connection = null;
@@ -38,16 +37,18 @@ class Connection {
         }
     }
 
+    public function getConnection() {
+        return $this->connection;
+    }
+
     private function closeConnection() {
         $this->connection = null;
     }
 
-    public function exec($query) {
+    public function safeExecute($prepared) {
         try {
-            $prepared = $this->connection->prepare($query);
             $prepared->execute();
             $result = $prepared->fetchAll();
-            // var_dump($result);
         } catch (PDOException $e) {
             echo "Query failed: " . $e->getMessage();
         }

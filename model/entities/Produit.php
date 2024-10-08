@@ -4,22 +4,19 @@ namespace Model\Entities;
 
 /**
  * Class Produit
- * @property int $id
  * @property string $name
  * @property string $description
  * @property string $prix
  * @property string $creation_date
  */
 class Produit {
-    private $id;
     private $name;
     private $description;
     private $prix;
     private $creation_date;
 
 
-    public function __construct($id, $name, $description, $prix, $creation_date) {
-        $this->id = $id;
+    public function __construct($name, $description, $prix, $creation_date) {
         $this->name = $name;
         $this->description = $description;
         $this->prix = $prix;
@@ -27,9 +24,7 @@ class Produit {
 
     }
 
-    public function getId() {
-        return $this->id;
-    }
+   
 
     public function getName() {
         return $this->name;
