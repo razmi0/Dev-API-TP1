@@ -6,55 +6,49 @@ use Model\Entities\Produit as Produit;
 use Model\Dao\Connection as Connection;
 use PDO;
 
-class ProduitDao {
+class ProduitDao
+{
     private $table_name  = "T_PRODUIT";
 
 
-    public function getTableName() {
+    public function getTableName()
+    {
         return $this->table_name;
     }
 
     /**
      * @param Produit $content
      */
-    public static function create($content){
+    public static function create($content)
+    {
         $connection = new Connection();
 
-        
-        $name = $content['name'];
-        var_dump($content);
-        $description = $content['description'];
-        $prix = $content['prix'];
-        $date_creation = $content['date_creation'] ?? date("Y-m-d H:i:s");
+        $produit = new Produit();
+        $produit->setName($content->product_name);
+        $produit->setDescription($content->description);
+        $produit->setPrix($content->prix);
+        $produit->setDateCreation(date("Y-m-d H:i:s"));
 
-        $produit = new Produit($name, $description, $prix, $date_creation);
-
-        $query = "INSERT INTO T_PRODUIT (name, description, prix, date) VALUES (:name, :description, :prix, :date)";
+        $query = "INSERT INTO T_PRODUIT (product_name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
 
         $prepared = $connection->getConnection()->prepare($query);
-
-        $prepared->bindParam(':name', $name, PDO::PARAM_STR);
-        $prepared->bindParam(':description', $description, PDO::PARAM_STR);
-        $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
-        $prepared->bindParam(':date', $date_creation, PDO::PARAM_STR);
+        $prepared->bindParam(':name', $produit->getProductName(), PDO::PARAM_STR);
+        $prepared->bindParam(':description', $produit->getDescription(), PDO::PARAM_STR);
+        $prepared->bindParam(':prix', $produit->getPrix(), PDO::PARAM_STR);
+        $prepared->bindParam(':date', $produit->getDateCreation(), PDO::PARAM_STR);
 
         $connection->safeExecute($prepared);
+        var_dump($produit);
 
         return $produit;
-
-
-
-
-        // $connection->prepare("INSERT INTO T_PRODUIT (name, description, prix, date) VALUES (:name, :description, :prix, :date)");
-
-        
     }
 
 
     /**
      * @return Produit[]
      */
-    static function findAll(){
+    static function findAll()
+    {
         $connection = new Connection();
         $query = "SELECT * FROM T_PRODUIT";
         $prepared = $connection->getConnection()->prepare($query);
@@ -62,11 +56,11 @@ class ProduitDao {
         return $result;
     }
 
-    
 
-    public function findById($id){}
 
-    public function delete( $id ){}
+    public function findById($id) {}
 
-    public function update( $id ){}
+    public function delete($id) {}
+
+    public function update($id) {}
 }
