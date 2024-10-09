@@ -30,8 +30,9 @@
 
 ## TODO
 
-## Todo
-
 TP1 :
 
 - [x] (#1)Remplacer mysqli par PDO
+- [ ] (#2)Incorporer dans mon entité un validateur pour les setters
+- [ ] choose a better type for the id and the date in the entity
+- [ ] add message properties to json response object
