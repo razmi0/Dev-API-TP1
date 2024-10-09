@@ -33,7 +33,8 @@ class Connection {
             $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
+            http_response_code(503);
+            echo json_encode(["message" => "Service non disponible : " . $e->getMessage()]);
         }
     }
 
