@@ -4,55 +4,64 @@ namespace Model\Entities;
 
 /**
  * Class Produit
- * @property string $name
+ * @property string $id
+ * @property string $product_name
  * @property string $description
  * @property string $prix
- * @property string $creation_date
+ * @property string $date_creation
  */
-class Produit {
-    private $name;
+class Produit
+{
+    private $id;
+    private $product_name;
     private $description;
     private $prix;
-    private $creation_date;
+    private $date_creation;
 
+    
 
-    public function __construct($name, $description, $prix, $creation_date) {
-        $this->name = $name;
-        $this->description = $description;
-        $this->prix = $prix;
-        $this->creation_date = $creation_date;
-
+    public function getId(){
+        return $this->id;
     }
 
-   
 
-    public function getName() {
-        return $this->name;
+    public function getProductName()
+    {
+        return $this->product_name;
     }
 
-    public function setName($name) {
-        $this->name = $name;
+    public function setName($name)
+    {
+        $this->product_name = $name;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
-    public function getPrix() {
+    public function getPrix()
+    {
         return $this->prix;
     }
 
-    public function setPrix($prix) {
+    public function setPrix($prix)
+    {
         $this->prix = $prix;
     }
 
-    public function getCreationDate() {
-        return $this->creation_date;
+    public function getDateCreation()
+    {
+        return $this->date_creation;
     }
 
+    public function setDateCreation($date_creation)
+    {
+        $this->date_creation = $date_creation;
+    }
 }
-
