@@ -50,7 +50,9 @@ class Connection {
             $prepared->execute();
             $result = $prepared->fetchAll();
         } catch (PDOException $e) {
-            echo "Query failed: " . $e->getMessage();
+            http_response_code(500);
+            echo json_encode(["message" => "Erreur lors de l'envoi de la requête : " . $e->getMessage()]);
+            die();
         }
 
         $this->closeConnection();
