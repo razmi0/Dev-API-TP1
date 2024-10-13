@@ -62,9 +62,9 @@ class ProduitService
     private function isNotTooLong($content)
     {
         if (strlen($content->name) >= 50) {
-            $this->buildError("Le nom du produit est trop long");
+            $this->buildError("Le nom du produit est trop long, la taille maximale est de 50 caractères");
         } else if (strlen($content->description) > 65000) {
-            $this->buildError("La description du produit est trop longue");
+            $this->buildError("La description du produit est trop longue, la taile maximale est de 65000 caractères");
         }
     }
 
