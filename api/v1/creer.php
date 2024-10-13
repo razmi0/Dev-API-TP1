@@ -3,89 +3,83 @@
 require_once "../../Autoloader.php";
 
 use Model\Dao\ProduitDao as ProduitDao;
-use Utils\Response;
-
-$headers = [
-    "Content-Type: application/json",
-    "Access-Control-Allow-Origin: *",
-    "Access-Control-Allow-Methods: POST",
-    "Access-Control-Age: 3600",
-    "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-];
-
+use Utils\Response as Response;
+use Utils\Error as Error;
 
 // Instantiate the controller
 // --
-$controller = new CreateController();
+$controller = new Controller();
 
 // Handle the request (verify the method and process the request)
-// If the method is allowed, the DAO is instantiate and the request is processed.
+// If the method is allowed, the DAO method "create" is called and the request is processed.
 // Else, an error message is returned.
 // --
 $controller->handleRequest();
 
-// Instantiate the response (code, message, data, headers)
+// Handle the response (set the headers and send the response) using the Response class
 // --
-$response = new Response($controller->getCode(), $controller->getMessage(), $controller->getData(), $headers);
+$controller->handleResponse();
 
-// Send the response
-// --
-$response->attachHeaders()->send();
 
-class CreateController
+class Controller
 {
     private $produitDao = null;
+    private $response = null;
     private $message = "";
+    private $error = "";
     private $data = [];
     private $code = 0;
 
     public function __construct()
     {
         $this->produitDao = new ProduitDao();
+        $this->response = new Response();
     }
 
     public function handleRequest()
     {
         switch ($_SERVER["REQUEST_METHOD"]) {
 
-            /**
+                /**
              * POST request : /api/v1/creer.php
              * Seulement les requêtes POST sont autorisées.
              */
             case "POST":
-                $content = json_decode(file_get_contents("php://input"));
-                $this->data = $this->produitDao->create($content);
-                $this->message = "Produit créé avec succès";
-                $this->code = 201;
+                try {
+                    $content = json_decode(file_get_contents("php://input"));
+                    $this->data = $this->produitDao->create($content);
+                    $this->message = "Produit créé avec succès";
+                    $this->code = 201;
+                } catch (Error $e) {
+                    $e->send();
+                }
+
                 break;
 
                 /**
                  * Autres requêtes
-                 * Une erreur 405 et un message est retournée.
+                 * Une erreur 405 et une erreur est retournée.
                  */
             default:
-
-                $this->message = "Methode non autorisée";
-                $this->data = [];
+                $this->error = "Methode non autorisée";
                 $this->code = 405;
                 break;
         }
     }
 
-   
-
-    public function getCode()
+    public function handleResponse()
     {
-        return $this->code;
-    }
-
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    public function getData()
-    {
-        return $this->data;
+        $headers = [
+            "Content-Type: application/json",
+            "Access-Control-Allow-Origin: *",
+            "Access-Control-Allow-Methods: POST",
+            "Access-Control-Age: 3600",
+            "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        ];
+        $this->response->setCode($this->code)
+            ->setData($this->data)
+            ->setMessage($this->message)
+            ->setHeaders($headers)
+            ->send();
     }
 }

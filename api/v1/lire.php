@@ -1,33 +1,41 @@
 <?php
 
 require_once "../../Autoloader.php";
+
 use Model\Dao\ProduitDao as ProduitDao;
+use Utils\Response as Response;
+use Utils\Error as Error;
 
 
 
-Controller::setHeaders();
-Controller::handleRequest();
+$controller = new Controller();
+
+// We handle the request calling the DAO.
+// If the request is not successful, we handle the error with the Error class.
+// --
+$controller->handleRequest();
+
+// Else if the request is successful, we handle the response with the Response class.
+// --
+$controller->handleResponse();
 
 
-/**
- * @method setHeaders() Sets the headers for the response.
- * @method handleRequest() Handles the request.
- * @method sendResponse($response, $code) Sends the response to the client.
- */
-class Controller {
+class Controller
+{
+    private $produitDao = null;
+    private $response = null;
+    private $message = "";
+    private $data = [];
+    private $code = 0;
 
-    /**
-     * Sets the headers for the response.
-     */
-    public static function setHeaders() {
-        header("Content-Type: application/json");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET");
-        header("Access-Control-Age: 3600");
-        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    public function __construct()
+    {
+        $this->produitDao = new ProduitDao();
+        $this->response = new Response();
     }
 
-    public static function handleRequest() {
+    public function handleRequest()
+    {
         switch ($_SERVER["REQUEST_METHOD"]) {
 
             /**
@@ -35,33 +43,39 @@ class Controller {
              * Seulement les requêtes GET sont autorisées.
              */
             case "GET":
-                $response = ProduitDao::findAll();
-                self::sendResponse($response, 200);
+                try {
+                    $this->data = $this->produitDao->findAll();
+                    $this->message = "Produits récupérés avec succès";
+                    $this->code = 200;
+                } catch (Error $e) {
+                    $e->send();
+                }
                 break;
 
-            /**
-             * Autres requêtes
-             * Une erreur 405 et un message est retournée.
-             */
+                /**
+                 * Autres requêtes
+                 * Une erreur 405 et un message est retournée.
+                 */
             default:
-                $response = ["message" => "Methode non autorisée"];
-                self::sendResponse($response, 405);
+                $error = new Error();
+                $error->setCode(405)->setError("Méthode non autorisée")->send();
                 break;
         }
     }
 
-    /**
-     * Sends the response to the client.
-     * @param $response The response to send.
-     * @param $code The HTTP status code to send.
-     */
-    private static function sendResponse($response, $code) {
-        http_response_code($code);
-        echo json_encode($response);
+    public function handleResponse()
+    {
+        $headers = [
+            "Content-Type: application/json",
+            "Access-Control-Allow-Origin: *",
+            "Access-Control-Allow-Methods: GET",
+            "Access-Control-Age: 3600",
+            "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        ];
+        $this->response->setCode($this->code)
+            ->setData($this->data)
+            ->setMessage($this->message)
+            ->setHeaders($headers)
+            ->send();
     }
-
-    
 }
-
-
-
