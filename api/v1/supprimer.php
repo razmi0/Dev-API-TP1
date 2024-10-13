@@ -79,6 +79,7 @@ class Controller
                 $error->setCode(405)
                     ->setError("Methode non autorisée")
                     ->setMessage("Veuillez utiliser la méthode DELETE pour supprimer un produit.")
+                    ->setLocation("api/v1/supprimer.php")
                     ->sendAndDie();
                 break;
         }

@@ -39,7 +39,7 @@ class ProduitDao
 
         // Database Access step ( build the query, prepare it, execute it and return the result )
         // --
-        $query = "INSERT INTO T_PRODUIT (product_name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
+        $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
 
         try {
 
@@ -54,7 +54,7 @@ class ProduitDao
             $prepared = $pdo->prepare($query);
             if (!$prepared) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: create");
                 throw $error;
             }
 
@@ -71,7 +71,7 @@ class ProduitDao
             $stmt = $prepared->execute();
             if (!$stmt) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: create");
                 throw $error;
             }
             // If all went good, we will return the id of the last inserted product to the controller
@@ -120,7 +120,7 @@ class ProduitDao
             $prepared = $pdo->prepare($query);
             if (!$prepared) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findAll");
                 throw $error;
             }
 
@@ -129,7 +129,7 @@ class ProduitDao
             $stmt = $prepared->execute();
             if (!$stmt) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findAll");
                 throw $error;
             }
             $result = $prepared->fetchAll();
@@ -138,7 +138,7 @@ class ProduitDao
             // --
             if (count($result) == 0) {
                 $error = new Error();
-                $error->setCode(404)->setError("Aucun produit trouvé");
+                $error->setCode(404)->setError("Aucun produit trouvé")->setLocation("model/dao/ProduitDao.php :: findAll");
                 throw $error;
             }
 
@@ -169,7 +169,7 @@ class ProduitDao
 
         // Build the query
         // --
-        $query = "SELECT * FROM T_PRODUIT WHERE product_id = :id";
+        $query = "SELECT * FROM T_PRODUIT WHERE id = :id";
 
         try {
             // Set PDO attributes
@@ -183,7 +183,7 @@ class ProduitDao
             $prepared = $pdo->prepare($query);
             if (!$prepared) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findById");
                 throw $error;
             }
 
@@ -196,7 +196,7 @@ class ProduitDao
             $stmt = $prepared->execute();
             if (!$stmt) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findById");
                 throw $error;
             }
             $result = $prepared->fetchAll();
@@ -205,7 +205,7 @@ class ProduitDao
             // --
             if (count($result) == 0) {
                 $error = new Error();
-                $error->setCode(404)->setError("Aucun produit trouvé");
+                $error->setCode(404)->setError("Aucun produit trouvé")->setLocation("model/dao/ProduitDao.php :: findById");
                 throw $error;
             }
 
@@ -236,7 +236,7 @@ class ProduitDao
 
         // Build the query
         // --
-        $query = "DELETE FROM T_PRODUIT WHERE product_id = :id";
+        $query = "DELETE FROM T_PRODUIT WHERE id = :id";
 
         try {
             // Set PDO attributes
@@ -250,7 +250,7 @@ class ProduitDao
             $prepared = $pdo->prepare($query);
             if (!$prepared) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: deleteById")->setMessage("Erreur lors de la suppression du produit");
                 throw $error;
             }
 
@@ -263,7 +263,7 @@ class ProduitDao
             $stmt = $prepared->execute();
             if (!$stmt) {
                 $error = new Error();
-                $error->setCode(503)->setError("Service non disponible");
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: deleteById")->setMessage("Erreur lors de la suppression du produit");
                 throw $error;
             }
 
@@ -276,7 +276,9 @@ class ProduitDao
                 $error = new Error();
                 $error
                     ->setCode(204)
-                    ->setError("Produit n'existe pas");
+                    ->setError("Ce produit n'existe pas")
+                    ->setMessage("L'utilisateur a tenté de supprimer un produit qui n'existe pas")
+                    ->setData(["id" => $id]);
                 throw $error;
             }
         } catch (Error $e) {

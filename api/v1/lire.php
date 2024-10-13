@@ -38,7 +38,7 @@ class Controller
     {
         switch ($_SERVER["REQUEST_METHOD"]) {
 
-            /**
+                /**
              * GET request : /api/v1/lire.php
              * Seulement les requêtes GET sont autorisées.
              */
@@ -58,7 +58,11 @@ class Controller
                  */
             default:
                 $error = new Error();
-                $error->setCode(405)->setError("Méthode non autorisée")->sendAndDie();
+                $error->setCode(405)
+                    ->setError("Méthode non autorisée")
+                    ->setMessage("Seules les requêtes GET sont autorisées.")
+                    ->setLocation("api/v1/lire.php")
+                    ->sendAndDie();
                 break;
         }
     }

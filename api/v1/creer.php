@@ -64,6 +64,7 @@ class Controller
                 $error->setCode(405)
                     ->setError("Methode non autorisée")
                     ->setMessage("Veuillez utiliser la méthode POST pour créer un produit")
+                    ->setLocation("api/v1/creer.php")
                     ->sendAndDie();
                 break;
         }

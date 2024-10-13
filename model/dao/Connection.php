@@ -23,9 +23,11 @@ class Connection
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
         } catch (PDOException $e) {
-            error_log($e->getMessage());
             $error = new Error();
-            $error->setCode(500)->setError("Service non disponible");
+            $error
+                ->setCode(500)
+                ->setError("Service non disponible")
+                ->setLocation("model/dao/Connection.php");
             throw $error;
         }
     }

@@ -5,7 +5,7 @@ namespace Model\Entities;
 /**
  * Class Produit
  * @property string $id
- * @property string $product_name
+ * @property string $name
  * @property string $description
  * @property string $prix
  * @property string $date_creation
@@ -13,7 +13,7 @@ namespace Model\Entities;
 class Produit
 {
     private $id;
-    private $product_name;
+    private $name;
     private $description;
     private $prix;
     private $date_creation;
@@ -28,12 +28,12 @@ class Produit
 
     public function getProductName()
     {
-        return $this->product_name;
+        return $this->name;
     }
 
     public function setName($name)
     {
-        $this->product_name = $name;
+        $this->name = $name;
     }
 
     public function getDescription()
