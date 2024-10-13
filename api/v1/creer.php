@@ -60,8 +60,11 @@ class Controller
                  * Une erreur 405 et une erreur est retournée.
                  */
             default:
-                $this->error = "Methode non autorisée";
-                $this->code = 405;
+                $error = new Error();
+                $error->setCode(405)
+                    ->setError("Methode non autorisée")
+                    ->setMessage("Methode non autorisée")
+                    ->send();
                 break;
         }
     }
