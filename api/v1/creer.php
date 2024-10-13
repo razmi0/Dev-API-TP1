@@ -1,33 +1,51 @@
 <?php
 
 require_once "../../Autoloader.php";
+
 use Model\Dao\ProduitDao as ProduitDao;
+use Utils\Response;
+
+$headers = [
+    "Content-Type: application/json",
+    "Access-Control-Allow-Origin: *",
+    "Access-Control-Allow-Methods: POST",
+    "Access-Control-Age: 3600",
+    "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+];
 
 
+// Instantiate the controller
+// --
+$controller = new CreateController();
 
-Controller::setHeaders();
-Controller::handleRequest();
+// Handle the request (verify the method and process the request)
+// If the method is allowed, the DAO is instantiate and the request is processed.
+// Else, an error message is returned.
+// --
+$controller->handleRequest();
 
+// Instantiate the response (code, message, data, headers)
+// --
+$response = new Response($controller->getCode(), $controller->getMessage(), $controller->getData(), $headers);
 
-/**
- * @method setHeaders() Sets the headers for the response.
- * @method handleRequest() Handles the request.
- * @method sendResponse($response, $code) Sends the response to the client.
- */
-class Controller {
+// Send the response
+// --
+$response->attachHeaders()->send();
 
-    /**
-     * Sets the headers for the response.
-     */
-    public static function setHeaders() {
-        header("Content-Type: application/json");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: POST");
-        header("Access-Control-Age: 3600");
-        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+class CreateController
+{
+    private $produitDao = null;
+    private $message = "";
+    private $data = [];
+    private $code = 0;
+
+    public function __construct()
+    {
+        $this->produitDao = new ProduitDao();
     }
 
-    public static function handleRequest() {
+    public function handleRequest()
+    {
         switch ($_SERVER["REQUEST_METHOD"]) {
 
             /**
@@ -36,33 +54,38 @@ class Controller {
              */
             case "POST":
                 $content = json_decode(file_get_contents("php://input"));
-                $response = ProduitDao::create($content);
-                // self::sendResponse($response, 200);
+                $this->data = $this->produitDao->create($content);
+                $this->message = "Produit créé avec succès";
+                $this->code = 201;
                 break;
 
-            /**
-             * Autres requêtes
-             * Une erreur 405 et un message est retournée.
-             */
+                /**
+                 * Autres requêtes
+                 * Une erreur 405 et un message est retournée.
+                 */
             default:
-                $response = ["message" => "Methode non autorisée"];
-                self::sendResponse($response, 405);
+
+                $this->message = "Methode non autorisée";
+                $this->data = [];
+                $this->code = 405;
                 break;
         }
     }
 
-    /**
-     * Sends the response to the client.
-     * @param $response The response to send.
-     * @param $code The HTTP status code to send.
-     */
-    private static function sendResponse($response, $code) {
-        http_response_code($code);
-        echo json_encode($response);
+   
+
+    public function getCode()
+    {
+        return $this->code;
     }
 
-    
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
 }
-
-
-
