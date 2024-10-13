@@ -37,7 +37,7 @@ class Error extends Exception {
         return $this;
     }
 
-    public function send()
+    public function sendAndDie()
     {
         error_log("Message : " . $this->message . " Error : " . $this->error);
         header("Content-Type: application/json; charset=UTF-8");
@@ -47,5 +47,6 @@ class Error extends Exception {
             "data" => $this->data,
             "error" => $this->error
         ]);
+        die();
     }
 }

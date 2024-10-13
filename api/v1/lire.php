@@ -48,7 +48,7 @@ class Controller
                     $this->message = "Produits récupérés avec succès";
                     $this->code = 200;
                 } catch (Error $e) {
-                    $e->send();
+                    $e->sendAndDie();
                 }
                 break;
 
@@ -58,7 +58,7 @@ class Controller
                  */
             default:
                 $error = new Error();
-                $error->setCode(405)->setError("Méthode non autorisée")->send();
+                $error->setCode(405)->setError("Méthode non autorisée")->sendAndDie();
                 break;
         }
     }
@@ -76,6 +76,6 @@ class Controller
             ->setData($this->data)
             ->setMessage($this->message)
             ->setHeaders($headers)
-            ->send();
+            ->sendAndDie();
     }
 }

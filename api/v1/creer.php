@@ -50,7 +50,7 @@ class Controller
                     $this->message = "Produit créé avec succès";
                     $this->code = 201;
                 } catch (Error $e) {
-                    $e->send();
+                    $e->sendAndDie();
                 }
 
                 break;
@@ -64,7 +64,7 @@ class Controller
                 $error->setCode(405)
                     ->setError("Methode non autorisée")
                     ->setMessage("Veuillez utiliser la méthode POST pour créer un produit")
-                    ->send();
+                    ->sendAndDie();
                 break;
         }
     }
@@ -82,6 +82,6 @@ class Controller
             ->setData($this->data)
             ->setMessage($this->message)
             ->setHeaders($headers)
-            ->send();
+            ->sendAndDie();
     }
 }

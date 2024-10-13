@@ -83,7 +83,7 @@ class Response
         return $this;
     }
 
-    public function send()
+    public function sendAndDie()
     {
         if($this->code === 0) {
             die();
