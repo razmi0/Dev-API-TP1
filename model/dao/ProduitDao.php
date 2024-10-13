@@ -286,5 +286,83 @@ class ProduitDao
         }
     }
 
-    public function update($id) {}
+    public function update($content)
+    {
+        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
+        // --
+
+        try {
+            $connection = new Connection();
+        } catch (Error $e) {
+            throw $e;
+        }
+        $pdo = $connection->getPDO();
+
+        // Service step ( validate the data and create the product object )
+        // --
+        try {
+            $produitService = new ProduitService();
+            $produit = $produitService->createProduit($content);
+        } catch (Error $e) {
+            throw $e;
+        }
+
+        // Database Access step ( build the query, prepare it, execute it and return the result )
+        // --
+        $query = "UPDATE T_PRODUIT SET name = :name, description = :description, prix = :prix WHERE id = :id";
+
+        try {
+
+            // Set PDO attributes
+            // --
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+            // Verify the preparation of the query
+            // --
+            $prepared = $pdo->prepare($query);
+            if (!$prepared) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: update");
+                throw $error;
+            }
+
+            // Bind the parameters
+            // --
+            $prepared->bindParam(':name', $produit->getProductName(), PDO::PARAM_STR);
+            $prepared->bindParam(':description', $produit->getDescription(), PDO::PARAM_STR);
+            $prepared->bindParam(':prix', $produit->getPrix(), PDO::PARAM_STR);
+            $prepared->bindParam(':id', $content->id, PDO::PARAM_INT);
+
+            // Verify the execution of the query
+            // --
+            $stmt = $prepared->execute();
+            if (!$stmt) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: update");
+                throw $error;
+            }
+            $affectedRows = $prepared->rowCount();
+
+            if ($affectedRows == 0) {
+                $error = new Error();
+                $error
+                    ->setCode(202)
+                    ->setError("Aucune modification")
+                    ->setMessage("Aucune modification n'a été apportée à ce produit")
+                    ->setData(["id" => $content->id])
+                    ->setLocation("model/dao/ProduitDao.php :: update");
+                throw $error;
+            }
+
+            // If all went good, we will return the id of the last inserted product to the controller
+            // --
+            return ["id" => $content->id];
+        } catch (Error $e) {
+            // If an error was catch, we send an informative error message back to the controller
+            // --
+            throw $e;
+        }
+    }
 }
