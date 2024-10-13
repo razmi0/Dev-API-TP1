@@ -63,7 +63,7 @@ class Controller
                 $error = new Error();
                 $error->setCode(405)
                     ->setError("Methode non autorisée")
-                    ->setMessage("Methode non autorisée")
+                    ->setMessage("Veuillez utiliser la méthode POST pour créer un produit")
                     ->send();
                 break;
         }
