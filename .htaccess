@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteRule ^api/v1.0/produit/list/?$ api/v1/lire.php [L]
+RewriteRule ^api/v1.0/produit/new/?$ api/v1/creer.php [L]
+RewriteRule ^api/v1.0/produit/update/?$ api/v1/modifier.php [L]
+RewriteRule ^api/v1.0/produit/delete/?$ api/v1/supprimer.php [L]
+RewriteRule ^api/v1.0/produit/delete/([0-9]+)/?$ api/v1/supprimer.php?id=$1 [L]
+RewriteRule ^api/v1.0/produit/listone/?$ api/v1/lire_un.php [L]
+RewriteRule ^api/v1.0/produit/listone/([0-9]+)/?$ api/v1/lire_un.php?id=$1 [L]
