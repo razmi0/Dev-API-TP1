@@ -4,7 +4,7 @@ namespace Model\Dao;
 
 use PDO;
 use PDOException;
-use Utils\Response as Response;
+use Utils\Error;
 
 
 
@@ -24,8 +24,9 @@ class Connection
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            $response = new Response(500, "Erreur interne", []);
-            $response->send();
+            $error = new Error();
+            $error->setCode(500)->setError("Service non disponible");
+            throw $error;
         }
     }
 
