@@ -47,7 +47,7 @@ class Response
         return $this->data;
     }
 
-     /**
+    /**
      * Sets the headers for the response.
      */
     public function attachHeaders()
@@ -56,11 +56,6 @@ class Response
             header($header);
         }
         return $this;
-        // header("Content-Type: application/json");
-        // header("Access-Control-Allow-Origin: *");
-        // header("Access-Control-Allow-Methods: POST");
-        // header("Access-Control-Age: 3600");
-        // header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     }
 
     public function send()
