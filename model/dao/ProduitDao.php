@@ -5,35 +5,37 @@ namespace Model\Dao;
 use Model\Entities\Produit as Produit;
 use Model\Dao\Connection as Connection;
 use Model\Services\ProduitService as ProduitService;
-use Utils\Response as Response;
+use Utils\Error as Error;
 use PDO;
-use PDOException;
+
 
 
 class ProduitDao
 {
-    private $table_name  = "T_PRODUIT";
-
-
-    public function getTableName()
-    {
-        return $this->table_name;
-    }
-
     /**
      * @param Produit $content
+     * @throws Error
+     * @return array ["id" => $pdo->lastInsertId()]
      */
     public function create($content)
     {
-        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
+        // Connection step ( open connection to the database via PDO instantiation)
         // --
-        $connection = new Connection();
+        try {
+            $connection = new Connection();
+        } catch (Error $e) {
+            throw $e;
+        }
         $pdo = $connection->getPDO();
 
         // Service step ( validate the data and create the product object )
         // --
-        $produitService = new ProduitService();
-        $produit = $produitService->createProduit($content);
+        try {
+            $produitService = new ProduitService();
+            $produit = $produitService->createProduit($content);
+        } catch (Error $e) {
+            throw $e;
+        }
 
         // Database Access step ( build the query, prepare it, execute it and return the result )
         // --
@@ -50,8 +52,10 @@ class ProduitDao
             // Verify the preparation of the query
             // --
             $prepared = $pdo->prepare($query);
-            if ($prepared === false) {
-                throw new PDOException("Erreur lors de la préparation de la requête");
+            if (!$prepared) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible");
+                throw $error;
             }
 
             // Bind the parameters
@@ -65,31 +69,40 @@ class ProduitDao
             // Verify the execution of the query
             // --
             $executionResult = $prepared->execute();
-            if ($executionResult) {
-                $result = $prepared->fetchAll();
-            } else {
-                throw new PDOException("Erreur lors de l'exécution de la requête");
+            if (!$executionResult) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible");
+                throw $error;
             }
-        } catch (PDOException $e) {
-            // If an error was catch, we send a response with a 500 status code and an error message
+            // If all went good, we will return the id of the last inserted product to the controller
             // --
-            $response = new Response(500, "Erreur lors de l'envoi de la requête", []);
-            error_log($e->getMessage());
-            $response->send();
+            $prepared->fetchAll();
+            return ["id" => $pdo->lastInsertId()];
+        } catch (Error $e) {
+            // If an error was catch, we send an informative error message back to the controller
+            // --
+            throw $e;
         }
-        return $result;
     }
 
 
     /**
+     * @throws Error
      * @return Produit[]
      */
-    static function findAll()
+    public function findAll()
     {
         // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
         // --
-        $connection = new Connection();
+        try {
+            $connection = new Connection();
+        } catch (Error $e) {
+            throw $e;
+        }
         $pdo = $connection->getPDO();
+
+        // No service step here, we are just fetching data from the database
+        // --
 
         // Build the query
         // --
@@ -101,31 +114,44 @@ class ProduitDao
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-            $prepared = $pdo->prepare($query);
-
+            
             // Verify the preparation of the query
             // --
-            if ($prepared === false) {
-                throw new PDOException("Erreur lors de la préparation de la requête");
+            $prepared = $pdo->prepare($query);
+            if (!$prepared) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible");
+                throw $error;
             }
 
             // Verify the execution of the query
             // --
             $executionResult = $prepared->execute();
-            if ($executionResult) {
-                $result = $prepared->fetchAll();
-            } else {
-                throw new PDOException("Erreur lors de l'exécution de la requête");
+            if (!$executionResult) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible");
+                throw $error;
             }
-        } catch (PDOException $e) {
+            $result = $prepared->fetchAll();
+
+            // If no product was found, we send a response with a 404 status code and an error message
+            // --
+            if(count($result) == 0){
+                $error = new Error();
+                $error->setCode(404)->setError("Aucun produit trouvé");
+                throw $error;
+            }
+
+            // If all went good, we will return the result
+            // --
+            return $result;
+
+        } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             // --
-            $response = new Response(500, "Erreur lors de l'envoi de la requête", []);
-            error_log($e->getMessage());
-            $response->send();
+            throw $e;
         }
 
-        return $result;
     }
 
 
