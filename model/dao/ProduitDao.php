@@ -73,7 +73,7 @@ class ProduitDao
         } catch (PDOException $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             // --
-            $response = new Response(500, "Erreur lors de l'envoi de la requête", [], []);
+            $response = new Response(500, "Erreur lors de l'envoi de la requête", []);
             error_log($e->getMessage());
             $response->send();
         }
@@ -120,7 +120,7 @@ class ProduitDao
         } catch (PDOException $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             // --
-            $response = new Response(500, "Erreur lors de l'envoi de la requête", [], []);
+            $response = new Response(500, "Erreur lors de l'envoi de la requête", []);
             error_log($e->getMessage());
             $response->send();
         }

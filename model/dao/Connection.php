@@ -24,7 +24,7 @@ class Connection
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            $response = new Response(500, "Erreur interne", [], []);
+            $response = new Response(500, "Erreur interne", []);
             $response->send();
         }
     }

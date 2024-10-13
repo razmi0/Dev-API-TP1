@@ -9,7 +9,7 @@ class Response
     private $data = [];
     private $headers = [];
 
-    public function __construct($code, $message, $data, $headers)
+    public function __construct($code, $message, $data, $headers = [])
     {
         $this->code = $code;
         $this->message = $message;
