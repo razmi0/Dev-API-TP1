@@ -46,7 +46,7 @@ class Controller
             case "POST":
                 try {
                     $content = json_decode(file_get_contents("php://input"));
-                    $this->data = $this->produitDao->create($content);
+                    $this->data = $this->produitDao->create($content) ?? [];
                     $this->message = "Produit créé avec succès";
                     $this->code = 201;
                 } catch (Error $e) {

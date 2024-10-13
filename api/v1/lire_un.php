@@ -78,7 +78,7 @@ class Controller
                     // If the request is not successful, we handle the error with the Error class.
                     // --
                     try {
-                        $this->data = $this->produitDao->findById($id);
+                        $this->data = $this->produitDao->findById($id) ?? [];
                         $this->message = "Produit trouvé";
                         $this->code = 200;
                     } catch (Error $e) {

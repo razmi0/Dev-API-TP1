@@ -44,7 +44,7 @@ class Controller
              */
             case "GET":
                 try {
-                    $this->data = $this->produitDao->findAll();
+                    $this->data = $this->produitDao->findAll() ?? [];
                     $this->message = "Produits récupérés avec succès";
                     $this->code = 200;
                 } catch (Error $e) {
