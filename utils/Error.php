@@ -17,6 +17,12 @@ class Error extends Exception {
         $this->data = $data;
     }
 
+    public function setMessage($message)
+    {
+        $this->message = $message;
+        return $this;
+    }
+
     public function setCode($code)
     {
         $this->code = $code;
