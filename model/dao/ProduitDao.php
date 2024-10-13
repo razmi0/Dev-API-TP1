@@ -154,9 +154,74 @@ class ProduitDao
 
     }
 
+    public function findById($id) {
+        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
+        // --
+
+        try {
+            $connection = new Connection();
+        } catch (Error $e) {
+            throw $e;
+        }
+        $pdo = $connection->getPDO();
+
+        // No service step here, we are just fetching data from the database
+        // --
+
+        // Build the query
+        // --
+        $query = "SELECT * FROM T_PRODUIT WHERE product_id = :id";
+
+        try {
+            // Set PDO attributes
+            // --
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+            // Verify the preparation of the query
+            // --
+            $prepared = $pdo->prepare($query);
+            if (!$prepared) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible");
+                throw $error;
+            }
+
+            // Bind the parameters
+            // --
+            $prepared->bindParam(':id', $id, PDO::PARAM_INT);
+
+            // Verify the execution of the query
+            // --
+            $executionResult = $prepared->execute();
+            if (!$executionResult) {
+                $error = new Error();
+                $error->setCode(503)->setError("Service non disponible");
+                throw $error;
+            }
+            $result = $prepared->fetchAll();
+
+            // If no product was found, we send a response with a 404 status code and an error message
+            // --
+            if(count($result) == 0){
+                $error = new Error();
+                $error->setCode(404)->setError("Aucun produit trouvé");
+                throw $error;
+            }
+
+            // If all went good, we will return the result
+            // --
+            return $result;
+
+        } catch (Error $e) {
+            // If an error was catch, we send a response with a 500 status code and an error message
+            // --
+            throw $e;
+        }
 
 
-    public function findById($id) {}
+    }
 
     public function delete($id) {}
 
