@@ -4,6 +4,7 @@ namespace Model\Dao;
 
 use PDO;
 use PDOException;
+use Utils\Response as Response;
 
 
 
@@ -22,9 +23,9 @@ class Connection
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
         } catch (PDOException $e) {
-            http_response_code(500);
             error_log($e->getMessage());
-            echo json_encode(["message" => "Erreur interne : "]);
+            $response = new Response(500, "Erreur interne", [], []);
+            $response->send();
         }
     }
 
