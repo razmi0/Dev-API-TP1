@@ -20,3 +20,5 @@ SELECT \* FROM T_PRODUIT ORDER BY date_creation DESC
 UPDATE T_PRODUIT SET name = :name, description = :description, prix = :prix WHERE id = :id
 
 INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)
+
+DROP TABLE T_PRODUIT
