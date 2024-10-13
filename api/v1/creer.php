@@ -26,7 +26,6 @@ class Controller
     private $produitDao = null;
     private $response = null;
     private $message = "";
-    private $error = "";
     private $data = [];
     private $code = 0;
 
