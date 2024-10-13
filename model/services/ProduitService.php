@@ -24,6 +24,7 @@ class ProduitService
     {
         $this->isNotNull($content);
         $this->isNotEmpty($content);
+        $this->isNotTooLong($content);
     }
 
     private function buildProduct($content)
@@ -55,6 +56,15 @@ class ProduitService
             $this->buildError("La description du produit est obligatoire");
         } else if ($content->prix == "") {
             $this->buildError("Le prix du produit est obligatoire");
+        }
+    }
+
+    private function isNotTooLong($content)
+    {
+        if (strlen($content->name) >= 50) {
+            $this->buildError("Le nom du produit est trop long");
+        } else if (strlen($content->description) > 255) {
+            $this->buildError("La description du produit est trop longue");
         }
     }
 
