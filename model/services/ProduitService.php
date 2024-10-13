@@ -63,7 +63,7 @@ class ProduitService
     {
         if (strlen($content->name) >= 50) {
             $this->buildError("Le nom du produit est trop long");
-        } else if (strlen($content->description) > 255) {
+        } else if (strlen($content->description) > 65000) {
             $this->buildError("La description du produit est trop longue");
         }
     }
