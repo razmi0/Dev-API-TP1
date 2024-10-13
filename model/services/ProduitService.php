@@ -23,12 +23,13 @@ class ProduitService
     private function validate($content)
     {
         $this->isNotNull($content);
+        $this->isNotEmpty($content);
     }
 
     private function buildProduct($content)
     {
         $produit = new Produit();
-        $produit->setName($content->product_name);
+        $produit->setName($content->name);
         $produit->setDescription($content->description);
         $produit->setPrix($content->prix);
         $produit->setDateCreation(date("Y-m-d H:i:s"));
@@ -37,7 +38,7 @@ class ProduitService
 
     private function isNotNull($content)
     {
-        if (is_null($content->product_name)) {
+        if (is_null($content->name)) {
             $this->buildError("Le nom du produit est obligatoire");
         } else if (is_null($content->description)) {
             $this->buildError("La description du produit est obligatoire");
@@ -46,10 +47,21 @@ class ProduitService
         }
     }
 
+    private function isNotEmpty($content)
+    {
+        if ($content->name == "") {
+            $this->buildError("Le nom du produit est obligatoire");
+        } else if ($content->description == "") {
+            $this->buildError("La description du produit est obligatoire");
+        } else if ($content->prix == "") {
+            $this->buildError("Le prix du produit est obligatoire");
+        }
+    }
+
     private function buildError($message)
     {
         $error = new Error();
-        $error->setCode(400)->setError($message);
+        $error->setCode(400)->setError($message)->setLocation("model/services/ProduitService.php :: buildError");
         throw $error;
     }
 }
