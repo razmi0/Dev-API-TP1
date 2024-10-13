@@ -18,9 +18,10 @@ class Produit
     private $prix;
     private $date_creation;
 
-    
 
-    public function getId(){
+
+    public function getId()
+    {
         return $this->id;
     }
 
