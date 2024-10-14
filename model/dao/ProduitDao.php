@@ -333,11 +333,16 @@ class ProduitDao
                 throw $error;
             }
 
+            $name = $produit->getProductName();
+            $description = $produit->getDescription();
+            $prix = $produit->getPrix();
+
+
             // Bind the parameters
             // --
-            $prepared->bindParam(':name', $produit->getProductName(), PDO::PARAM_STR);
-            $prepared->bindParam(':description', $produit->getDescription(), PDO::PARAM_STR);
-            $prepared->bindParam(':prix', $produit->getPrix(), PDO::PARAM_STR);
+            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
+            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
+            $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
             $prepared->bindParam(':id', $content->id, PDO::PARAM_INT);
 
             // Verify the execution of the query
