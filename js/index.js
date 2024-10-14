@@ -10,20 +10,13 @@ const API_CREATE_ONE_ENDPOINT = `${API_URL}/creer.php`;
 //--
 const inputSections = Array.from(document.querySelectorAll("[data-endpoint]"));
 const outputSections = inputSections.map((section) => section.nextElementSibling);
-/**
- *
- * @param ctn The container where the message will be inserted
- * @param text The message text
- * @param code The message code
- * @param options { error: boolean } If the message is an error or not
- *
- */
-const insertText = (ctn, text, code, options = { error: false }) => {
-    const colorClass = options.error ? "pico-color-red-500" : "";
-    const prefix = options.error ? "[ERROR] : " : "";
+const insertText = ({ ctn, text, code = null, error = false }) => {
+    const prefix = error ? "[ERROR] : " : "";
+    const suffix = code ? `-- Code ${code}` : "";
+    const className = error ? "pico-color-red-500" : "";
     ctn.innerHTML = `
         <div>
-            <p class="${colorClass}">${prefix}${text} -- Code ${code}</p>
+            <p class="${className}">${prefix} ${text} ${suffix}</p>
         </div>
     `;
 };
@@ -74,9 +67,9 @@ const setupReadAll = () => {
         const response = await fetch(API_READ_ALL_ENDPOINT);
         const json = await response.json();
         if (json.error)
-            insertText(outputSection, json.error, response.status, { error: true });
+            insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText(outputSection, json.message, response.status);
+            insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
             insertData(outputSection, json.data);
     });
@@ -102,17 +95,16 @@ const setupReadOne = () => {
         console.log("Fetching data...");
         const id = readOneInput.value;
         if (!id) {
-            insertText(outputSection, "L'id est obligatoire", 0);
+            insertText({ ctn: outputSection, text: "L'id est obligatoire" });
             return;
         }
         const apiURLWithId = `${API_READ_ONE_ENDPOINT}?id=${id}`;
         const response = await fetch(apiURLWithId);
         const json = await response.json();
-        console.log(json);
         if (json.error)
-            insertText(outputSection, json.error, response.status, { error: true });
+            insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText(outputSection, json.message, response.status);
+            insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
             insertData(outputSection, json.data);
     });
@@ -137,9 +129,8 @@ const setupDelete = () => {
         e.preventDefault();
         console.log("Deleting data...");
         const id = deleteOneInput.value;
-        console.log(id);
         if (!id) {
-            insertText(outputSection, "L'id est obligatoire", 0);
+            insertText({ ctn: outputSection, text: "L'id est obligatoire" });
             return;
         }
         const fetchOptions = {
@@ -152,9 +143,9 @@ const setupDelete = () => {
         const response = await fetch(API_DELETE_ONE_ENDPOINT, fetchOptions);
         const json = await response.json();
         if (json.error)
-            insertText(outputSection, json.error, response.status, { error: true });
+            insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText(outputSection, json.message, response.status);
+            insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
             insertData(outputSection, json.data);
     });
@@ -169,9 +160,36 @@ const setupCreateOne = () => {
     const createOneSection = inputSections.find((section) => section.dataset.endpoint === "create");
     const createOneButton = createOneSection.querySelector("button");
     const outputSection = createOneSection.nextElementSibling;
-    const createOneInput = createOneSection.querySelector("input[name='name']");
-    const createOneInputDescription = createOneSection.querySelector("input[name='description']");
-    const createOneInputPrice = createOneSection.querySelector("input[name='price']");
+    const inputs = Array.from(createOneSection.querySelectorAll("input"));
+    inputs.forEach((input) => {
+        input.addEventListener("input", () => {
+            const isFormValid = inputs.every((input) => input.value.length > 0);
+            isFormValid ? createOneButton.removeAttribute("disabled") : createOneButton.setAttribute("disabled", "");
+        });
+    });
+    createOneButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+        console.log("Creating data...");
+        const clientData = inputs.reduce((acc, input) => {
+            acc[input.name] = input.value;
+            return acc;
+        }, {});
+        const fetchOptions = {
+            method: "POST",
+            body: JSON.stringify(clientData),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        const response = await fetch(API_CREATE_ONE_ENDPOINT, fetchOptions);
+        const json = await response.json();
+        if (json.error)
+            insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
+        if (json.message)
+            insertText({ ctn: outputSection, text: json.message, code: response.status });
+        if (json.data)
+            insertData(outputSection, json.data);
+    });
 };
 /**
  * Run the app
@@ -180,5 +198,6 @@ const run = () => {
     setupReadAll();
     setupReadOne();
     setupDelete();
+    setupCreateOne();
 };
 run();
