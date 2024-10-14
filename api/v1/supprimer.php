@@ -28,11 +28,14 @@ class Controller
     private $message = "";
     private $data = [];
     private $code = 0;
+    private $error = null;
 
     public function __construct()
     {
         $this->produitDao = new ProduitDao();
         $this->response = new Response();
+        $this->error = new Error();
+        $this->error->setLocation("api/v1/supprimer.php");
     }
 
     public function handleRequest()
@@ -45,23 +48,25 @@ class Controller
              */
 
             case "DELETE":
-                $client_json = json_decode(file_get_contents("php://input"));
-                $id = isset($client_json->id) ? $client_json->id : null;
-
-                // If no id is found, we return an error
-                // --
-                if (!isset($id)) {
-                    $error = new Error();
-                    $error->setCode(400)
-                        ->setError("Requête invalide")
-                        ->setMessage("Veuillez fournir un id de produit dans le corps de la requête au format JSON.")
-                        ->sendAndDie();
-                }
-
-                // We call the DAO method "delete" to delete the product
-                // If the request is not successful, we handle the error with the Error class.
-                // --
                 try {
+                    $client_json = json_decode(file_get_contents("php://input"));
+                    $id = isset($client_json->id) ? $client_json->id : null;
+
+                    // If no id is found, we return an error
+                    // --
+                    if (!isset($id)) {
+                        $this->error->setCode(400)
+                            ->setError("Requête invalide")
+                            ->setMessage("Veuillez fournir un id de produit dans le corps de la requête au format JSON.");
+                        throw $this->error;
+                    }
+
+                    // We call the DAO method "delete" to delete the product
+                    // If the request is not successful, we handle the error with the Error class.
+                    // --
+                    /**
+                     * @var never[] $data
+                     */
                     $this->data = $this->produitDao->deleteById($id) ?? [];
                     $this->message = "Suppression effectuée avec succès";
                     $this->code = 200;
@@ -75,11 +80,9 @@ class Controller
                  * Une erreur 405 et une erreur est retournée.
                  */
             default:
-                $error = new Error();
-                $error->setCode(405)
+                $this->error->setCode(405)
                     ->setError("Methode non autorisée")
                     ->setMessage("Veuillez utiliser la méthode DELETE pour supprimer un produit.")
-                    ->setLocation("api/v1/supprimer.php")
                     ->sendAndDie();
                 break;
         }
