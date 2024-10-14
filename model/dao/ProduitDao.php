@@ -29,21 +29,46 @@ class ProduitDao
                 ->setError("Impossible de traiter la requete")
                 ->setLocation("model/dao/ProduitDao.php");
         } catch (Error $e) {
+            $this->error->setLocation("model/dao/ProduitDao.php :: __construct");
             throw $e;
         }
     }
 
-    private function bindParams($produit, $prepared)
+    private function bindParamsCreate($produit, $prepared)
     {
-        $name = $produit->getProductName();
-        $description = $produit->getDescription();
-        $prix = $produit->getPrix();
-        $date = $produit->getDateCreation();
+        try {
+            $name = $produit->getProductName();
+            $description = $produit->getDescription();
+            $prix = $produit->getPrix();
+            $date = $produit->getDateCreation();
 
-        $prepared->bindParam(':name', $name, PDO::PARAM_STR);
-        $prepared->bindParam(':description', $description, PDO::PARAM_STR);
-        $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
-        $prepared->bindParam(':date', $date, PDO::PARAM_STR);
+            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
+            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
+            $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
+            $prepared->bindParam(':date', $date, PDO::PARAM_STR);
+        } catch (Error $e) {
+            $this->error->setLocation("model/dao/ProduitDao.php :: bindParamsCreate");
+            throw $e;
+        }
+
+
+        return $prepared;
+    }
+
+    private function bindParamsUpdate($produit, $prepared)
+    {
+        try {
+            $name = $produit->getProductName();
+            $description = $produit->getDescription();
+            $prix = $produit->getPrix();
+
+            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
+            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
+            $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
+        } catch (Error $e) {
+            $this->error->setLocation("model/dao/ProduitDao.php :: bindParamsUpdate");
+            throw $e;
+        }
 
         return $prepared;
     }
@@ -58,10 +83,10 @@ class ProduitDao
      */
     public function create($content)
     {
-        $this->error->setLocation("model/dao/ProduitDao.php :: create");
 
 
         try {
+            $this->error->setLocation("model/dao/ProduitDao.php :: create");
             // Service step ( validate the data and create the product object )
             // --
             $produit = $this->produitService->createProduit($content);
@@ -79,7 +104,7 @@ class ProduitDao
 
             // Bind the parameters
             // --
-            $prepared = $this->bindParams($produit, $prepared);
+            $prepared = $this->bindParamsCreate($produit, $prepared);
 
             // Verify the execution of the query
             // --
@@ -91,11 +116,11 @@ class ProduitDao
             // If all went good, we will return the id of the last inserted product to the controller
             // --
             $prepared->fetchAll();
+            $insertedId = $this->pdo->lastInsertId();
 
             // We return the last inserted id in db for user convenience
             //--
-
-            return ["id" => $this->pdo->lastInsertId()];
+            return ["id" => $insertedId];
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             // --
@@ -110,55 +135,39 @@ class ProduitDao
      */
     public function findAll()
     {
-        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
-        // --
-        try {
-            $connection = new Connection();
-        } catch (Error $e) {
-            throw $e;
-        }
-        $pdo = $connection->getPDO();
-
-        // No service step here, we are just fetching data from the database
-        // --
-
-        // Build the query
-        // --
-        $query = "SELECT * FROM T_PRODUIT ORDER BY date_creation DESC";
 
         try {
-            // Set PDO attributes
+            $this->error->setLocation("model/dao/ProduitDao.php :: findAll");
+
+            // Build the query
             // --
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $query = "SELECT * FROM T_PRODUIT ORDER BY date_creation DESC";
 
             // Verify the preparation of the query
             // --
-            $prepared = $pdo->prepare($query);
+            $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findAll");
-                throw $error;
+                throw $this->error;
             }
 
             // Verify the execution of the query
             // --
             $stmt = $prepared->execute();
             if (!$stmt) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findAll");
-                throw $error;
+                throw $this->error;
             }
             $result = $prepared->fetchAll();
 
             // If no product was found, we send a response with a 404 status code and an error message
             // --
             if (count($result) == 0) {
-                $error = new Error();
-                $error->setCode(404)->setError("Aucun produit trouvé")->setLocation("model/dao/ProduitDao.php :: findAll");
-                throw $error;
+                $this->error
+                    ->setCode(404)
+                    ->setError("Aucun produit trouvé");
+                throw $this->error;
             }
+
+            // TODO : ADD PRODUCT INSTANTIAION HERE
 
             // If all went good, we will return the result
             // --
@@ -172,37 +181,23 @@ class ProduitDao
 
     public function findById($id)
     {
-        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
-        // --
+
 
         try {
-            $connection = new Connection();
-        } catch (Error $e) {
-            throw $e;
-        }
-        $pdo = $connection->getPDO();
+            $this->error->setLocation("model/dao/ProduitDao.php :: findById");
 
-        // No service step here, we are just fetching data from the database
-        // --
-
-        // Build the query
-        // --
-        $query = "SELECT * FROM T_PRODUIT WHERE id = :id";
-
-        try {
+            // Build the query
+            // --
+            $query = "SELECT * FROM T_PRODUIT WHERE id = :id";
             // Set PDO attributes
             // --
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Verify the preparation of the query
             // --
-            $prepared = $pdo->prepare($query);
+            $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findById");
-                throw $error;
+                throw $this->error;
             }
 
             // Bind the parameters
@@ -213,19 +208,21 @@ class ProduitDao
             // --
             $stmt = $prepared->execute();
             if (!$stmt) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: findById");
-                throw $error;
+                throw $this->error;
             }
             $result = $prepared->fetchAll();
 
             // If no product was found, we send a response with a 404 status code and an error message
             // --
             if (count($result) == 0) {
-                $error = new Error();
-                $error->setCode(404)->setError("Aucun produit trouvé")->setLocation("model/dao/ProduitDao.php :: findById");
-                throw $error;
+                $this->error
+                    ->setCode(404)
+                    ->setError("Aucun produit trouvé")
+                    ->setLocation("model/dao/ProduitDao.php :: findById");
+                throw $this->error;
             }
+
+            // TODO : ADD PRODUCT INSTANTIAION HERE
 
             // If all went good, we will return the result
             // --
@@ -239,37 +236,17 @@ class ProduitDao
 
     public function deleteById($id)
     {
-        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
-        // --
 
         try {
-            $connection = new Connection();
-        } catch (Error $e) {
-            throw $e;
-        }
-        $pdo = $connection->getPDO();
-
-        // No service step here, we are just fetching data from the database
-        // --
-
-        // Build the query
-        // --
-        $query = "DELETE FROM T_PRODUIT WHERE id = :id";
-
-        try {
-            // Set PDO attributes
+            $this->error->setLocation("model/dao/ProduitDao.php :: deleteById")->setMessage("Erreur lors de la suppression du produit");
+            // Build the query
             // --
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
+            $query = "DELETE FROM T_PRODUIT WHERE id = :id";
             // Verify the preparation of the query
             // --
-            $prepared = $pdo->prepare($query);
+            $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: deleteById")->setMessage("Erreur lors de la suppression du produit");
-                throw $error;
+                throw $this->error;
             }
 
             // Bind the parameters
@@ -280,24 +257,21 @@ class ProduitDao
             // --
             $stmt = $prepared->execute();
             if (!$stmt) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: deleteById")->setMessage("Erreur lors de la suppression du produit");
-                throw $error;
+                throw $this->error;
             }
 
             $affectedRows = $prepared->rowCount();
 
             // If no product was found, we send a 204 with no content in response body as HTTP specification states
-            // The error message is sent to php_error.log
+            // The error message will be logged in php_error.log
             // --
             if ($affectedRows == 0) {
-                $error = new Error();
-                $error
+                $this->error
                     ->setCode(204)
                     ->setError("Ce produit n'existe pas")
                     ->setMessage("L'utilisateur a tenté de supprimer un produit qui n'existe pas")
                     ->setData(["id" => $id]);
-                throw $error;
+                throw $this->error;
             }
         } catch (Error $e) {
             throw $e;
@@ -306,77 +280,47 @@ class ProduitDao
 
     public function update($content)
     {
-        // Connection step ( open connection to the database via PDO instantiation and set PDO attributes )
-        // --
+
 
         try {
-            $connection = new Connection();
-        } catch (Error $e) {
-            throw $e;
-        }
-        $pdo = $connection->getPDO();
+            $this->error
+                ->setLocation("model/dao/ProduitDao.php :: update")
+                ->setMessage("Erreur lors de la modification du produit");
 
-        // Service step ( validate the data and create the product object )
-        // --
-        try {
-            $produitService = new ProduitService();
-            $produit = $produitService->createProduit($content);
-        } catch (Error $e) {
-            throw $e;
-        }
-
-        // Database Access step ( build the query, prepare it, execute it and return the result )
-        // --
-        $query = "UPDATE T_PRODUIT SET name = :name, description = :description, prix = :prix WHERE id = :id";
-
-        try {
-
-            // Set PDO attributes
+            // Service step ( validate the data and create the product object )
             // --
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $produit = $this->produitService->createProduit($content);
+
+            // Database Access step ( build the query, prepare it, execute it and return the result )
+            // --
+            $query = "UPDATE T_PRODUIT SET name = :name, description = :description, prix = :prix WHERE id = :id";
 
             // Verify the preparation of the query
             // --
-            $prepared = $pdo->prepare($query);
+            $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: update");
-                throw $error;
+                throw $this->error;
             }
-
-            $name = $produit->getProductName();
-            $description = $produit->getDescription();
-            $prix = $produit->getPrix();
-
 
             // Bind the parameters
             // --
-            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
-            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
-            $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
-            $prepared->bindParam(':id', $content->id, PDO::PARAM_INT);
+            $prepared = $this->bindParamsUpdate($produit, $prepared);
 
             // Verify the execution of the query
             // --
             $stmt = $prepared->execute();
             if (!$stmt) {
-                $error = new Error();
-                $error->setCode(503)->setError("Service non disponible")->setLocation("model/dao/ProduitDao.php :: update");
-                throw $error;
+                throw $this->error;
             }
             $affectedRows = $prepared->rowCount();
 
             if ($affectedRows == 0) {
-                $error = new Error();
-                $error
+                $this->error
                     ->setCode(202)
                     ->setError("Aucune modification")
                     ->setMessage("Aucune modification n'a été apportée à ce produit")
-                    ->setData(["id" => $content->id])
-                    ->setLocation("model/dao/ProduitDao.php :: update");
-                throw $error;
+                    ->setData(["id" => $content->id]);
+                throw $this->error;
             }
 
             // If all went good, we will return the id of the last inserted product to the controller
