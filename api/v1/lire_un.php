@@ -60,8 +60,8 @@ class Controller
                     parse_str($urlParams["query"], $params);
                     $id = isset($params["id"]) ? $params["id"] : null;
                 } else {
-                    $content = json_decode(file_get_contents("php://input"));
-                    $id = isset($content->id) ? $content->id : null;
+                    $client_json = json_decode(file_get_contents("php://input"));
+                    $id = isset($client_json->id) ? $client_json->id : null;
                 }
 
                 // If no id is found, we return an error

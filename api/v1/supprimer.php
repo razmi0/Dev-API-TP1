@@ -45,8 +45,8 @@ class Controller
              */
 
             case "DELETE":
-                $content = json_decode(file_get_contents("php://input"));
-                $id = isset($content->id) ? $content->id : null;
+                $client_json = json_decode(file_get_contents("php://input"));
+                $id = isset($client_json->id) ? $client_json->id : null;
 
                 // If no id is found, we return an error
                 // --
