@@ -28,7 +28,6 @@ class Controller
     private $data = [];
     private $code = 0;
     private $error = null;
-    private $validator = null;
 
     public function __construct()
     {
