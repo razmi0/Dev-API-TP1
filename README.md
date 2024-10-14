@@ -27,9 +27,13 @@ TP1 :
     - Appeler le service de validation => Error => throw BadRequestException (400)
     - Appeller le DAO => Error => throw InternalServerErrorException (500) / NotFoundException (404)
     - Appeller Reponse => Error => throw InternalServerErrorException (500)
-- [ ] (#6) Bouger validation services dans une classe Validator
+- [x] (#6) Bouger validation services dans une classe Validator
   - [x] (#6.1) Creer une classe Validator et ses methodes
   - [x] (#6.2) lire.php
   - [x] (#6.4) creer.php
   - [x] (#6.5) modifier.php
-  - [ ] (#6.6) supprimer.php
+  - [x] (#6.6) supprimer.php
+
+## TODO ANNEXE
+
+- reflechir a une fonxtion de construction de query update sur-mesure.
