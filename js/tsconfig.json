@@ -3,8 +3,9 @@
     "baseUrl": "./",
     "outDir": "./",
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node"
+    "module": "AMD",
+    "moduleResolution": "Node",
+    "outFile": "./index.js"
   },
   "files": ["./src/index.ts"]
 }
