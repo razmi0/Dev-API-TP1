@@ -79,7 +79,6 @@ class ProduitDao
 
             // Bind the parameters
             // --
-
             $prepared = $this->bindParams($produit, $prepared);
 
             // Verify the execution of the query
