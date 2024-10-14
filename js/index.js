@@ -10,6 +10,15 @@ const API_CREATE_ONE_ENDPOINT = `${API_URL}/creer.php`;
 //--
 const inputSections = Array.from(document.querySelectorAll("[data-endpoint]"));
 const outputSections = inputSections.map((section) => section.nextElementSibling);
+/**
+ *
+ * @param options The options object containing the container, text, code, and error flag
+ * @param options.ctn The container where the message will be inserted
+ * @param options.text The message text
+ * @param options.code The message code
+ * @param options.error If the message is an error or not
+ *
+ */
 const insertText = ({ ctn, text, code = null, error = false }) => {
     const prefix = error ? "[ERROR] : " : "";
     const suffix = code ? `-- Code ${code}` : "";
@@ -26,7 +35,7 @@ const insertText = ({ ctn, text, code = null, error = false }) => {
  * @param data The data to insert
  *
  */
-const insertData = (ctn, data) => {
+const insertTable = (ctn, data) => {
     console.log("Inserting data...");
     const table = document.createElement("table");
     const thead = document.createElement("thead");
@@ -62,7 +71,7 @@ const setupReadAll = () => {
     const readSection = inputSections.find((section) => section.dataset.endpoint === "read");
     const readAllButton = readSection.querySelector("button");
     const outputSection = readSection.nextElementSibling;
-    readAllButton.addEventListener("click", async () => {
+    readAllButton.addEventListener("mousedown", async () => {
         console.log("Fetching data...");
         const response = await fetch(API_READ_ALL_ENDPOINT);
         const json = await response.json();
@@ -71,7 +80,7 @@ const setupReadAll = () => {
         if (json.message)
             insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
-            insertData(outputSection, json.data);
+            (outputSection.innerHTML = ""), insertTable(outputSection, json.data);
     });
 };
 /**
@@ -90,7 +99,7 @@ const setupReadOne = () => {
             ? readOneButton.removeAttribute("disabled")
             : readOneButton.setAttribute("disabled", "");
     });
-    readOneButton.addEventListener("click", async (e) => {
+    readOneButton.addEventListener("mousedown", async (e) => {
         e.preventDefault();
         console.log("Fetching data...");
         const id = readOneInput.value;
@@ -106,7 +115,7 @@ const setupReadOne = () => {
         if (json.message)
             insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
-            insertData(outputSection, json.data);
+            insertTable(outputSection, json.data);
     });
 };
 /**
@@ -125,7 +134,7 @@ const setupDelete = () => {
             ? deleteOneButton.removeAttribute("disabled")
             : deleteOneButton.setAttribute("disabled", "");
     });
-    deleteOneButton.addEventListener("click", async (e) => {
+    deleteOneButton.addEventListener("mousedown", async (e) => {
         e.preventDefault();
         console.log("Deleting data...");
         const id = deleteOneInput.value;
@@ -147,7 +156,7 @@ const setupDelete = () => {
         if (json.message)
             insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
-            insertData(outputSection, json.data);
+            insertTable(outputSection, json.data);
     });
 };
 /**
@@ -167,7 +176,7 @@ const setupCreateOne = () => {
             isFormValid ? createOneButton.removeAttribute("disabled") : createOneButton.setAttribute("disabled", "");
         });
     });
-    createOneButton.addEventListener("click", async (e) => {
+    createOneButton.addEventListener("mousedown", async (e) => {
         e.preventDefault();
         console.log("Creating data...");
         const clientData = inputs.reduce((acc, input) => {
@@ -188,7 +197,7 @@ const setupCreateOne = () => {
         if (json.message)
             insertText({ ctn: outputSection, text: json.message, code: response.status });
         if (json.data)
-            insertData(outputSection, json.data);
+            outputSection.innerHTML += `<p>Le produit a été créé avec l'id : ${json.data[0].id}</p>`;
     });
 };
 /**
@@ -201,3 +210,17 @@ const run = () => {
     setupCreateOne();
 };
 run();
+/**
+ * Theme Toggle
+ */
+const themeToggleButton = document.querySelector("button[data-theme]");
+if (themeToggleButton) {
+    themeToggleButton.addEventListener("mousedown", () => {
+        let html = document.querySelector("html[data-theme]");
+        if (html) {
+            let htmlTheme = html.dataset.theme;
+            htmlTheme = htmlTheme === "light" ? "dark" : "light";
+            html.dataset.theme = htmlTheme;
+        }
+    });
+}
