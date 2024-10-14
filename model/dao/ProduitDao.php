@@ -100,8 +100,11 @@ class ProduitDao
 
 
     /**
+     * 
+     * @description Find all products
      * @throws Error
      * @return Produit[]
+     * 
      */
     public function findAll()
     {
@@ -159,10 +162,12 @@ class ProduitDao
 
 
     /**
+     * 
      * @param $id
      * @return array
      * @throws Error
      * @return Produit[]
+     * 
      */
     public function findById($id)
     {
@@ -272,6 +277,14 @@ class ProduitDao
         }
     }
 
+    /**
+     * 
+     * Helper method to bind the parameters for the update method
+     * @param Produit $produit
+     * @param PDOStatement $prepared
+     * @return PDOStatement
+     * 
+     */
     private function bindParamsUpdate($produit, $prepared)
     {
         try {
@@ -293,7 +306,11 @@ class ProduitDao
     }
 
     /**
+     * 
      * @param Produit $produit
+     * @throws Error
+     * @return array
+     * 
      */
     public function update($produit)
     {
@@ -338,7 +355,7 @@ class ProduitDao
 
             // If all went good, we will return the id of the last inserted product to the controller
             // --
-            return ["id" => $produit->id];
+            return [["id" => $produit->id]];
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             // --
