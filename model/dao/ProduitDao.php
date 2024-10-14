@@ -4,7 +4,6 @@ namespace Model\Dao;
 
 use Model\Entities\Produit as Produit;
 use Model\Dao\Connection as Connection;
-use Model\Services\ProduitService as ProduitService;
 use Utils\Error as Error;
 use PDO;
 
@@ -13,7 +12,6 @@ use PDO;
 class ProduitDao
 {
     private $pdo;
-    private $produitService;
     private $error;
 
     public function __construct()
@@ -21,9 +19,8 @@ class ProduitDao
         try {
 
             $connection = new Connection();
-            $this->pdo = $connection->setPDOAttributes()->getPDO();
-            $this->produitService = new ProduitService();
             $this->error = new Error();
+            $this->pdo = $connection->setPDOAttributes()->getPDO();
             $this->error
                 ->setCode(503)
                 ->setError("Impossible de traiter la requete")
@@ -55,26 +52,15 @@ class ProduitDao
         return $prepared;
     }
 
-
-
-
-
-
     /**
-     * @param Produit $content
+     * @param Produit $produit
      * @throws Error
      * @return array ["id" => $pdo->lastInsertId()]
      */
-    public function create($content)
+    public function create($produit)
     {
-
-
         try {
             $this->error->setLocation("model/dao/ProduitDao.php :: create");
-            // Service step ( validate the data and create the product object )
-            // --
-            $produit = $this->produitService->createProduit($content);
-
             // Database Access step ( build the query, prepare it, execute it and return the result )
             // --
             $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
@@ -99,7 +85,7 @@ class ProduitDao
 
             // If all went good, we will return the id of the last inserted product to the controller
             // --
-            $prepared->fetchAll();
+            // $prepared->fetchAll();
             $insertedId = $this->pdo->lastInsertId();
 
             // We return the last inserted id in db for user convenience
@@ -282,7 +268,10 @@ class ProduitDao
         return $prepared;
     }
 
-    public function update($content)
+    /**
+     * @param Produit $produit
+     */
+    public function update($produit)
     {
 
 
@@ -290,10 +279,6 @@ class ProduitDao
             $this->error
                 ->setLocation("model/dao/ProduitDao.php :: update")
                 ->setMessage("Erreur lors de la modification du produit");
-
-            // Service step ( validate the data and create the product object )
-            // --
-            $produit = $this->produitService->createProduit($content);
 
             // Database Access step ( build the query, prepare it, execute it and return the result )
             // --
@@ -310,8 +295,6 @@ class ProduitDao
             // --
             $prepared = $this->bindParamsUpdate($produit, $prepared);
 
-            var_dump($produit);
-
             // Verify the execution of the query
             // --
             $stmt = $prepared->execute();
@@ -325,13 +308,13 @@ class ProduitDao
                     ->setCode(202)
                     ->setError("Aucune modification")
                     ->setMessage("Aucune modification n'a été apportée à ce produit")
-                    ->setData(["id" => $content->id]);
+                    ->setData(["id" => $produit->getId()]);
                 throw $this->error;
             }
 
             // If all went good, we will return the id of the last inserted product to the controller
             // --
-            return ["id" => $content->id];
+            return ["id" => $produit->id];
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             // --
