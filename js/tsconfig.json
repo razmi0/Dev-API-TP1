@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "rootDir": "src",
     "baseUrl": "./",
-    "outDir": "./",
+    "outDir": "./dist",
     "target": "ESNext",
     "module": "AMD",
     "moduleResolution": "Node",
     "outFile": "./index.js"
-  },
-  "files": ["./src/index.ts"]
+  }
+  // "include": ["./src/*.ts"]
+  // "files": ["./src/*.ts"]
 }
