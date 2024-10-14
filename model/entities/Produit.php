@@ -25,6 +25,12 @@ class Produit
         return $this->id;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
 
     public function getProductName()
     {
@@ -34,6 +40,7 @@ class Produit
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getDescription()
@@ -44,6 +51,7 @@ class Produit
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     public function getPrix()
@@ -54,6 +62,7 @@ class Produit
     public function setPrix($prix)
     {
         $this->prix = $prix;
+        return $this;
     }
 
     public function getDateCreation()
@@ -64,5 +73,6 @@ class Produit
     public function setDateCreation($date_creation)
     {
         $this->date_creation = $date_creation;
+        return $this;
     }
 }
