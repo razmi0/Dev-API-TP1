@@ -1,10 +1,10 @@
 # TP1 Basic CRUD API
 
+- notes
+  - controller => dao => base de données
+  - chaque transfert entre couche est objet ( entité)
+
 ## Project structure
-
-```css
-
-```
 
 ## TODO
 
@@ -27,3 +27,4 @@ TP1 :
     - Appeler le service de validation => Error => throw BadRequestException (400)
     - Appeller le DAO => Error => throw InternalServerErrorException (500) / NotFoundException (404)
     - Appeller Reponse => Error => throw InternalServerErrorException (500)
+- [ ] (#6) Bouger validation services dans une classe Validator
