@@ -41,4 +41,12 @@ class Connection
     {
         $this->pdo = null;
     }
+
+    public function setPDOAttributes()
+    {
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        return $this;
+    }
 }
