@@ -27,11 +27,18 @@ class Controller
     private $message = "";
     private $data = [];
     private $code = 0;
+    private $error = null;
 
     public function __construct()
     {
-        $this->produitDao = new ProduitDao();
-        $this->response = new Response();
+        try {
+            $this->produitDao = new ProduitDao();
+            $this->response = new Response();
+            $this->error = new Error();
+            $this->error->setLocation("api/v1/lire.php");
+        } catch (Error $e) {
+            $e->sendAndDie();
+        }
     }
 
     public function handleRequest()
@@ -57,11 +64,9 @@ class Controller
                  * Une erreur 405 et un message est retournée.
                  */
             default:
-                $error = new Error();
-                $error->setCode(405)
+                $this->error->setCode(405)
                     ->setError("Méthode non autorisée")
                     ->setMessage("Seules les requêtes GET sont autorisées.")
-                    ->setLocation("api/v1/lire.php")
                     ->sendAndDie();
                 break;
         }
