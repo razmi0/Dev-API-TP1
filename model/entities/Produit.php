@@ -18,6 +18,15 @@ class Produit
     private $prix;
     private $date_creation;
 
+    public function __construct($id, $name, $description, $prix, $date_creation)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->description = $description;
+        $this->prix = $prix;
+        $this->date_creation = $date_creation;
+    }
+
 
 
     public function getId()
@@ -74,5 +83,16 @@ class Produit
     {
         $this->date_creation = $date_creation;
         return $this;
+    }
+
+    public function toArray()
+    {
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "description" => $this->description,
+            "prix" => $this->prix,
+            "date_creation" => $this->date_creation
+        ];
     }
 }
