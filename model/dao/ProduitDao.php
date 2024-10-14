@@ -126,22 +126,30 @@ class ProduitDao
             if (!$stmt) {
                 throw $this->error;
             }
-            $result = $prepared->fetchAll();
+            $products_from_db = $prepared->fetchAll();
 
             // If no product was found, we send a response with a 404 status code and an error message
             // --
-            if (count($result) == 0) {
+            if (count($products_from_db) == 0) {
                 $this->error
                     ->setCode(404)
                     ->setError("Aucun produit trouvé");
                 throw $this->error;
             }
 
-            // TODO : ADD PRODUCT INSTANTIAION HERE
+            $produits = array_map(function ($product) {
+                return new Produit(
+                    $product['id'],
+                    $product['name'],
+                    $product['description'],
+                    $product['prix'],
+                    $product['date_creation']
+                );
+            }, $products_from_db);
 
             // If all went good, we will return the result
             // --
-            return $result;
+            return $produits;
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             // --

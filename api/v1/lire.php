@@ -28,6 +28,7 @@ class Controller
     private $data = [];
     private $code = 0;
     private $error = null;
+    private $validator = null;
 
     public function __construct()
     {
@@ -51,7 +52,13 @@ class Controller
              */
             case "GET":
                 try {
-                    $this->data = $this->produitDao->findAll() ?? [];
+                    /**
+                     * @var Produit[] $data
+                     */
+                    $products = $this->produitDao->findAll() ?? [];
+                    $this->data = array_map(function ($product) {
+                        return $product->toArray();
+                    }, $products);
                     $this->message = "Produits récupérés avec succès";
                     $this->code = 200;
                 } catch (Error $e) {
