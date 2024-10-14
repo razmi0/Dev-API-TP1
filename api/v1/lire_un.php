@@ -28,13 +28,21 @@ class Controller
     private $message = "";
     private $data = [];
     private $code = 0;
+    private $error = null;
 
     public function __construct()
     {
         $this->produitDao = new ProduitDao();
         $this->response = new Response();
+        $this->error = new Error();
+        $this->error->setLocation("api/v1/lire_un.php");
     }
 
+    /**
+     * 
+     * Handle the request
+     * 
+     */
     public function handleRequest()
     {
         switch ($_SERVER["REQUEST_METHOD"]) {
@@ -43,42 +51,40 @@ class Controller
              * GET request : /api/v1/lire_un.php
              * Seulement les requêtes GET sont autorisées.
              */
-
             case "GET":
-                // We get all the parameters from the URI ( path and query )
-                // --
-                $urlParams = parse_url($_SERVER["REQUEST_URI"]);
-
-                // We check if the query is present in the URI
-                // --
-                $hasQuery = isset($urlParams["query"]);
-
-                // We get the id from the query or the body of the request
-                // If no id is found, id will be null
-                // --
-                if ($hasQuery) {
-                    parse_str($urlParams["query"], $params);
-                    $id = isset($params["id"]) ? $params["id"] : null;
-                } else {
-                    $client_json = json_decode(file_get_contents("php://input"));
-                    $id = isset($client_json->id) ? $client_json->id : null;
-                }
-
-                // If no id is found, we return an error
-                // --
-                if (!isset($id)) {
-                    $error = new Error();
-                    $error->setCode(400)
-                        ->setError("Requête invalide")
-                        ->setMessage("Veuillez envoyer l'id du produit à rechercher. Vous pouvez envoyer l'id par le corps de la requête ou par l'url. L'id par l'url est prioritaire.")
-                        ->setLocation("api/v1/lire_un.php")
-                        ->sendAndDie();
-                }
-
-                // We call the DAO method "findById" to get the product
-                // If the request is not successful, we handle the error with the Error class.
-                // --
                 try {
+                    // We get all the parameters from the URI ( path and query )
+                    // --
+                    $urlParams = parse_url($_SERVER["REQUEST_URI"]);
+
+                    // We check if the query is present in the URI
+                    // --
+                    $hasQuery = isset($urlParams["query"]);
+
+                    // We get the id from the query or the body of the request
+                    // If no id is found, id will be null and an error will be returned.
+                    // --
+                    if ($hasQuery) {
+                        parse_str($urlParams["query"], $params);
+                        $id = isset($params["id"]) ? $params["id"] : null;
+                    } else {
+                        $client_json = json_decode(file_get_contents("php://input"));
+                        $id = isset($client_json->id) ? $client_json->id : null;
+                    }
+
+                    // If no id is found, we return an error
+                    // --
+                    if (!isset($id)) {
+                        $this->error->setCode(400)
+                            ->setError("Requête invalide")
+                            ->setMessage("Veuillez envoyer l'id du produit à rechercher. Vous pouvez envoyer l'id par le corps de la requête ou par l'url. L'id par l'url est prioritaire.")
+                            ->sendAndDie();
+                    }
+
+                    // We call the DAO method "findById" to get the product
+                    // If the request is not successful, we handle the error with the Error class.
+                    // --
+
                     $this->data = $this->produitDao->findById($id) ?? [];
                     $this->message = "Produit trouvé";
                     $this->code = 200;
@@ -95,7 +101,6 @@ class Controller
             default:
                 $error = new Error();
                 $error->setCode(405)
-                    ->setLocation("api/v1/lire_un.php")
                     ->setError("Methode non autorisée")
                     ->setMessage("Veuillez utiliser la méthode GET pour obtenir un produit. Vous pouvez envoyer l'id par le corps de la requête ou par l'url. L'id par l'url est prioritaire.")
                     ->sendAndDie();
@@ -103,6 +108,9 @@ class Controller
         }
     }
 
+    /**
+     * Handle the response
+     */
     public function handleResponse()
     {
         $headers = [
