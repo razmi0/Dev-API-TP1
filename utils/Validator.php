@@ -1,13 +1,13 @@
 <?php
 
-namespace Model\Services;
+namespace Utils;
 
 use Model\Entities\Produit as Produit;
 use Utils\Error as Error;
 
 
 
-class ProduitService
+class Validator
 {
     private $error = null;
     private $produit = null;
@@ -17,66 +17,66 @@ class ProduitService
     public function __construct()
     {
         $this->error = new Error();
-        $this->error->setLocation("model/services/ProduitService.php")->setCode(400);
+        $this->error->setLocation("model/services/Validator.php")->setCode(400);
         $this->produit = new Produit();
     }
 
-    public function createProduit($content)
+    public function createProduit($client_json)
     {
         try {
-            $this->validate($content);
-            $this->buildProduct($content);
+            $this->validate($client_json);
+            $this->buildProduct($client_json);
         } catch (Error $error) {
             throw $error;
         }
         return $this->produit;
     }
 
-    private function validate($content)
+    private function validate($client_json)
     {
-        $this->isNotNull($content);
-        $this->isNotEmpty($content);
-        $this->isNotTooLong($content);
+        $this->isNotNull($client_json);
+        $this->isNotEmpty($client_json);
+        $this->isNotTooLong($client_json);
     }
 
-    private function buildProduct($content)
+    private function buildProduct($client_json)
     {
-        $this->produit->setId($content->id);
-        $this->produit->setName($content->name);
-        $this->produit->setDescription($content->description);
-        $this->produit->setPrix($content->prix);
+        $this->produit->setId($client_json->id);
+        $this->produit->setName($client_json->name);
+        $this->produit->setDescription($client_json->description);
+        $this->produit->setPrix($client_json->prix);
         $this->produit->setDateCreation(date("Y-m-d H:i:s"));
     }
 
-    private function isNotNull($content)
+    private function isNotNull($client_json)
     {
-        if (is_null($content->name)) {
+        if (is_null($client_json->name)) {
             $this->error->setMessage("Le nom du produit est obligatoire");
-        } else if (is_null($content->description)) {
+        } else if (is_null($client_json->description)) {
             $this->error->setMessage("La description du produit est obligatoire");
-        } else if (is_null($content->prix)) {
+        } else if (is_null($client_json->prix)) {
             $this->error->setMessage("Le prix du produit est obligatoire");
-        } else if (is_null($content->id)) {
+        } else if (is_null($client_json->id)) {
             $this->error->setMessage("L'id du produit est obligatoire");
         }
     }
 
-    private function isNotEmpty($content)
+    private function isNotEmpty($client_json)
     {
-        if ($content->name == "") {
+        if ($client_json->name == "") {
             $this->error->setMessage("Le nom du produit est obligatoire");
-        } else if ($content->description == "") {
+        } else if ($client_json->description == "") {
             $this->error->setMessage("La description du produit est obligatoire");
-        } else if ($content->prix == "") {
+        } else if ($client_json->prix == "") {
             $this->error->setMessage("Le prix du produit est obligatoire");
         }
     }
 
-    private function isNotTooLong($content)
+    private function isNotTooLong($client_json)
     {
-        if (strlen($content->name) >= $this->NAME_MAX_LENGTH) {
+        if (strlen($client_json->name) >= $this->NAME_MAX_LENGTH) {
             $this->error->setMessage("Le nom du produit est trop long, la taille maximale est de 50 caractères");
-        } else if (strlen($content->description) > $this->DESCRIPTION_MAX_LENGTH) {
+        } else if (strlen($client_json->description) > $this->DESCRIPTION_MAX_LENGTH) {
             $this->error->setMessage("La description du produit est trop longue, la taile maximale est de 65000 caractères");
         }
     }
