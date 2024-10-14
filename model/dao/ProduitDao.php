@@ -26,7 +26,7 @@ class ProduitDao
                 ->setError("Impossible de traiter la requete")
                 ->setLocation("model/dao/ProduitDao.php");
         } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php :: __construct");
+            $this->error->setLocation("model/dao/ProduitDao.php-> __construct");
             throw $e;
         }
     }
@@ -44,7 +44,7 @@ class ProduitDao
             $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
             $prepared->bindParam(':date', $date, PDO::PARAM_STR);
         } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php :: bindParamsCreate");
+            $this->error->setLocation("model/dao/ProduitDao.php-> bindParamsCreate");
             throw $e;
         }
 
@@ -55,12 +55,12 @@ class ProduitDao
     /**
      * @param Produit $produit
      * @throws Error
-     * @return array ["id" => $pdo->lastInsertId()]
+     * @return array
      */
     public function create($produit)
     {
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php :: create");
+            $this->error->setLocation("model/dao/ProduitDao.php-> create");
             // Database Access step ( build the query, prepare it, execute it and return the result )
             // --
             $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
@@ -107,7 +107,7 @@ class ProduitDao
     {
 
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php :: findAll");
+            $this->error->setLocation("model/dao/ProduitDao.php-> findAll");
 
             // Build the query
             // --
@@ -157,12 +157,19 @@ class ProduitDao
         }
     }
 
+
+    /**
+     * @param $id
+     * @return array
+     * @throws Error
+     * @return Produit[]
+     */
     public function findById($id)
     {
 
 
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php :: findById");
+            $this->error->setLocation("model/dao/ProduitDao.php-> findById");
 
             // Build the query
             // --
@@ -196,11 +203,12 @@ class ProduitDao
                 $this->error
                     ->setCode(404)
                     ->setError("Aucun produit trouvé")
-                    ->setLocation("model/dao/ProduitDao.php :: findById");
+                    ->setLocation("model/dao/ProduitDao.php-> findById");
                 throw $this->error;
             }
 
             // TODO : ADD PRODUCT INSTANTIAION HERE
+
 
             // If all went good, we will return the result
             // --
@@ -212,11 +220,19 @@ class ProduitDao
         }
     }
 
+    /**
+     * 
+     * @description Delete a product by its id
+     * @param $id
+     * @throws Error
+     * @return void
+     * 
+     */
     public function deleteById($id)
     {
 
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php :: deleteById")->setMessage("Erreur lors de la suppression du produit");
+            $this->error->setLocation("model/dao/ProduitDao.php-> deleteById")->setMessage("Erreur lors de la suppression du produit");
             // Build the query
             // --
             $query = "DELETE FROM T_PRODUIT WHERE id = :id";
@@ -269,7 +285,7 @@ class ProduitDao
             $prepared->bindParam(':description', $description, PDO::PARAM_STR);
             $prepared->bindParam(':prix', $prix, PDO::PARAM_INT);
         } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php :: bindParamsUpdate");
+            $this->error->setLocation("model/dao/ProduitDao.php-> bindParamsUpdate");
             throw $e;
         }
 
@@ -285,7 +301,7 @@ class ProduitDao
 
         try {
             $this->error
-                ->setLocation("model/dao/ProduitDao.php :: update")
+                ->setLocation("model/dao/ProduitDao.php-> update")
                 ->setMessage("Erreur lors de la modification du produit");
 
             // Database Access step ( build the query, prepare it, execute it and return the result )
