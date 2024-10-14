@@ -6,6 +6,6 @@
     "module": "ESNext",
     "moduleResolution": "Node"
   },
-  "include": ["./source/const.ts", "./source/migrate.ts"],
-  "exclude": ["type.ts"]
+  "files": ["./src/const.ts", "./src/migrate.ts"],
+  "exclude": ["./src/type.ts"]
 }
