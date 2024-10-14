@@ -90,7 +90,7 @@ class ProduitDao
 
             // We return the last inserted id in db for user convenience
             //--
-            return ["id" => $insertedId];
+            return [["id" => $insertedId]];
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             // --
