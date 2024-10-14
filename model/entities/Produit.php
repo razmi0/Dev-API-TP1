@@ -12,13 +12,13 @@ namespace Model\Entities;
  */
 class Produit
 {
-    private $id;
-    private $name;
-    private $description;
-    private $prix;
-    private $date_creation;
+    private $id = null;
+    private $name = null;
+    private $description = null;
+    private $prix = null;
+    private $date_creation = null;
 
-    public function __construct($id, $name, $description, $prix, $date_creation)
+    public function __construct($id = null, $name = null, $description = null, $prix = null, $date_creation = null)
     {
         $this->id = $id;
         $this->name = $name;
