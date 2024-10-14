@@ -55,23 +55,7 @@ class ProduitDao
         return $prepared;
     }
 
-    private function bindParamsUpdate($produit, $prepared)
-    {
-        try {
-            $name = $produit->getProductName();
-            $description = $produit->getDescription();
-            $prix = $produit->getPrix();
 
-            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
-            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
-            $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
-        } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php :: bindParamsUpdate");
-            throw $e;
-        }
-
-        return $prepared;
-    }
 
 
 
@@ -278,6 +262,26 @@ class ProduitDao
         }
     }
 
+    private function bindParamsUpdate($produit, $prepared)
+    {
+        try {
+            $id = $produit->getId();
+            $name = $produit->getProductName();
+            $description = $produit->getDescription();
+            $prix = $produit->getPrix();
+
+            $prepared->bindParam(':id', $id, PDO::PARAM_INT);
+            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
+            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
+            $prepared->bindParam(':prix', $prix, PDO::PARAM_INT);
+        } catch (Error $e) {
+            $this->error->setLocation("model/dao/ProduitDao.php :: bindParamsUpdate");
+            throw $e;
+        }
+
+        return $prepared;
+    }
+
     public function update($content)
     {
 
@@ -305,6 +309,8 @@ class ProduitDao
             // Bind the parameters
             // --
             $prepared = $this->bindParamsUpdate($produit, $prepared);
+
+            var_dump($produit);
 
             // Verify the execution of the query
             // --
