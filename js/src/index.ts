@@ -10,10 +10,24 @@ const API_CREATE_ONE_ENDPOINT = `${API_URL}/creer.php` as const;
 
 // Types
 // --
-type APIResponse = {
+
+type BasicAPIResponse = {
   error: string | null;
   message: string | null;
-  data: Product[];
+};
+type APIResponse = {
+  CREATE: {
+    data: Record<"id", string>[];
+  } & BasicAPIResponse;
+  READ: {
+    data: Product[];
+  } & BasicAPIResponse;
+  DELETE: {
+    data: never[];
+  } & BasicAPIResponse;
+  UPDATE: {
+    data: Record<"id", string>[];
+  } & BasicAPIResponse;
 };
 
 type Product = {
@@ -22,6 +36,13 @@ type Product = {
   description: string;
   price: string;
   data_creation: string;
+};
+
+type InsertTextOptions = {
+  ctn: HTMLElement;
+  text: string;
+  code?: number | null;
+  error?: boolean;
 };
 
 // DOM ELEMENTS
@@ -39,12 +60,6 @@ const outputSections = inputSections.map((section) => section.nextElementSibling
  * @param options.error If the message is an error or not
  *
  */
-type InsertTextOptions = {
-  ctn: HTMLElement;
-  text: string;
-  code?: number | null;
-  error?: boolean;
-};
 const insertText = ({ ctn, text, code = null, error = false }: InsertTextOptions) => {
   const prefix = error ? "[ERROR] : " : "";
   const suffix = code ? `-- Code ${code}` : "";
@@ -62,7 +77,7 @@ const insertText = ({ ctn, text, code = null, error = false }: InsertTextOptions
  * @param data The data to insert
  *
  */
-const insertData = (ctn: HTMLElement, data: Product[]) => {
+const insertTable = (ctn: HTMLElement, data: Product[]) => {
   console.log("Inserting data...");
   const table = document.createElement("table");
   const thead = document.createElement("thead");
@@ -102,14 +117,14 @@ const setupReadAll = () => {
   const readAllButton = readSection.querySelector("button") as HTMLButtonElement;
   const outputSection = readSection.nextElementSibling as HTMLElement;
 
-  readAllButton.addEventListener("click", async () => {
+  readAllButton.addEventListener("mousedown", async () => {
     console.log("Fetching data...");
     const response = await fetch(API_READ_ALL_ENDPOINT);
-    const json: APIResponse = await response.json();
+    const json: APIResponse["READ"] = await response.json();
 
     if (json.error) insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
     if (json.message) insertText({ ctn: outputSection, text: json.message, code: response.status });
-    if (json.data) insertData(outputSection, json.data);
+    if (json.data) (outputSection.innerHTML = ""), insertTable(outputSection, json.data);
   });
 };
 
@@ -131,7 +146,7 @@ const setupReadOne = () => {
       : readOneButton.setAttribute("disabled", "");
   });
 
-  readOneButton.addEventListener("click", async (e) => {
+  readOneButton.addEventListener("mousedown", async (e) => {
     e.preventDefault();
     console.log("Fetching data...");
     const id = readOneInput.value;
@@ -144,11 +159,11 @@ const setupReadOne = () => {
     const apiURLWithId = `${API_READ_ONE_ENDPOINT}?id=${id}`;
 
     const response = await fetch(apiURLWithId);
-    const json: APIResponse = await response.json();
+    const json: APIResponse["READ"] = await response.json();
 
     if (json.error) insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
     if (json.message) insertText({ ctn: outputSection, text: json.message, code: response.status });
-    if (json.data) insertData(outputSection, json.data);
+    if (json.data) insertTable(outputSection, json.data);
   });
 };
 
@@ -170,7 +185,7 @@ const setupDelete = () => {
       : deleteOneButton.setAttribute("disabled", "");
   });
 
-  deleteOneButton.addEventListener("click", async (e) => {
+  deleteOneButton.addEventListener("mousedown", async (e) => {
     e.preventDefault();
     console.log("Deleting data...");
     const id = deleteOneInput.value;
@@ -189,11 +204,11 @@ const setupDelete = () => {
     };
 
     const response = await fetch(API_DELETE_ONE_ENDPOINT, fetchOptions);
-    const json: APIResponse = await response.json();
+    const json: APIResponse["DELETE"] = await response.json();
 
     if (json.error) insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
     if (json.message) insertText({ ctn: outputSection, text: json.message, code: response.status });
-    if (json.data) insertData(outputSection, json.data);
+    if (json.data) insertTable(outputSection, json.data);
   });
 };
 
@@ -217,7 +232,7 @@ const setupCreateOne = () => {
     });
   });
 
-  createOneButton.addEventListener("click", async (e) => {
+  createOneButton.addEventListener("mousedown", async (e) => {
     e.preventDefault();
     console.log("Creating data...");
 
@@ -235,11 +250,11 @@ const setupCreateOne = () => {
     };
 
     const response = await fetch(API_CREATE_ONE_ENDPOINT, fetchOptions);
-    const json: APIResponse = await response.json();
+    const json: APIResponse["CREATE"] = await response.json();
 
     if (json.error) insertText({ ctn: outputSection, text: json.error, code: response.status, error: true });
     if (json.message) insertText({ ctn: outputSection, text: json.message, code: response.status });
-    if (json.data) insertData(outputSection, json.data);
+    if (json.data) outputSection.innerHTML += `<p>Le produit a été créé avec l'id : ${json.data[0].id}</p>`;
   });
 };
 /**
