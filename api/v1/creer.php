@@ -5,6 +5,7 @@ require_once "../../Autoloader.php";
 use Model\Dao\ProduitDao as ProduitDao;
 use Utils\Response as Response;
 use Utils\Error as Error;
+use Utils\Validator as Validator;
 
 // Instantiate the controller
 // --
@@ -28,11 +29,20 @@ class Controller
     private $message = "";
     private $data = [];
     private $code = 0;
+    private $validator = null;
+    private $error = null;
 
     public function __construct()
     {
-        $this->produitDao = new ProduitDao();
-        $this->response = new Response();
+        try {
+            $this->produitDao = new ProduitDao();
+            $this->response = new Response();
+            $this->validator = new Validator();
+            $this->error = new Error();
+        } catch (Error $e) {
+            $this->error->setLocation("api/v1/creer.php");
+            $e->sendAndDie();
+        }
     }
 
     public function handleRequest()
@@ -45,8 +55,9 @@ class Controller
              */
             case "POST":
                 try {
-                    $content = json_decode(file_get_contents("php://input"));
-                    $this->data = $this->produitDao->create($content) ?? [];
+                    $client_json = json_decode(file_get_contents("php://input"));
+                    $this->validator->createProduit($client_json);
+                    $this->data = $this->produitDao->create($client_json) ?? [];
                     $this->message = "Produit créé avec succès";
                     $this->code = 201;
                 } catch (Error $e) {

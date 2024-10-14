@@ -3,6 +3,7 @@
 require_once "../../Autoloader.php";
 
 use Model\Dao\ProduitDao as ProduitDao;
+use Utils\Validator as Validator;
 use Utils\Response as Response;
 use Utils\Error as Error;
 
@@ -27,11 +28,21 @@ class Controller
     private $message = "";
     private $data = [];
     private $code = 0;
+    private $error = null;
+    private $validator = null;
+
 
     public function __construct()
     {
-        $this->produitDao = new ProduitDao();
-        $this->response = new Response();
+        try {
+            $this->validator = new Validator();
+            $this->produitDao = new ProduitDao();
+            $this->response = new Response();
+            $this->error = new Error();
+            $this->error->setLocation("api/v1/lire.php");
+        } catch (Error $e) {
+            $e->sendAndDie();
+        }
     }
 
     public function handleRequest()
@@ -40,23 +51,14 @@ class Controller
 
                 /**
              * PUT request : /api/v1/modifier.php
-             * Seulement les requêtes GET sont autorisées.
+             * Seulement les requêtes PUT sont autorisées.
              */
             case "PUT":
-                $content = json_decode(file_get_contents("php://input"));
-                $id = isset($content->id) ? $content->id : null;
-
-                if (!isset($id)) {
-                    $error = new Error();
-                    $error
-                        ->setCode(400)
-                        ->setError("Requête invalide")
-                        ->setMessage("Veuillez fournir un id de produit dans le corps de la requête au format JSON.")
-                        ->sendAndDie();
-                }
-
                 try {
-                    $this->data = $this->produitDao->update($content) ?? [];
+
+                    $client_json = json_decode(file_get_contents("php://input"));
+                    $produit = $this->validator->createProduit($client_json);
+                    $this->data = $this->produitDao->update($produit) ?? [];
                     $this->message = "Produit modifié avec succès";
                     $this->code = 200;
                 } catch (Error $e) {
@@ -70,8 +72,7 @@ class Controller
                  * Une erreur 405 et un message est retournée.
                  */
             default:
-                $error = new Error();
-                $error
+                $this->error
                     ->setCode(405)
                     ->setError("Méthode non autorisée")
                     ->setLocation("api/v1/modifier.php")
