@@ -29,11 +29,11 @@
                 <form>
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" placeholder="Name" required>
-                    <label for="price">Price:</label>
-                    <input type="text" id="price" name="price" placeholder="Price" required>
+                    <label for="prix">Price:</label>
+                    <input type="text" id="prix" name="prix" placeholder="Prix" required>
                     <label for="description">Description:</label>
                     <input type="text" id="description" name="description" placeholder="Description" required>
-                    <button type="button">Create this one</button>
+                    <button type="button" disabled>Create this one</button>
                 </form>
             </section>
             <section>
