@@ -4,10 +4,9 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "target": "ESNext",
-    "module": "AMD",
-    "moduleResolution": "Node",
-    "outFile": "./index.js"
-  }
+    "moduleResolution": "Node"
+  },
+  "exclude": ["./src/types.ts"]
   // "include": ["./src/*.ts"]
   // "files": ["./src/*.ts"]
 }

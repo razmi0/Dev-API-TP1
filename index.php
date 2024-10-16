@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html data-theme="light">
+<html data-theme="dark">
 
 <head>
     <title>API Product Interface</title>
-    <script src="./js/index.js" type="module"></script>
+    <script src="./js/dist/index.js" type="module"></script>
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
@@ -26,8 +26,10 @@
             box-sizing: border-box;
         }
 
-        small {
-            color: var(--pico-color-grey-500);
+
+
+        input:not([name='description']) {
+            max-width: 50vw;
         }
 
         label:has(~input[required]) {
@@ -41,6 +43,33 @@
                 right: -1ch;
                 color: red;
 
+            }
+        }
+
+        button {
+            max-width: fit-content;
+        }
+
+        section[data-endpoint]~section {
+            max-height: 40vh;
+        }
+
+        [data-output='id'] {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            padding-inline: 0.8rem;
+            padding-block: 0.4rem;
+            margin-bottom: 20px;
+            margin-right: 20px;
+            background: var(--pico-color-grey-100);
+            border-radius: 1rem;
+            box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+            font-size: 0.8rem;
+            color: var(--pico-color-grey-900);
+
+            & small {
+                font-variant-numeric: tabular-nums;
             }
         }
     </style>
@@ -68,7 +97,6 @@
             <section data-endpoint="create">
                 <header style="margin-bottom : 1rem;">
                     <h2 style="margin-bottom: 0;">Create a new product</h2>
-                    <small>All inputs are mandatory</small>
                 </header>
                 <form>
                     <fieldset class="grid">
@@ -114,9 +142,11 @@
             <section data-endpoint="read-one">
                 <h2>Find by id</h2>
                 <form>
-                    <label for="id">Identifier :</label>
-                    <input type="text" id="id" name="id" placeholder="Enter an id..." required>
-                    <button disabled type="button">Find this one</button>
+                    <fieldset role="group">
+                        <input type="text" id="id" name="id" placeholder="Enter an id..." required>
+                        <label style="display: none;" for="id">Identifier :</label>
+                        <button disabled type="button">Find this one</button>
+                    </fieldset>
                 </form>
             </section>
             <section>
@@ -132,10 +162,16 @@
             <section data-endpoint="update">
                 <h2>Update a product</h2>
                 <form>
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Enter name..." required>
-                    <label for="prix">Prix:</label>
-                    <input type="text" id="prix" name="prix" placeholder="Enter price..." required>
+                    <fieldset class="grid">
+                        <div>
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" placeholder="Enter name..." required>
+                        </div>
+                        <div>
+                            <label for="prix">Price:</label>
+                            <input type="text" id="prix" name="prix" placeholder="Enter price..." required>
+                        </div>
+                    </fieldset>
                     <label for="stock">Description:</label>
                     <input type="text" id="description" name="description" placeholder="Enter description..." required>
                 </form>
@@ -153,15 +189,21 @@
             <section data-endpoint="delete">
                 <h2>Delete a product</h2>
                 <form>
-                    <label for="id">Identifier :</label>
-                    <input type="text" id="id" name="id" placeholder="Enter an id ..." required>
-                    <button disabled type="button">Delete this one</button>
+                    <fieldset role="group">
+                        <input type="text" id="id" name="id" placeholder="Enter an id ..." required>
+                        <label style="display: none;" for="id">Identifier :</label>
+                        <button disabled type="button">Delete this one</button>
+                    </fieldset>
                 </form>
             </section>
             <section>
 
             </section>
         </article>
+        <section data-output='id'>
+            <small>Selected id : </small>
+            <output></output>
+        </section>
     </main>
 </body>
 
