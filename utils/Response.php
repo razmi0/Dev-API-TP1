@@ -29,14 +29,12 @@ class Response
     {
         $this->message = $message;
         return $this;
-
     }
 
     public function setData($data)
     {
         $this->data = $data;
         return $this;
-
     }
 
     public function getCode()
@@ -58,7 +56,6 @@ class Response
     {
         $this->error = $error;
         return $this;
-
     }
 
     public function setHeaders($headers)
@@ -85,12 +82,12 @@ class Response
 
     public function sendAndDie()
     {
-        if($this->code === 0) {
+        if ($this->code === 0) {
             die();
         }
         $this->attachHeaders();
         http_response_code($this->code);
-        echo json_encode(["message" => $this->message, "data" => $this->data, "error" => $this->error]);
+        echo json_encode(["message" => $this->message, "data" => $this->data ?? [], "error" => $this->error]);
         die();
     }
 }

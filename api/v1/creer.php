@@ -57,7 +57,7 @@ class Controller
                 try {
                     $client_json = json_decode(file_get_contents("php://input"));
                     $produit = $this->validator->createProduit($client_json);
-                    $this->data = $this->produitDao->create($produit) ?? [];
+                    $this->data = $this->produitDao->create($produit);
                     $this->message = "Produit créé avec succès";
                     $this->code = 201;
                 } catch (Error $e) {
