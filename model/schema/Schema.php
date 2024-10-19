@@ -438,7 +438,7 @@ class Schema extends SchemaCore
      * 
      * 
      */
-    public function safeParse($clientJson): Schema
+    public function safeParse($clientJson): bool
     {
         // Check if the schema is set
         // --
@@ -463,7 +463,7 @@ class Schema extends SchemaCore
         foreach ($this->validationMap as $key => $rules) {
 
 
-            // Loop through the rules for each key
+            // Loop through the rules for each key of data
             // --
             foreach ($rules as $rule) {
                 // Validate the data against the rule and store the result as a ValidatorResult object
@@ -507,8 +507,8 @@ class Schema extends SchemaCore
         // --
         $this->isParsed = true;
 
-        // Return the instance so the consumer can chain methods
+        // Return if the client data has errors
         // --
-        return $this;
+        return $this->hasError;
     }
 }
