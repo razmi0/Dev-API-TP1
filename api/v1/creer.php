@@ -47,63 +47,44 @@ $response = new Response([
 ]);
 
 
-
-
-// Instantiate the controller
+// Get the right schema to agree with the client data
 // --
+$product_schema = new Schema(Constant::PRODUCT_CREATE_SCHEMA);
+
+
+// Start the controller with the Request and Response objects
+// --
+
 $controller = new Controller($request, $response);
-$controller->handleRequest(function () {
 
-    /**
-     * A schema is a set of rules that the client data must follow.
-     * Provided with a valid template, the Schema class can parse
-     * the client data and validate it against the rules explicitly
-     * defined in the schema by the consumer.
-     */
-    $schema = new Schema([
+// Handle the request with Request and Response in handleRequest closure and add the product schema
+// --
 
-        "name" => [
-            "type" => Constant::NAME_TYPE, // string
-            "range" => Constant::NAME_LENGTH, // [1, 65]
-            "regex" => Constant::NAME_REGEX // "/^[a-zA-Z0-9 ]+$/"
-        ],
+$controller->handleRequest(function () use ($product_schema) {
 
+    // Get the client data
+    $client_data = $this->request->getClientDecodedData();
 
-        "description" => [
-            "type" => Constant::DESCRIPTION_TYPE, // string
-            "range" => Constant::DESCRIPTION_LENGTH, // [1, 65000]
-            "regex" => Constant::DESCRIPTION_REGEX // "/^[a-zA-Z0-9 ]+$/"
-        ],
+    // Check if the client data is valid
+    $is_client_error = $product_schema->safeParse($client_data);
 
-
-        "prix" => [
-            "type" => Constant::PRICE_TYPE, // double
-            "range" => Constant::PRICE_RANGE, // [0, null]
-            "regex" => Constant::PRICE_REGEX // "/^[0-9.]+$/"
-        ]
-    ]);
-
-    $client_decoded_data = $this->request->getClientDecodedData();
-
-    $tested_schema = $schema->safeParse($client_decoded_data);
-
-    if ($tested_schema->getHasError()) {
-        $errorResults = $tested_schema->getErrorResults();
+    // If the client data is invalid, throw an error
+    if ($is_client_error) {
         throw $this->error
             ->setCode(400)
             ->setError("Données invalides")
-            ->setData($errorResults);
+            ->setData($product_schema->getErrorResults());
     }
 
-    $newProduct = new Produit();
-    $newProduct
-        ->setName($client_decoded_data["name"])
-        ->setDescription($client_decoded_data["description"])
-        ->setPrix($client_decoded_data["prix"])
-        ->setDateCreation(date("Y-m-d H:i:s"));
+    //Create a new product
+    $newProduct = Produit::make($client_data);
 
+    // Create a new product in the database
     $produitDao = new ProduitDao();
+
+    // Catch the inserted ID from the database
     $insertedID = $produitDao->create($newProduct);
 
+    // Return the inserted ID
     return ["id" => intval($insertedID)];
 });

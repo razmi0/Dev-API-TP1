@@ -3,15 +3,36 @@
 
 namespace Model;
 
+use Model\Schema\Schema;
+
+
+/**
+ * class Constant
+ * 
+ * All those constants emerged from the database
+ * @property Schema $PRODUCT_CREATE_SCHEMA
+ */
 class Constant
 {
-    public const NAME_TYPE = "string";
-    public const DESCRIPTION_TYPE = "string";
-    public const PRICE_TYPE = "double";
-    public const NAME_LENGTH = [1, 65];
-    public const DESCRIPTION_LENGTH = [1, 65000];
-    public const PRICE_RANGE = [0, null];
-    public const NAME_REGEX = "/^[a-zA-Z0-9 ]+$/";
-    public const DESCRIPTION_REGEX = "/^[a-zA-Z0-9 ]+$/";
-    public const PRICE_REGEX = "/^[0-9.]+$/";
+
+    /**
+     * This schema will be use in /api/v1/creer.php to validate client json
+     */
+    public const PRODUCT_CREATE_SCHEMA = [
+        "name" => [
+            "type" => "string",
+            "range" => [1, 65],
+            "regex" => "/^[a-zA-Z0-9 ]+$/"
+        ],
+        "description" => [
+            "type" => "string",
+            "range" => [1, 65000],
+            "regex" => "/^[a-zA-Z0-9 ]+$/"
+        ],
+        "prix" => [
+            "type" => "double",
+            "range" => [0, null],
+            "regex" => "/^[0-9.]+$/"
+        ]
+    ];
 }
