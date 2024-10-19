@@ -30,8 +30,6 @@ class Controller implements ControllerInterface
     protected ?Error $error = null;
     protected ?Response $response = null;
     protected ?Request $request = null;
-    protected array $client_decoded_data = [];
-    protected string $client_raw_json = "";
 
     public function __construct(Request $request, Response $response)
     {
@@ -48,9 +46,6 @@ class Controller implements ControllerInterface
             }
             $this->request = $request;
             $this->response = $response;
-
-            $this->client_raw_json = file_get_contents("php://input");
-            $this->client_decoded_data = json_decode($this->client_raw_json, true);
         } catch (Error $e) {
             $e->sendAndDie();
         }
@@ -60,8 +55,9 @@ class Controller implements ControllerInterface
     {
         try {
             $binded_handler = Closure::bind($anonymous_handler, $this, get_class($this));
+            $response_data = $binded_handler();
             $this->response
-                ->setData($binded_handler())
+                ->setData($response_data)
                 ->sendAndDie();
         } catch (Error $e) {
             $e->sendAndDie();

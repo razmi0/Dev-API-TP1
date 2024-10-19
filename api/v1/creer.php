@@ -47,6 +47,8 @@ $response = new Response([
 ]);
 
 
+
+
 // Instantiate the controller
 // --
 $controller = new Controller($request, $response);
@@ -81,7 +83,9 @@ $controller->handleRequest(function () {
         ]
     ]);
 
-    $tested_schema = $schema->safeParse($this->client_decoded_data);
+    $client_decoded_data = $this->request->getClientDecodedData();
+
+    $tested_schema = $schema->safeParse($client_decoded_data);
 
     if ($tested_schema->getHasError()) {
         $errorResults = $tested_schema->getErrorResults();
@@ -93,9 +97,9 @@ $controller->handleRequest(function () {
 
     $newProduct = new Produit();
     $newProduct
-        ->setName($this->client_decoded_data["name"])
-        ->setDescription($this->client_decoded_data["description"])
-        ->setPrix($this->client_decoded_data["prix"])
+        ->setName($client_decoded_data["name"])
+        ->setDescription($client_decoded_data["description"])
+        ->setPrix($client_decoded_data["prix"])
         ->setDateCreation(date("Y-m-d H:i:s"));
 
     $produitDao = new ProduitDao();
