@@ -27,6 +27,16 @@ class Produit
         $this->date_creation = $date_creation;
     }
 
+    public static function make(array $data)
+    {
+        return new Produit(
+            $data["id"] ?? null,
+            $data["name"],
+            $data["description"],
+            $data["prix"],
+            $data["date_creation"] ?? date("Y-m-d H:i:s"),
+        );
+    }
 
 
     public function getId()
