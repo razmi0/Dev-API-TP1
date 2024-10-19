@@ -1,5 +1,7 @@
 <?php
 
+namespace Model\Schema;
+
 /**
  * 
  * 
@@ -13,8 +15,6 @@
  * 
  * 
  **/
-
-namespace Schema;
 
 require_once 'Validator/TypeValidator.php';
 require_once 'Validator/ComplexValidator.php';

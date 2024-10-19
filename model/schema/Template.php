@@ -1,5 +1,7 @@
 <?php
 
+namespace Model\Schema;
+
 
 /**
  * 
@@ -22,8 +24,6 @@
  * 
  **/
 
-
-namespace Schema;
 
 use InvalidArgumentException;
 

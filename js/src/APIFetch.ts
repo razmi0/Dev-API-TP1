@@ -43,6 +43,8 @@ export const fetchCreateOne = async (clientData: ClientData["CREATE"]) => {
   };
 
   const response = await fetch(API_CREATE_ONE_ENDPOINT, fetchOptions);
+  console.log(response);
   const json: APIResponse["CREATE"] = await response.json();
+
   return [json, response] as const;
 };

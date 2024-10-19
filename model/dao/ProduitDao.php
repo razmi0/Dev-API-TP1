@@ -54,8 +54,8 @@ class ProduitDao
 
     /**
      * @param Produit $produit
-     * @throws Error
-     * @return array
+     * @throws Error 
+     * @return string $insertedId
      */
     public function create($produit)
     {
@@ -85,12 +85,11 @@ class ProduitDao
 
             // If all went good, we will return the id of the last inserted product to the controller
             // --
-            // $prepared->fetchAll();
             $insertedId = $this->pdo->lastInsertId();
 
             // We return the last inserted id in db for user convenience
             //--
-            return [["id" => $insertedId]];
+            return $insertedId;
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             // --

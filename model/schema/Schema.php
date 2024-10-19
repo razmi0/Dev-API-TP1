@@ -1,5 +1,9 @@
 <?php
 
+
+namespace Model\Schema;
+
+
 /**
  * 
  * 
@@ -35,14 +39,12 @@
  * 
  **/
 
-require_once 'Validator/ValidatorError.php';
-require_once 'Core.php';
+require_once '../../Autoloader.php';
 
-use Schema\Template as Template;
-use Schema\Core as SchemaCore;
+use Model\Schema\Core as SchemaCore;
 use Schema\Validator\ValidatorError as ValidatorError;
 use Schema\Validator\ValidatorResult as ValidatorResult;
-
+use Model\Schema\Template as Template;
 
 /**
  * 
@@ -193,9 +195,10 @@ class Schema extends SchemaCore
      * 
      * 
      */
-    public function __construct(Template $template)
+    public function __construct(array $schema)
     {
-        $this->schema = $template->getTemplate();
+        $validTemplate = Template::fromArray($schema);
+        $this->schema = $validTemplate->getTemplate();
         $this->hasSchema = true;
     }
 
@@ -427,7 +430,7 @@ class Schema extends SchemaCore
      * 
      * 
      * Parse the client data against the validationMap but doesn't throw exceptions when an error in client data is found so the consumer can handle the errors.
-     * @param string $clientJson
+     * @param array $clientJson
      * @throws Exception
      * @return Schema
      * 
@@ -454,11 +457,6 @@ class Schema extends SchemaCore
         // --
         $this->processSchema();
 
-        // Decode the client data
-        // --
-        $data = json_decode($clientJson, true);
-
-
         // Loop through the keys provided in the json data 
         // The validationMap keys and the client data keys match
         // --
@@ -470,7 +468,7 @@ class Schema extends SchemaCore
             foreach ($rules as $rule) {
                 // Validate the data against the rule and store the result as a ValidatorResult object
                 // --
-                $validated = $rule->validate($data[$key], $key);
+                $validated = $rule->validate($clientJson[$key], $key);
 
                 // Call the getter getReadable() from ValidatorResult to get a clean result
                 // --

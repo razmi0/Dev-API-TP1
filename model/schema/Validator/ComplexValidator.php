@@ -27,9 +27,7 @@ class NotBlankValidator implements ValidatorInterface
      * 
      * 
      * 
-     * 
      * A value is not blank if it is not equal to a blank string, a blank array, false or null like in Symphony NotBlank constraint for forms.
-     * 
      * 
      * 
      */

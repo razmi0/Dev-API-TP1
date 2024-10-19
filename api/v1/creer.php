@@ -2,96 +2,104 @@
 
 require_once "../../Autoloader.php";
 
-use Model\Dao\ProduitDao as ProduitDao;
-use Utils\Response as Response;
-use Utils\Error as Error;
-use Utils\Validator as Validator;
+
+use DTO\Request;
+use DTO\Response;
+use Model\Constant;
+use Model\Schema\Schema;
+use Controller\Controller;
+use Model\Dao\ProduitDao;
+use Model\Entities\Produit;
+
+
+/**
+ * 
+ * The request object is used to parse the client request and extract the necessary
+ * information from it. The Controller class will use this object to determine if the
+ * request is valid and authorized.
+ */
+$request = new Request([
+    "endpoint" => "/api/v1/creer.php",
+    "methods" => ["POST"],
+]);
+
+
+/**
+ * 
+ * The response object is used to send the valid response expected by the client.
+ * The Controller class will use this object to send the response with the appropriate
+ * headers and status code.
+ * 
+ */
+$response = new Response([
+
+
+    "code" => 201,
+    "message" => "Produit créé avec succès",
+
+
+    "headers" => [
+        "content_type" => "application/json",
+        "origin" => "*",
+        "methods" => ["POST"],
+        "age" => 3600
+    ]
+]);
+
 
 // Instantiate the controller
 // --
-$controller = new Controller();
+$controller = new Controller($request, $response);
+$controller->handleRequest(function () {
 
-// Handle the request (verify the method and process the request)
-// If the method is allowed, the DAO method "create" is called and the request is processed.
-// Else, an error message is returned.
-// --
-$controller->handleRequest();
+    /**
+     * A schema is a set of rules that the client data must follow.
+     * Provided with a valid template, the Schema class can parse
+     * the client data and validate it against the rules explicitly
+     * defined in the schema by the consumer.
+     */
+    $schema = new Schema([
 
-// Handle the response (set the headers and send the response) using the Response class
-// --
-$controller->handleResponse();
+        "name" => [
+            "type" => Constant::NAME_TYPE, // string
+            "range" => Constant::NAME_LENGTH, // [1, 65]
+            "regex" => Constant::NAME_REGEX // "/^[a-zA-Z0-9 ]+$/"
+        ],
 
 
-class Controller
-{
-    private $produitDao = null;
-    private $response = null;
-    private $message = "";
-    private $data = [];
-    private $code = 0;
-    private $validator = null;
-    private $error = null;
+        "description" => [
+            "type" => Constant::DESCRIPTION_TYPE, // string
+            "range" => Constant::DESCRIPTION_LENGTH, // [1, 65000]
+            "regex" => Constant::DESCRIPTION_REGEX // "/^[a-zA-Z0-9 ]+$/"
+        ],
 
-    public function __construct()
-    {
-        try {
-            $this->produitDao = new ProduitDao();
-            $this->response = new Response();
-            $this->validator = new Validator();
-            $this->error = new Error();
-        } catch (Error $e) {
-            $this->error->setLocation("api/v1/creer.php");
-            $e->sendAndDie();
-        }
+
+        "prix" => [
+            "type" => Constant::PRICE_TYPE, // double
+            "range" => Constant::PRICE_RANGE, // [0, null]
+            "regex" => Constant::PRICE_REGEX // "/^[0-9.]+$/"
+        ]
+    ]);
+
+    $tested_schema = $schema->safeParse($this->client_decoded_data);
+
+    if ($tested_schema->getHasError()) {
+        $errorResults = $tested_schema->getErrorResults();
+        throw $this->error
+            ->setCode(400)
+            ->setError("Données invalides")
+            ->setData($errorResults);
     }
 
-    public function handleRequest()
-    {
-        switch ($_SERVER["REQUEST_METHOD"]) {
+    $newProduct = new Produit();
+    $newProduct
+        ->setName($this->client_decoded_data["name"])
+        ->setDescription($this->client_decoded_data["description"])
+        ->setPrix($this->client_decoded_data["prix"])
+        ->setDateCreation(date("Y-m-d H:i:s"));
 
-                /**
-             * POST request : /api/v1/creer.php
-             * Seulement les requêtes POST sont autorisées.
-             */
-            case "POST":
-                try {
-                    $client_json = json_decode(file_get_contents("php://input"));
-                    $produit = $this->validator->createProduit($client_json);
-                    $this->data = $this->produitDao->create($produit);
-                    $this->message = "Produit créé avec succès";
-                    $this->code = 201;
-                } catch (Error $e) {
-                    $e->sendAndDie();
-                }
+    $produitDao = new ProduitDao();
+    $insertedID = $produitDao->create($newProduct);
 
-                break;
-
-                /**
-                 * Autres requêtes
-                 * Une erreur 405 et une erreur est retournée.
-                 */
-            default:
-                $this->error->setCode(405)
-                    ->setError("Methode non autorisée")
-                    ->setMessage("Veuillez utiliser la méthode POST pour créer un produit")
-                    ->sendAndDie();
-                break;
-        }
-    }
-
-    public function handleResponse()
-    {
-        $headers = [
-            "Content-Type: application/json",
-            "Access-Control-Allow-Origin: *",
-            "Access-Control-Allow-Methods: POST",
-            "Access-Control-Age: 3600",
-            "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-        ];
-        $this->response->setCode($this->code)
-            ->setData($this->data)
-            ->setMessage($this->message)
-            ->setHeaders($headers)
-            ->sendAndDie();
-    }
-}
+    return ["id" => intval($insertedID)];
+});
