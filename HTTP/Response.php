@@ -6,7 +6,7 @@ namespace HTTP;
 class Response
 {
     private int $code = 0;
-    private array $data = [];
+    private ?array $data = [];
     private string $message = "";
     private string $error = "";
     private string $content_type = "application/json";
@@ -81,7 +81,7 @@ class Response
         }
         header("Content-Type: " . $this->content_type);
         header("Access-Control-Allow-Origin: " . $this->origin);
-        header("Access-Control-Allow-Methods: " . $this->methods);
+        header("Access-Control-Allow-Methods: " . implode(", ", $this->methods));
         header("Access-Control-Age: " . $this->age);
         header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
