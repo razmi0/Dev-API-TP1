@@ -11,7 +11,7 @@ class Response
     private string $error = "";
     private string $content_type = "application/json";
     private string  $origin = "*";
-    private string $methods = "GET";
+    private array $methods = ["GET"];
     private int $age = 3600;
 
 
@@ -19,10 +19,10 @@ class Response
     {
         $this->code = $response["code"];
         $this->message = $response["message"];
-        $this->content_type = $response["headers"]["content_type"];
-        $this->origin = $response["headers"]["origin"];
-        $this->methods = implode(", ", $response["headers"]["methods"]);
-        $this->age = $response["headers"]["age"];
+        $this->content_type = $response["headers"]["content_type"] ?? "application/json";
+        $this->origin = $response["headers"]["origin"] ?? "*";
+        $this->methods = $response["headers"]["methods"] ?? ["GET"];
+        $this->age = $response["headers"]["age"] ?? 3600;
     }
 
     public function setCode($code)
@@ -75,6 +75,7 @@ class Response
 
     public function sendAndDie()
     {
+        // No response object instanciated so we die
         if ($this->code === 0) {
             die();
         }

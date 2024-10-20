@@ -438,7 +438,7 @@ class Schema extends SchemaCore
      * 
      * 
      */
-    public function safeParse($clientJson): bool
+    public function safeParse($clientJson): Schema
     {
         // Check if the schema is set
         // --
@@ -507,8 +507,6 @@ class Schema extends SchemaCore
         // --
         $this->isParsed = true;
 
-        // Return if the client data has errors
-        // --
-        return $this->hasError;
+        return $this;
     }
 }

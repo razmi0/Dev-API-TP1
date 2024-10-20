@@ -9,6 +9,7 @@ use Utils\Error;
 use DTO\Request;
 use DTO\Response;
 use Controller\ControllerInterface;
+use Model\Schema\Schema;
 
 
 /**
@@ -18,6 +19,7 @@ use Controller\ControllerInterface;
  * @property Error $error
  * @property Response $response
  * @property Request $request
+ * @property Schema $schema
  * @property array $client_decoded_data
  * @property string $client_raw_json
  * 
@@ -30,20 +32,33 @@ class Controller implements ControllerInterface
     protected ?Error $error = null;
     protected ?Response $response = null;
     protected ?Request $request = null;
+    protected ?Schema $data_parsed = null;
 
-    public function __construct(Request $request, Response $response)
+    public function __construct(array $methods, Request $request, Response $response, Schema $schema = null)
     {
         try {
-            $this->error = new Error();
-            $this->error->setLocation($request->getEndpoint());
+            $request->setAuthorizedMethods($methods);
+            $response->setMethods($methods);
 
-            if (!$request->isMethodAuthorized()) {
-                $error_message = "Seules les méthodes suivantes sont autorisées : " . implode(", ", $request->getAuthorizedMethods());
+
+            $method_not_authorized = $request->is_methods_not_authorized();
+            $endpoint = $request->getEndpoint();
+
+            $this->error = new Error();
+            if ($method_not_authorized) {
+                $error_message = "Seules les méthodes suivantes sont autorisées : " . implode(", ", $methods);
                 throw $this->error
+                    ->setLocation($endpoint)
                     ->setError("Méthode non autorisée.")
                     ->setCode(405)
                     ->setMessage($error_message);
             }
+
+            if ($schema) {
+                $data = $request->getClientDecodedData();
+                $this->data_parsed = $schema->safeParse($data);
+            }
+
             $this->request = $request;
             $this->response = $response;
         } catch (Error $e) {

@@ -30,6 +30,7 @@ namespace DTO;
  * 
  * @method string getClientRawJson()
  * 
+ * @method bool is_methods_not_authorized()
  * 
  */
 class Request
@@ -43,16 +44,22 @@ class Request
 
     public function __construct(array $request)
     {
-        $this->authorized_methods = $request["methods"];
-        $this->request_method = $_SERVER["REQUEST_METHOD"];
-        $this->endpoint = $request["endpoint"];
-        $this->client_raw_json = file_get_contents("php://input");
-        $this->client_decoded_data = json_decode($this->client_raw_json, true);
+        $this->authorized_methods = $request["methods"] ?? [];
+        $this->request_method = $_SERVER["REQUEST_METHOD"] ?? "";
+        $this->endpoint = $request["endpoint"] ?? "";
+        $this->client_raw_json = file_get_contents("php://input") ?? "";
+        $this->client_decoded_data = json_decode($this->client_raw_json, true) ?? [];
     }
 
-    public function isMethodAuthorized(): bool
+    public function is_methods_not_authorized(): bool
     {
-        return in_array($this->request_method, $this->authorized_methods);
+        return !in_array($this->request_method, $this->authorized_methods);
+    }
+
+    public function setAuthorizedMethods(array $methods)
+    {
+        $this->authorized_methods = $methods;
+        return $this;
     }
 
     public function getAuthorizedMethods(): array

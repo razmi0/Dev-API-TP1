@@ -31,6 +31,8 @@ class ProduitDao
         }
     }
 
+
+
     private function bindParamsCreate($produit, $prepared)
     {
         try {
@@ -140,13 +142,7 @@ class ProduitDao
             }
 
             $produits = array_map(function ($product) {
-                return new Produit(
-                    $product['id'],
-                    $product['name'],
-                    $product['description'],
-                    $product['prix'],
-                    $product['date_creation']
-                );
+                return Produit::make($product)->toArray();
             }, $products_from_db);
 
             // If all went good, we will return the result
