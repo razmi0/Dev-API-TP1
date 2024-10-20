@@ -35,4 +35,12 @@ class Constant
             "regex" => "/^[0-9.]+$/"
         ]
     ];
+
+    public const ID_SCHEMA = [
+        "id" => [
+            "type" => "integer",
+            "range" => [1, null],
+            "regex" => "/^[0-9]+$/"
+        ]
+    ];
 }
