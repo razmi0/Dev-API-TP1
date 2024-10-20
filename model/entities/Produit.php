@@ -9,6 +9,18 @@ namespace Model\Entities;
  * @property string $description
  * @property string $prix
  * @property string $date_creation
+ * 
+ * @method string getId()
+ * @method string getName()
+ * @method string getDescription()
+ * @method string getPrix()
+ * @method string getDateCreation()
+ * @method setId(string $id)
+ * @method setName(string $name)
+ * @method setDescription(string $description)
+ * @method setPrix(string $prix)
+ * @method setDateCreation(string $date_creation)
+ * @method toArray()
  */
 class Produit
 {
@@ -27,7 +39,7 @@ class Produit
         $this->date_creation = $date_creation;
     }
 
-    public static function make(array $data)
+    public static function make(array $data): Produit
     {
         return new Produit(
             $data["id"] ?? null,

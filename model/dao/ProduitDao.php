@@ -64,29 +64,24 @@ class ProduitDao
         try {
             $this->error->setLocation("model/dao/ProduitDao.php-> create");
             // Database Access step ( build the query, prepare it, execute it and return the result )
-            // --
             $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
 
             // Verify the preparation of the query
-            // --
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
                 throw $this->error;
             }
 
             // Bind the parameters
-            // --
             $prepared = $this->bindParamsCreate($produit, $prepared);
 
             // Verify the execution of the query
-            // --
             $stmt = $prepared->execute();
             if (!$stmt) {
                 throw $this->error;
             }
 
             // If all went good, we will return the id of the last inserted product to the controller
-            // --
             $insertedId = $this->pdo->lastInsertId();
 
             // We return the last inserted id in db for user convenience
@@ -94,7 +89,6 @@ class ProduitDao
             return $insertedId;
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
-            // --
             throw $e;
         }
     }
@@ -114,18 +108,15 @@ class ProduitDao
             $this->error->setLocation("model/dao/ProduitDao.php-> findAll");
 
             // Build the query
-            // --
             $query = "SELECT * FROM T_PRODUIT ORDER BY date_creation DESC";
 
             // Verify the preparation of the query
-            // --
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
                 throw $this->error;
             }
 
             // Verify the execution of the query
-            // --
             $stmt = $prepared->execute();
             if (!$stmt) {
                 throw $this->error;
@@ -133,7 +124,6 @@ class ProduitDao
             $products_from_db = $prepared->fetchAll();
 
             // If no product was found, we send a response with a 404 status code and an error message
-            // --
             if (count($products_from_db) == 0) {
                 $this->error
                     ->setCode(404)
@@ -146,11 +136,9 @@ class ProduitDao
             }, $products_from_db);
 
             // If all went good, we will return the result
-            // --
             return $produits;
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
-            // --
             throw $e;
         }
     }
@@ -159,12 +147,11 @@ class ProduitDao
     /**
      * 
      * @param $id
-     * @return array
      * @throws Error
      * @return Produit
      * 
      */
-    public function findById(int $id)
+    public function findById(int $id): Produit
     {
 
 
@@ -172,33 +159,29 @@ class ProduitDao
             $this->error->setLocation("model/dao/ProduitDao.php-> findById");
 
             // Build the query
-            // --
             $query = "SELECT * FROM T_PRODUIT WHERE id = :id";
             // Set PDO attributes
-            // --
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // Verify the preparation of the query
-            // --
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
                 throw $this->error;
             }
 
             // Bind the parameters
-            // --
             $prepared->bindParam(':id', $id, PDO::PARAM_INT);
 
             // Verify the execution of the query
-            // --
             $stmt = $prepared->execute();
             if (!$stmt) {
                 throw $this->error;
             }
-            $result = $prepared->fetchAll();
+
+            // Fetch the result
+            $result = $prepared->fetch();
 
             // If no product was found, we send a response with a 404 status code and an error message
-            // --
             if (count($result) == 0) {
                 $this->error
                     ->setCode(404)
@@ -207,15 +190,13 @@ class ProduitDao
                 throw $this->error;
             }
 
-            // TODO : ADD PRODUCT INSTANTIAION HERE
+            // Create a new product object
+            $produit = Produit::make($result);
 
-
-            // If all went good, we will return the result
-            // --
-            return $result;
+            // If all went good, we will return the product to the controller
+            return $produit;
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
-            // --
             throw $e;
         }
     }
@@ -232,34 +213,30 @@ class ProduitDao
     {
 
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php-> deleteById")->setMessage("Erreur lors de la suppression du produit");
+            $this->error
+                ->setLocation("model/dao/ProduitDao.php -> deleteById");
             // Build the query
-            // --
             $query = "DELETE FROM T_PRODUIT WHERE id = :id";
             // Verify the preparation of the query
-            // --
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
                 throw $this->error;
             }
 
             // Bind the parameters
-            // --
             $prepared->bindParam(':id', $id, PDO::PARAM_INT);
 
             // Verify the execution of the query
-            // --
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw $this->error;
+                throw $this->error->setCode(500)
+                    ->setError("Erreur lors de la suppression du produit");
             }
 
+            // Affected rows in the database
             $affectedRows = $prepared->rowCount();
 
-            // If no product was found, we send a 204 with no content in response body as HTTP specification states
-            // The error message will be logged in php_error.log
-            // --
-
+            // return the number of affected rows
             return $affectedRows;
         } catch (Error $e) {
             throw $e;
@@ -311,22 +288,18 @@ class ProduitDao
                 ->setMessage("Erreur lors de la modification du produit");
 
             // Database Access step ( build the query, prepare it, execute it and return the result )
-            // --
             $query = "UPDATE T_PRODUIT SET name = :name, description = :description, prix = :prix WHERE id = :id";
 
             // Verify the preparation of the query
-            // --
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
                 throw $this->error;
             }
 
             // Bind the parameters
-            // --
             $prepared = $this->bindParamsUpdate($produit, $prepared);
 
             // Verify the execution of the query
-            // --
             $stmt = $prepared->execute();
             if (!$stmt) {
                 throw $this->error;
@@ -343,11 +316,9 @@ class ProduitDao
             }
 
             // If all went good, we will return the id of the last inserted product to the controller
-            // --
             return [["id" => $produit->id]];
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
-            // --
             throw $e;
         }
     }

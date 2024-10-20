@@ -50,5 +50,5 @@ $controller->handleRequest(function () {
     // Get the product from the database
     $product = $produitDao->findById($id);
 
-    return ["product" => $product];
+    return ["product" => $product->toArray()];
 });
