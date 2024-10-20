@@ -71,11 +71,11 @@ class Error extends Exception
     private function formatConsoleError()
     {
         $strs = [
-            ["label" => "[LOCATION]", "value" => $this->location],
-            ["label" => "[MESSAGE]", "value" => $this->message],
-            ["label" => "[ERROR]", "value" => $this->error],
-            ["label" => "[DATA]", "value" => $this->data],
-            ["label" => "[CODE]", "value" => $this->code]
+            ["label" => "[LOCATION] ", "value" => $this->location],
+            ["label" => "[MESSAGE]  ", "value" => $this->message],
+            ["label" => "[ERROR]    ", "value" => $this->error],
+            ["label" => "[DATA]     ", "value" => $this->data],
+            ["label" => "[CODE]     ", "value" => $this->code]
         ];
 
         $log = self::joinErrorLogs($strs);
