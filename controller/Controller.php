@@ -6,11 +6,18 @@ require_once '../../Autoloader.php';
 
 use Closure;
 use Utils\Error;
-use DTO\Request;
-use DTO\Response;
+use HTTP\Request;
+use HTTP\Response;
 use Controller\ControllerInterface;
 use Model\Schema\Schema;
 
+/**
+ *  _____ _______ _______ _______ _______ _______ _______ _______
+ * |                                                             |
+ * |        The controller is basically a middleware             |
+ * |_____________________________________________________________|
+ * 
+ */
 
 /**
  * 
@@ -23,7 +30,7 @@ use Model\Schema\Schema;
  * @property array $client_decoded_data
  * @property string $client_raw_json
  * 
- * @method __construct(Request $request, Schema $schema, Response $response)
+ * @method __construct(Request $request, Schema $schema, Response $response) Dependency injection
  * @method handleRequest(callable $handler): void
  * 
  */
@@ -37,15 +44,25 @@ class Controller implements ControllerInterface
     public function __construct(array $methods, Request $request, Response $response, Schema $schema = null)
     {
         try {
+            $this->request = $request;
+            $this->response = $response;
+
+            // We set the authorized methods for the request
             $request->setAuthorizedMethods($methods);
+
+            // We set the methods for the response header
             $response->setMethods($methods);
 
-
-            $method_not_authorized = $request->is_methods_not_authorized();
+            // We get the endpoint
             $endpoint = $request->getEndpoint();
 
+            // We set the endpoint for the debugging purpose
             $this->error = new Error();
-            if ($method_not_authorized) {
+
+            // Middleware 1
+            // We check if the method is authorized
+            // If the method is not authorized, we throw an error
+            if ($request->is_methods_not_authorized()) {
                 $error_message = "Seules les méthodes suivantes sont autorisées : " . implode(", ", $methods);
                 throw $this->error
                     ->setLocation($endpoint)
@@ -54,13 +71,26 @@ class Controller implements ControllerInterface
                     ->setMessage($error_message);
             }
 
+            // Middleware 2
+            // We check if the client data is a valid JSON
+            // If the data is not a valid JSON, we throw an error with the JSON error message
+            if (!$request->getIsValidJson()) {
+                $error_message = $request->getJsonErrorMsg();
+                throw $this->error
+                    ->setLocation($endpoint)
+                    ->setError("Données invalides.")
+                    ->setCode(400)
+                    ->setMessage("Les données envoyées ne sont pas valides : " . $error_message);
+            }
+
+            // Middleware 3
+            // We parse the client data with the schema
+            // The schema is optional. If no schema is provided, we don't parse the data
+            // Else we parse the client data with the schema
             if ($schema) {
                 $data = $request->getClientDecodedData();
                 $this->data_parsed = $schema->safeParse($data);
             }
-
-            $this->request = $request;
-            $this->response = $response;
         } catch (Error $e) {
             $e->sendAndDie();
         }
@@ -69,8 +99,31 @@ class Controller implements ControllerInterface
     public function handleRequest(callable $anonymous_handler): void
     {
         try {
-            $binded_handler = Closure::bind($anonymous_handler, $this, get_class($this));
+            //
+            // Ici ce joue l'externalisation de la méthode handleRequest ( polymorphisme ++ wouaw )
+            // => On crée une closure dans laquelle on bind à son contexte d'execution l'instance $this de Controller
+            // $this contenant les propriétés de la classe Controller/Request/Response/Schema,
+            // la fonction $anonymous_handler peut donc accéder à ces propriétés
+            // 
+            $binded_handler = Closure::bind(
+                /**
+                 * la closure $anonymous_handler executant le code du endpoint
+                 */
+                $anonymous_handler,
+                /**
+                 * $this est le newThis de la closure $anonymous_handler
+                 */
+                $this,
+                /**
+                 * la classe Controller est le nouveau scope de la closure $anonymous_handler
+                 */
+                self::class
+            );
+
+            // We retrieve the response data from the handler
             $response_data = $binded_handler();
+
+            // We send the response data to the client
             $this->response
                 ->setData($response_data)
                 ->sendAndDie();
