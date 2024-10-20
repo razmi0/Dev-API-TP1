@@ -1,6 +1,6 @@
 <?php
 
-namespace DTO;
+namespace HTTP;
 
 
 
@@ -41,6 +41,8 @@ class Request
     protected string $endpoint = "";
     protected string $client_raw_json = "";
     protected array $client_decoded_data = [];
+    protected bool $valid_json = true;
+    protected string $json_error_msg = "";
 
     public function __construct(array $request)
     {
@@ -49,6 +51,14 @@ class Request
         $this->endpoint = $request["endpoint"] ?? "";
         $this->client_raw_json = file_get_contents("php://input") ?? "";
         $this->client_decoded_data = json_decode($this->client_raw_json, true) ?? [];
+
+        if (!empty($this->client_decoded_data)) {
+            $this->json_error_msg = json_last_error_msg();
+
+            if ($this->json_error_msg !== "No error") {
+                $this->valid_json = false;
+            }
+        }
     }
 
     public function is_methods_not_authorized(): bool
@@ -73,6 +83,14 @@ class Request
     public function getClientDecodedData(): array
     {
         return $this->client_decoded_data;
+    }
+    public function getIsValidJson(): bool
+    {
+        return $this->valid_json;
+    }
+    public function getJsonErrorMsg(): string
+    {
+        return $this->json_error_msg;
     }
     public function getClientRawJson(): string
     {

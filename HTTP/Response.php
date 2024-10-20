@@ -1,6 +1,6 @@
 <?php
 
-namespace DTO;
+namespace HTTP;
 
 
 class Response
