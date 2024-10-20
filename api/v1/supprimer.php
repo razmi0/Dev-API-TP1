@@ -2,105 +2,47 @@
 
 require_once "../../Autoloader.php";
 
-use Model\Dao\ProduitDao as ProduitDao;
-use Utils\Response as Response;
-use Utils\Error as Error;
 
-// Instantiate the controller
-// --
-$controller = new Controller();
+use HTTP\Request;
+use HTTP\Response;
+use Controller\Controller;
+use Model\Constant;
+use Model\Dao\ProduitDao;
+use Model\Schema\Schema;
 
-// Handle the request (verify the method and process the request)
-// If the method is allowed, the DAO method "delete" is called and the request is processed.
-// Else, an error message is returned.
-// --
-$controller->handleRequest();
+// Start the controller with the Request and Response objects
+$controller = new Controller(
+    ["DELETE"],
+    new Request([
+        "endpoint" => "/api/v1/supprimer.php",
+    ]),
+    new Response([
+        "code" => 204,
+        "message" => "Produit supprimé avec succès",
+    ]),
+    new Schema(Constant::ID_SCHEMA)
+);
 
-// Handle the response (set the headers and send the response) using the Response class
-// --
-$controller->handleResponse();
+// Handle the request with Request and Response in handleRequest closure and add the product schema
+$controller->handleRequest(function () {
 
+    // Get the id from the body
+    $id = $this->request->getClientDecodedData("id");
 
-class Controller
-{
-    private $produitDao = null;
-    private $response = null;
-    private $message = "";
-    private $data = [];
-    private $code = 0;
-    private $error = null;
-
-    public function __construct()
-    {
-        $this->produitDao = new ProduitDao();
-        $this->response = new Response();
-        $this->error = new Error();
-        $this->error->setLocation("api/v1/supprimer.php");
+    // If the id is not present in the query or in the body, throw an error
+    if (!$id) {
+        $error_message = "Veuillez fournir un id de produit dans le corps de la requête au format JSON.";
+        throw $this->error
+            ->setCode(400)
+            ->setError("Requête invalide")
+            ->setMessage($error_message);
     }
 
-    public function handleRequest()
-    {
-        switch ($_SERVER["REQUEST_METHOD"]) {
+    // Start the DAO
+    $produitDao = new ProduitDao();
 
-                /**
-             * DELETE request : /api/v1/supprimer.php
-             * Seulement les requêtes DELETE sont autorisées.
-             */
+    // Get the product from the database
+    $product = $produitDao->deleteById($id);
 
-            case "DELETE":
-                try {
-                    $client_json = json_decode(file_get_contents("php://input"));
-                    $id = isset($client_json->id) ? $client_json->id : null;
-
-                    // If no id is found, we return an error
-                    // --
-                    if (!isset($id)) {
-                        $this->error->setCode(400)
-                            ->setError("Requête invalide")
-                            ->setMessage("Veuillez fournir un id de produit dans le corps de la requête au format JSON.");
-                        throw $this->error;
-                    }
-
-                    // We call the DAO method "delete" to delete the product
-                    // If the request is not successful, we handle the error with the Error class.
-                    // --
-                    /**
-                     * @var never[] $data
-                     */
-                    $this->data = $this->produitDao->deleteById($id) ?? [];
-                    $this->message = "Suppression effectuée avec succès";
-                    $this->code = 200;
-                } catch (Error $e) {
-                    $e->sendAndDie();
-                }
-                break;
-
-                /**
-                 * Autres requêtes
-                 * Une erreur 405 et une erreur est retournée.
-                 */
-            default:
-                $this->error->setCode(405)
-                    ->setError("Methode non autorisée")
-                    ->setMessage("Veuillez utiliser la méthode DELETE pour supprimer un produit.")
-                    ->sendAndDie();
-                break;
-        }
-    }
-
-    public function handleResponse()
-    {
-        $headers = [
-            "Content-Type: application/json",
-            "Access-Control-Allow-Origin: *",
-            "Access-Control-Allow-Methods: DELETE",
-            "Access-Control-Age: 3600",
-            "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-        ];
-        $this->response->setCode($this->code)
-            ->setData($this->data)
-            ->setMessage($this->message)
-            ->setHeaders($headers)
-            ->sendAndDie();
-    }
-}
+    return ["product" => $product];
+});
