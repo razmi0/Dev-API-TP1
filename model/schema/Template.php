@@ -69,7 +69,7 @@ class Template
      * 
      * 
      */
-    private const OPTIONAL_KEYS = ['range'];
+    private const OPTIONAL_KEYS = ['range', 'regex', 'optional'];
 
     /**
      * 
@@ -124,8 +124,14 @@ class Template
             // Validate optional keys
             // --
             foreach (self::OPTIONAL_KEYS as $optionalKey) {
-                if (array_key_exists($optionalKey, $value) && !is_array($value[$optionalKey])) {
-                    throw new InvalidArgumentException("Optional key '$optionalKey' for '$key' must have an array value.");
+                if (array_key_exists($optionalKey, $value)) {
+                    if ($optionalKey === 'optional' && !is_bool($value[$optionalKey])) {
+                        throw new InvalidArgumentException("Optional key '$optionalKey' for '$key' must have a boolean value.");
+                    } else if ($optionalKey === "range" && !is_array($value[$optionalKey]) && count($value[$optionalKey]) !== 2) {
+                        throw new InvalidArgumentException("Optional key '$optionalKey' for '$key' must have a tuple length 2 value.");
+                    } else if ($optionalKey === "regex" && !is_string($value[$optionalKey])) {
+                        throw new InvalidArgumentException("Optional key '$optionalKey' for '$key' must have a string value.");
+                    }
                 }
             }
 
