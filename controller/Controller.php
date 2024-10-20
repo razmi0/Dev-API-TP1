@@ -58,6 +58,7 @@ class Controller implements ControllerInterface
 
             // We set the endpoint for the debugging purpose
             $this->error = new Error();
+            $this->error->setLocation($endpoint);
 
             // Middleware 1
             // We check if the method is authorized
