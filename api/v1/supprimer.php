@@ -17,7 +17,7 @@ $controller = new Controller(
         "endpoint" => "/api/v1/supprimer.php",
     ]),
     new Response([
-        "code" => 204,
+        "code" => 200,
         "message" => "Produit supprimé avec succès",
     ]),
     new Schema(Constant::ID_SCHEMA)
@@ -42,7 +42,17 @@ $controller->handleRequest(function () {
     $produitDao = new ProduitDao();
 
     // Get the product from the database
-    $product = $produitDao->deleteById($id);
+    $affectedRows = $produitDao->deleteById($id);
 
-    return ["product" => $product];
+    // If no product was found, we send a 204 with no content in response body as HTTP specification states
+    if ($affectedRows === 0) {
+        $this->error
+            ->setError("Aucun produit trouvé")
+            ->setCode(204)
+            ->setMessage("L'utilisateur a tenté de supprimer un produit qui n'existe pas")
+            ->setData(["id" => $id]);
+        throw $this->error;
+    }
+
+    return ["product" => $affectedRows];
 });
