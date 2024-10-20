@@ -161,10 +161,10 @@ class ProduitDao
      * @param $id
      * @return array
      * @throws Error
-     * @return Produit[]
+     * @return Produit
      * 
      */
-    public function findById($id)
+    public function findById(int $id)
     {
 
 
@@ -225,10 +225,10 @@ class ProduitDao
      * @description Delete a product by its id
      * @param $id
      * @throws Error
-     * @return void
+     * @return int
      * 
      */
-    public function deleteById($id)
+    public function deleteById(int $id): int
     {
 
         try {
@@ -259,14 +259,8 @@ class ProduitDao
             // If no product was found, we send a 204 with no content in response body as HTTP specification states
             // The error message will be logged in php_error.log
             // --
-            if ($affectedRows == 0) {
-                $this->error
-                    ->setCode(204)
-                    ->setError("Ce produit n'existe pas")
-                    ->setMessage("L'utilisateur a tenté de supprimer un produit qui n'existe pas")
-                    ->setData(["id" => $id]);
-                throw $this->error;
-            }
+
+            return $affectedRows;
         } catch (Error $e) {
             throw $e;
         }
