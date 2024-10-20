@@ -3,8 +3,8 @@
 require_once "../../Autoloader.php";
 
 
-use DTO\Request;
-use DTO\Response;
+use HTTP\Request;
+use HTTP\Response;
 use Controller\Controller;
 use Model\Dao\ProduitDao;
 

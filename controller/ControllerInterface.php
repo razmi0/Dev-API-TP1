@@ -2,8 +2,8 @@
 
 namespace Controller;
 
-use DTO\Request;
-use DTO\Response;
+use HTTP\Request;
+use HTTP\Response;
 use Model\Schema\Schema;
 
 interface ControllerInterface
