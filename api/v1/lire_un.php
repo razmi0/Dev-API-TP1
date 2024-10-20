@@ -18,9 +18,9 @@ $controller = new Controller(
     ]),
     new Response([
         "code" => 200,
-        "message" => "Produits trouvés",
+        "message" => "Produit trouvé",
     ]),
-    new Schema(Constant::ID_SCHEMA)
+    new Schema(Constant::READ_ONE_SCHEMA)
 );
 
 // Handle the request with Request and Response in handleRequest closure and add the product schema

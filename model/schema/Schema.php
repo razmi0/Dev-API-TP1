@@ -290,8 +290,13 @@ class Schema extends SchemaCore
 
             // Loop through the rules provided by the consumer
             // --
+            $type = $value["type"];
+
+            if (self::in($value, "required") && self::in($value, "optional")) {
+                throw new Exception("You can't set both required and optional for the same key.");
+            }
+
             foreach ($value as $constraint => $constraintValue) {
-                $type = $value["type"];
 
                 // Process the rules and store them in the validationMap
                 // --
@@ -463,9 +468,11 @@ class Schema extends SchemaCore
         foreach ($this->validationMap as $key => $rules) {
 
 
+
             // Loop through the rules for each key of data
             // --
             foreach ($rules as $rule) {
+
                 // Validate the data against the rule and store the result as a ValidatorResult object
                 // --
                 $validated = $rule->validate($clientJson[$key], $key);
@@ -473,6 +480,7 @@ class Schema extends SchemaCore
                 // Call the getter getReadable() from ValidatorResult to get a clean result
                 // --
                 $readable = $validated->getReadable();
+
 
                 // If the result is not valid,
                 // --
@@ -508,5 +516,11 @@ class Schema extends SchemaCore
         $this->isParsed = true;
 
         return $this;
+    }
+
+
+    static function in(array $array, $value): bool
+    {
+        return array_key_exists($value, $array);
     }
 }

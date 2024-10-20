@@ -182,7 +182,7 @@ class ProduitDao
             $result = $prepared->fetch();
 
             // If no product was found, we send a response with a 404 status code and an error message
-            if (count($result) == 0) {
+            if (!$result) {
                 $this->error
                     ->setCode(404)
                     ->setError("Aucun produit trouvé")

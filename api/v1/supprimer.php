@@ -20,11 +20,25 @@ $controller = new Controller(
         "code" => 200,
         "message" => "Produit supprimé avec succès",
     ]),
-    new Schema(Constant::ID_SCHEMA)
+    new Schema(Constant::DELETE_SCHEMA)
 );
 
 // Handle the request with Request and Response in handleRequest closure and add the product schema
 $controller->handleRequest(function () {
+
+    // Get the client data
+    $client_data = $this->request->getClientDecodedData();
+
+    // Parse the client data with the schema
+    $data_parsed = $this->schema->safeParse($client_data);
+
+    // If the client data is invalid, throw an error
+    if ($data_parsed->getHasError()) {
+        throw $this->error
+            ->setCode(400)
+            ->setError("Données invalides")
+            ->setData($data_parsed->getErrorResults());
+    }
 
     // Get the id from the body
     $id = $this->request->getClientDecodedData("id");
@@ -54,5 +68,5 @@ $controller->handleRequest(function () {
         throw $this->error;
     }
 
-    return ["product" => $affectedRows];
+    return ["id" => $id];
 });

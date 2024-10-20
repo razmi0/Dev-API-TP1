@@ -36,9 +36,19 @@ class Constant
         ]
     ];
 
-    public const ID_SCHEMA = [
+    public const READ_ONE_SCHEMA = [
         "id" => [
             "type" => "integer",
+            "required" => true,
+            "range" => [1, null],
+            "regex" => "/^[0-9]+$/"
+        ]
+    ];
+
+    public const DELETE_SCHEMA = [
+        "id" => [
+            "type" => "integer",
+            "required" => true,
             "range" => [1, null],
             "regex" => "/^[0-9]+$/"
         ]

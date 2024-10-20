@@ -33,12 +33,15 @@ $controller->handleRequest(function () {
     // Get the client data
     $client_data = $this->request->getClientDecodedData();
 
+    // Parse the client data with the schema
+    $data_parsed = $this->schema->safeParse($client_data);
+
     // If the client data is invalid, throw an error
-    if ($this->data_parsed->getHasError()) {
+    if ($data_parsed->getHasError()) {
         throw $this->error
             ->setCode(400)
             ->setError("Données invalides")
-            ->setData($this->data_parsed->getErrorResults());
+            ->setData($data_parsed->getErrorResults());
     }
 
     //Create a new product

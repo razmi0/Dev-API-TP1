@@ -27,8 +27,6 @@ use Model\Schema\Schema;
  * @property Response $response
  * @property Request $request
  * @property Schema $schema
- * @property array $client_decoded_data
- * @property string $client_raw_json
  * 
  * @method __construct(Request $request, Schema $schema, Response $response) Dependency injection
  * @method handleRequest(callable $handler): void
@@ -39,7 +37,7 @@ class Controller implements ControllerInterface
     protected ?Error $error = null;
     protected ?Response $response = null;
     protected ?Request $request = null;
-    protected ?Schema $data_parsed = null;
+    protected ?Schema $schema = null;
 
     public function __construct(array $methods, Request $request, Response $response, Schema $schema = null)
     {
@@ -89,8 +87,7 @@ class Controller implements ControllerInterface
             // The schema is optional. If no schema is provided, we don't parse the data
             // Else we parse the client data with the schema
             if ($schema) {
-                $data = $request->getClientDecodedData();
-                $this->data_parsed = $schema->safeParse($data);
+                $this->schema = $schema;
             }
         } catch (Error $e) {
             $e->sendAndDie();

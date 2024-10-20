@@ -57,3 +57,35 @@ class RegexValidator implements ValidatorInterface
             : new ValidatorResult("valid", $this->pattern, $value, [$key], "Value matches pattern");
     }
 }
+
+class RequiredValidator implements ValidatorInterface
+{
+    private bool $required;
+
+    public function __construct(bool $required)
+    {
+        $this->required = $required;
+    }
+    public function validate(mixed $value, string $key): ValidatorResult
+    {
+        return (is_null($value) && $this->required)
+            ? new ValidatorResult("invalid_required", "required", "not defined", [$key], "Value is required")
+            : new ValidatorResult("valid", "required", "defined", [$key], "Value is present");
+    }
+}
+
+class OptionalValidator implements ValidatorInterface
+{
+    private bool $optional;
+
+    public function __construct(bool $optional)
+    {
+        $this->optional = $optional;
+    }
+    public function validate(mixed $value, string $key): ValidatorResult
+    {
+        return (is_null($value) && $this->optional)
+            ? new ValidatorResult("valid", "optional", "defined", [$key], "Value is optional")
+            : new ValidatorResult("invalid_optional", "optional", "not defined", [$key], "Value is not optional");
+    }
+}

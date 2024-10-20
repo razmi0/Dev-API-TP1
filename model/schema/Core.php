@@ -22,16 +22,30 @@ require_once 'Validator/RangeValidator.php';
 require_once 'Validator/ValidatorInterface.php';
 
 use Schema\Validator\{
+    /**
+     * Type validators
+     */
     StringValidator,
     DoubleValidator,
     IntegerValidator,
     ArrayValidator,
     isNullValidator,
+    /**
+     * Complex validators
+     */
+    RegexValidator,
     NotBlankValidator,
+    RequiredValidator,
+    /**
+     * Range validators
+     */
     IntegerRangeValidator,
     ArrayRangeValidator,
+    OptionalValidator,
     StringRangeValidator,
-    RegexValidator,
+    /**
+     * Validator interface
+     */
     ValidatorInterface,
 };
 
@@ -65,7 +79,7 @@ class Core
      * 
      * 
      */
-    private const complexConstraints = ["regex", "not_blank"];
+    private const complexConstraints = ["regex", "not_blank", "required", "optional"];
     /**
      * 
      * 
@@ -181,6 +195,10 @@ class Core
                 return new NotBlankValidator();
             case "regex":
                 return new RegexValidator($constraintValue);
+            case "required":
+                return new RequiredValidator($constraintValue);
+            case "optional":
+                return new OptionalValidator($constraintValue);
         }
     }
 
@@ -203,5 +221,10 @@ class Core
             case "string":
                 return new StringRangeValidator($range);
         }
+    }
+
+    protected function getRequiredValidator(bool $isRequired): ValidatorInterface
+    {
+        return new RequiredValidator($isRequired);
     }
 }

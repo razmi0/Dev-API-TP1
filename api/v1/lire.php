@@ -23,9 +23,6 @@ $controller = new Controller(
 // Handle the request with Request and Response in handleRequest closure and add the product schema
 $controller->handleRequest(function () {
 
-    // No data to parse, just return the products
-    // --
-
     // Create a new ProduitDao object
     $produitDao = new ProduitDao();
 
