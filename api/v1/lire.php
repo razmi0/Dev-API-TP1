@@ -33,5 +33,5 @@ $controller->handleRequest(function () {
     $allProducts = $produitDao->findAll();
 
     // Return the inserted ID
-    return $allProducts;
+    return ["products" => $allProducts];
 });
