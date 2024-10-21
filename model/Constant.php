@@ -22,24 +22,27 @@ class Constant
         "name" => [
             "type" => "string",
             "range" => [1, 65],
-            "regex" => "/^[a-zA-Z0-9 ]+$/"
+            "regex" => "/^[a-zA-Z0-9 ]+$/",
+            "required" => true
         ],
         "description" => [
             "type" => "string",
             "range" => [1, 65000],
-            "regex" => "/^[a-zA-Z0-9 ]+$/"
+            "regex" => "/^[a-zA-Z0-9 ]+$/",
+            "required" => true
         ],
         "prix" => [
             "type" => "double",
             "range" => [0, null],
-            "regex" => "/^[0-9.]+$/"
+            "regex" => "/^[0-9.]+$/",
+            "required" => true
         ]
     ];
 
     public const READ_ONE_SCHEMA = [
         "id" => [
             "type" => "integer",
-            "required" => true,
+            "required" => false,
             "range" => [1, null],
             "regex" => "/^[0-9]+$/"
         ]
@@ -51,6 +54,33 @@ class Constant
             "required" => true,
             "range" => [1, null],
             "regex" => "/^[0-9]+$/"
+        ]
+    ];
+
+    public const UPDATE_SCHEMA = [
+        "id" => [
+            "type" => "integer",
+            "required" => true,
+            "range" => [1, null],
+            "regex" => "/^[0-9]+$/"
+        ],
+        "name" => [
+            "type" => "string",
+            "range" => [1, 65],
+            "regex" => "/^[a-zA-Z0-9 ]+$/",
+            "required" => false
+        ],
+        "description" => [
+            "type" => "string",
+            "range" => [1, 65000],
+            "regex" => "/^[a-zA-Z0-9-. ]+$/",
+            "required" => false
+        ],
+        "prix" => [
+            "type" => "double",
+            "range" => [0, null],
+            "regex" => "/^[0-9.]+$/",
+            "required" => false
         ]
     ];
 }
