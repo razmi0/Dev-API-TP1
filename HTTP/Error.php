@@ -4,6 +4,12 @@ namespace Utils;
 
 use Exception;
 
+
+/**
+ * Class Error
+ * 
+ * 
+ */
 class Error extends Exception
 {
     protected $code = 0;

@@ -1,10 +1,16 @@
 <?php
 
+
+/**
+ * 
+ * This script truncates the database table for the given DAO.
+ * Use it in conjontion with migrate.js to repopulate the database.
+ * 
+ */
+
 use Model\Dao\Connection;
 
 require_once "./Autoloader.php";
-
-
 
 
 try {
