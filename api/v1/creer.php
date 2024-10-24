@@ -25,7 +25,7 @@ new Controller(
     function () {
 
         // Get the decoded client data
-        $client_data = $this->request->getClientDecodedData();
+        $client_data = $this->request->getDecodedBody();
 
         //Create a new product
         $newProduct = Produit::make($client_data);

@@ -80,9 +80,9 @@ class Controller implements ControllerInterface
             if (!$request->getIsValidJson()) {
                 $error_message = $request->getJsonErrorMsg();
                 throw $this->error
-                    ->setError("Données invalides.")
+                    ->setError("Json invalide")
                     ->setCode(400)
-                    ->setMessage("Les données envoyées ne sont pas valides : " . $error_message);
+                    ->setMessage("Le json est malformé : " . $error_message);
             }
 
             // Middleware 3
@@ -90,7 +90,7 @@ class Controller implements ControllerInterface
             // If a schema is defined, we parse the client data with the schema
             // If the client data is invalid against the schema, we throw an error and send it to the client
             if ($schema) {
-                $client_data = $request->getClientDecodedData();
+                $client_data = $request->getDecodedBody();
                 $data_parsed = $schema->safeParse($client_data);
                 if ($data_parsed->getHasError()) {
                     throw $this->error
@@ -109,7 +109,7 @@ class Controller implements ControllerInterface
 
     private function handleRequest(): void
     {
-        // We provide and bind all the necessary data to a new Closure (a callable, an instance and a scope)
+        // We provide and bind all the necessary data to a new Closure (a callback, an instance and a scope)
         $binded_handler = Closure::bind(
             /**
              * the handler provided by the Controller consumer

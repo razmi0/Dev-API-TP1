@@ -3,6 +3,8 @@
 namespace HTTP;
 
 
+use HTTP\Error;
+
 
 /**
  * 
@@ -26,7 +28,7 @@ namespace HTTP;
  * 
  * @method string getEndpoint()
  * 
- * @method array getClientDecodedData()
+ * @method array getDecodedBody()
  * 
  * @method string getClientRawJson()
  * 
@@ -67,62 +69,78 @@ class Request
     protected array $url_params = [];
     protected array $query_params = [];
 
+    private ?Error $error  = null;
+
     public function __construct(array $request)
     {
-        // Get the request method (GET, POST, PUT, DELETE, ...)
-        $this->request_method = $_SERVER["REQUEST_METHOD"] ?? "";
+        $this->error = new Error();
 
-        // Get the authorized methods
-        $this->authorized_methods = $request["methods"] ?? [];
+        try {
 
-        // Get the endpoint
-        $this->endpoint = $request["endpoint"] ?? "";
 
-        // Get the URI parameters
-        $this->url_params = parse_url($_SERVER["REQUEST_URI"]);
+            // Get the request method (GET, POST, PUT, DELETE, ...)
+            $this->request_method = $_SERVER["REQUEST_METHOD"] ?? "";
 
-        // Assign URI components to class properties
+            // Get the authorized methods (GET, POST, PUT, DELETE, ...)
+            $this->authorized_methods = $request["methods"] ?? [];
 
-        // build the URI parameters
-        [
-            $this->scheme,
-            $this->host,
-            $this->port,
-            $this->path,
-            $this->query,
-        ] = $this->buildURIParams();
+            // Get the endpoint (the file name)
+            $this->endpoint = $request["endpoint"] ?? "";
 
-        // build the URI flags
-        [
-            $this->has_scheme,
-            $this->has_host,
-            $this->has_port,
-            $this->has_path,
-            $this->has_query,
-        ] = $this->buildURIFlags();
+            // Get the URI parameters (scheme, host, port, path, query)
+            $this->url_params = parse_url($_SERVER["REQUEST_URI"]);
 
-        // Parse the query parameters for easy access into associative array (key => value)
-        if ($this->has_query) {
-            parse_str($this->query, $this->query_params);
+            // Assign URI components to class properties
+
+            // build the URI parameters
+            [
+                $this->scheme,
+                $this->host,
+                $this->port,
+                $this->path,
+                $this->query,
+            ] = $this->buildURIParams();
+
+            // build the URI flags
+            [
+                $this->has_scheme,
+                $this->has_host,
+                $this->has_port,
+                $this->has_path,
+                $this->has_query,
+            ] = $this->buildURIFlags();
+
+            // Parse the query parameters for easy access into associative array (key => value)
+            if ($this->has_query) {
+                parse_str($this->query, $this->query_params);
+            }
+
+            // Get the client data
+            $this->client_raw_json = file_get_contents("php://input") ?? "";
+
+            // Decode the client data
+            // if no data is present, set the decoded data to an empty array
+            $this->client_decoded_data = $this->safeDecode($this->client_raw_json);
+        } catch (Error $e) {
+            throw $e;
         }
+    }
 
-        // Get the client data
-        $this->client_raw_json = file_get_contents("php://input") ?? "";
+    /**
+     * decode the client data setting the json error message if the json is invalid
+     */
+    private function safeDecode(string $json): array
+    {
+        // json => associative array
+        $decoted = json_decode($json, true) ?? [];
 
-        // Decode the client data
-        // if no data is present, set the decoded data to an empty array
-        $this->client_decoded_data = json_decode($this->client_raw_json, true) ?? [];
-
-        // Check if there was an error decoding the JSON
-        if (!empty($this->client_decoded_data)) {
-
-            // Data is present
-            $this->has_data = true;
-
-            // Check if the JSON is valid
+        if (!json_last_error() === JSON_ERROR_NONE) {
             $this->json_error_msg = json_last_error_msg();
-            $this->valid_json = ($this->json_error_msg === "No error");
+            $this->valid_json = false;
         }
+
+        $this->has_data = !empty($decoted);
+        return $decoted;
     }
 
     public function is_methods_not_authorized(): bool
@@ -144,10 +162,10 @@ class Request
     {
         return $this->endpoint;
     }
-    public function getClientDecodedData(string $key = null): mixed
+    public function getDecodedBody(string $key = null): mixed
     {
         if ($key) {
-            return $this->client_decoded_data[$key] ?? [];
+            return $this->client_decoded_data[$key] ?? null;
         }
         return $this->client_decoded_data;
     }

@@ -25,7 +25,7 @@ new Controller(
         $idInQuery = $this->request->getQueryParam("id");
 
         // Get the id from the body
-        $idInBody = $this->request->getClientDecodedData("id");
+        $idInBody = $this->request->getDecodedBody("id");
 
         // If the id is not present in the query or in the body, throw an error
         if (!$idInQuery && !$idInBody) {
