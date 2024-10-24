@@ -4,7 +4,7 @@ namespace Model\Dao;
 
 use PDO;
 use PDOException;
-use Utils\Error;
+use HTTP\Error;
 
 
 
@@ -16,6 +16,7 @@ class Connection
     private $username = "root";
     private $password = "";
     private $db_name = "db_labrest";
+    private $table_name = "T_PRODUIT";
 
 
     public function __construct()
@@ -30,6 +31,11 @@ class Connection
                 ->setLocation("model/dao/Connection.php");
             throw $error;
         }
+    }
+
+    public function getTableName()
+    {
+        return $this->table_name;
     }
 
     public function getPDO()
