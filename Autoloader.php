@@ -5,13 +5,15 @@
  * include()ou include_once()
  * Vous devez nommer vos fichiers PHP du même nom que la classe
  * Exemples : Classe Produit dans fichier Produit.php
- *            Classe ProduitDao dans fichier ProduitDao.php
+ *            Classe ProductDao dans fichier ProductDao.php
  */
 define('BASE_PATH', realpath(dirname(__FILE__)));
 
-class Autoloader {
-    static public function loader($className) {
-        $filename = BASE_PATH.DIRECTORY_SEPARATOR.str_replace("\\", DIRECTORY_SEPARATOR, $className) . ".php";
+class Autoloader
+{
+    static public function loader($className)
+    {
+        $filename = BASE_PATH . DIRECTORY_SEPARATOR . str_replace("\\", DIRECTORY_SEPARATOR, $className) . ".php";
         if (file_exists($filename)) {
             include($filename);
             if (class_exists($className)) {

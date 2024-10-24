@@ -4,10 +4,8 @@ require_once "../../Autoloader.php";
 
 use HTTP\Request;
 use HTTP\Response;
-use Model\Constant;
-use Model\Schema\Schema;
 use Controller\Controller;
-use Model\Dao\ProduitDao;
+use Model\Dao\ProductDao;
 use Model\Entities\Produit;
 
 // Start the controller with the Request and Response objects
@@ -24,14 +22,14 @@ new Controller(
     null,
     function () {
 
-        // Create a new ProduitDao object
-        $produitDao = new ProduitDao();
+        // Create a new ProductDao object
+        $ProductDao = new ProductDao();
 
         // Get all products from the database
         /**
          * @var Produit[] $allProducts
          */
-        $allProducts = $produitDao->findAll();
+        $allProducts = $ProductDao->findAll();
 
         // Map the products to an array
         $productsArray = array_map(fn($product) => $product->toArray(), $allProducts);

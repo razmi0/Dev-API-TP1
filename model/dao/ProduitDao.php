@@ -9,7 +9,7 @@ use PDO;
 
 
 
-class ProduitDao
+class ProductDao
 {
     private $pdo;
     private $error;
@@ -24,9 +24,9 @@ class ProduitDao
             $this->error
                 ->setCode(503)
                 ->setError("Impossible de traiter la requete")
-                ->setLocation("model/dao/ProduitDao.php");
+                ->setLocation("model/dao/ProductDao.php");
         } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php-> __construct");
+            $this->error->setLocation("model/dao/ProductDao.php-> __construct");
             throw $e;
         }
     }
@@ -46,7 +46,7 @@ class ProduitDao
             $prepared->bindParam(':prix', $prix, PDO::PARAM_STR);
             $prepared->bindParam(':date', $date, PDO::PARAM_STR);
         } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php-> bindParamsCreate");
+            $this->error->setLocation("model/dao/ProductDao.php-> bindParamsCreate");
             throw $e;
         }
 
@@ -62,7 +62,7 @@ class ProduitDao
     public function create($produit)
     {
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php-> create");
+            $this->error->setLocation("model/dao/ProductDao.php-> create");
             // Database Access step ( build the query, prepare it, execute it and return the result )
             $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
 
@@ -105,7 +105,7 @@ class ProduitDao
     {
 
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php-> findAll");
+            $this->error->setLocation("model/dao/ProductDao.php-> findAll");
 
             // Build the query
             $query = "SELECT * FROM T_PRODUIT ORDER BY date_creation DESC";
@@ -152,7 +152,7 @@ class ProduitDao
 
 
         try {
-            $this->error->setLocation("model/dao/ProduitDao.php-> findById");
+            $this->error->setLocation("model/dao/ProductDao.php-> findById");
 
             // Build the query
             $query = "SELECT * FROM T_PRODUIT WHERE id = :id";
@@ -182,7 +182,7 @@ class ProduitDao
                 $this->error
                     ->setCode(404)
                     ->setError("Aucun produit trouvé")
-                    ->setLocation("model/dao/ProduitDao.php-> findById");
+                    ->setLocation("model/dao/ProductDao.php-> findById");
                 throw $this->error;
             }
 
@@ -210,7 +210,7 @@ class ProduitDao
 
         try {
             $this->error
-                ->setLocation("model/dao/ProduitDao.php -> deleteById");
+                ->setLocation("model/dao/ProductDao.php -> deleteById");
             // Build the query
             $query = "DELETE FROM T_PRODUIT WHERE id = :id";
             // Verify the preparation of the query
@@ -260,7 +260,7 @@ class ProduitDao
             $prepared->bindParam(':description', $description, PDO::PARAM_STR);
             $prepared->bindParam(':prix', $prix, PDO::PARAM_INT);
         } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProduitDao.php-> bindParamsUpdate");
+            $this->error->setLocation("model/dao/ProductDao.php-> bindParamsUpdate");
             throw $e;
         }
 
@@ -280,7 +280,7 @@ class ProduitDao
 
         try {
             $this->error
-                ->setLocation("model/dao/ProduitDao.php-> update")
+                ->setLocation("model/dao/ProductDao.php-> update")
                 ->setMessage("Erreur lors de la modification du produit");
 
             // Database Access step ( build the query, prepare it, execute it and return the result )

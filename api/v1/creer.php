@@ -7,7 +7,7 @@ use HTTP\Response;
 use Model\Constant;
 use Model\Schema\Schema;
 use Controller\Controller;
-use Model\Dao\ProduitDao;
+use Model\Dao\ProductDao;
 use Model\Entities\Produit;
 
 new Controller(
@@ -31,10 +31,10 @@ new Controller(
         $newProduct = Produit::make($client_data);
 
         // Connect to the database
-        $produitDao = new ProduitDao();
+        $ProductDao = new ProductDao();
 
         // Create product in db and catch the inserted ID from the database
-        $insertedID = $produitDao->create($newProduct);
+        $insertedID = $ProductDao->create($newProduct);
 
         // Cast the id to integer and return the inserted ID to controller
         return ["id" => intval($insertedID)];
