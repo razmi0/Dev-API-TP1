@@ -9,12 +9,13 @@ use Utils\Error;
 use HTTP\Request;
 use HTTP\Response;
 use Controller\ControllerInterface;
+use Model\Dao\ProduitDao;
 use Model\Schema\Schema;
 
 /**
  *  _____ _______ _______ _______ _______ _______ _______ _______
  * |                                                             |
- * |        The controller is basically a middleware             |
+ * |                     |
  * |_____________________________________________________________|
  * 
  */
@@ -27,6 +28,7 @@ use Model\Schema\Schema;
  * @property Response $response
  * @property Request $request
  * @property Schema $schema
+ * @property Error $error
  * 
  * @method __construct(Request $request, Schema $schema, Response $response) Dependency injection
  * @method handleRequest(callable $handler): void
@@ -39,11 +41,13 @@ class Controller implements ControllerInterface
     protected ?Request $request = null;
     protected ?Schema $schema = null;
 
-    public function __construct(array $methods, Request $request, Response $response, Schema $schema = null)
+    public function __construct(array $methods, Request $request, Response $response, Error $error, Schema $schema = null)
     {
         try {
             $this->request = $request;
             $this->response = $response;
+            $this->error = $error;
+            $this->schema = $schema;
 
             // We set the authorized methods for the request
             $request->setAuthorizedMethods($methods);
@@ -55,7 +59,6 @@ class Controller implements ControllerInterface
             $endpoint = $request->getEndpoint();
 
             // We set the endpoint for the debugging purpose
-            $this->error = new Error();
             $this->error->setLocation($endpoint);
 
             // Middleware 1
@@ -80,14 +83,6 @@ class Controller implements ControllerInterface
                     ->setError("Données invalides.")
                     ->setCode(400)
                     ->setMessage("Les données envoyées ne sont pas valides : " . $error_message);
-            }
-
-            // Middleware 3
-            // We parse the client data with the schema
-            // The schema is optional. If no schema is provided, we don't parse the data
-            // Else we parse the client data with the schema
-            if ($schema) {
-                $this->schema = $schema;
             }
         } catch (Error $e) {
             $e->sendAndDie();
