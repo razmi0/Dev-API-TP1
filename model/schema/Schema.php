@@ -408,7 +408,7 @@ class Schema extends SchemaCore
         }, array_keys($this->schema), $this->schema), fn($value) => $value !== null);
 
         // Loop through the keys provided in the json data 
-        // The validationMap keys and the client data keys match
+        // The validationMap keys and the client data keys match (except for the particular case where the key is not required)
         // --
         foreach ($this->validationMap as $key => $rules) {
 
