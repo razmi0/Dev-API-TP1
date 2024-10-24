@@ -22,13 +22,13 @@ class Constant
         "name" => [
             "type" => "string",
             "range" => [1, 65],
-            "regex" => "/^[a-zA-Z0-9 ]+$/",
+            "regex" => "/^[a-zA-Z0-9-'%,.:\/&()|; ]+$/",
             "required" => true
         ],
         "description" => [
             "type" => "string",
             "range" => [1, 65000],
-            "regex" => "/^[a-zA-Z0-9 ]+$/",
+            "regex" => "/^[a-zA-Z0-9-'%,.:\/&()|; ]+$/",
             "required" => true
         ],
         "prix" => [
