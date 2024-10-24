@@ -19,10 +19,6 @@ try {
     // --
     $dao = new Connection();
 
-    // Set the PDO attributes
-    // --
-    $dao->setPDOAttributes();
-
     // Get the PDO object
     // --
     $pdo = $dao->getPDO();

@@ -11,7 +11,7 @@ use HTTP\Error;
 class Connection
 {
 
-    public $pdo = null;
+    private $pdo = null;
     private $host = "localhost:3306";
     private $username = "root";
     private $password = "";
@@ -25,9 +25,10 @@ class Connection
         $this->error = new Error();
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
+            $this->setPDOAttributes();
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            throw $this->error->e500("Service non disponible", [], "model/dao/Connection.php");
+            throw $this->error->HTTP500("Service non disponible", [], "model/dao/Connection.php");
         }
     }
 
