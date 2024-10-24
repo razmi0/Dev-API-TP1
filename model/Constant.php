@@ -45,7 +45,7 @@ class Constant
             "required" => false,
             "range" => [1, null],
             "regex" => "/^[0-9]+$/"
-        ]
+        ],
     ];
 
     public const DELETE_SCHEMA = [
