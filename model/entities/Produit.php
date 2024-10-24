@@ -43,9 +43,9 @@ class Produit
     {
         return new Produit(
             $data["id"] ?? null,
-            $data["name"],
-            $data["description"],
-            $data["prix"],
+            $data["name"] ?? null,
+            $data["description"] ?? null,
+            $data["prix"] ?? null,
             $data["date_creation"] ?? date("Y-m-d H:i:s"),
         );
     }
