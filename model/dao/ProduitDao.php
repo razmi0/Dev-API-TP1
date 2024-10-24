@@ -4,7 +4,7 @@ namespace Model\Dao;
 
 use Model\Entities\Produit as Produit;
 use Model\Dao\Connection as Connection;
-use Utils\Error as Error;
+use HTTP\Error as Error;
 use PDO;
 
 
@@ -127,16 +127,12 @@ class ProduitDao
             if (count($products_from_db) == 0) {
                 $this->error
                     ->setCode(404)
-                    ->setError("Aucun produit trouvé");
+                    ->setError("La base de données est vide");
                 throw $this->error;
             }
 
-            $produits = array_map(function ($product) {
-                return Produit::make($product)->toArray();
-            }, $products_from_db);
-
-            // If all went good, we will return the result
-            return $produits;
+            // We map the products from the database to a new array of products entities and return it to the controller
+            return array_map(fn($product) => Produit::make($product), $products_from_db);
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
@@ -278,7 +274,7 @@ class ProduitDao
      * @return array
      * 
      */
-    public function update($produit)
+    public function update(Produit $produit): int
     {
 
 
@@ -316,7 +312,7 @@ class ProduitDao
             }
 
             // If all went good, we will return the id of the last inserted product to the controller
-            return [["id" => $produit->id]];
+            return $produit->id;
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             throw $e;
