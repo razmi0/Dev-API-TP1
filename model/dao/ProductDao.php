@@ -186,11 +186,8 @@ class ProductDao
                 throw $this->error;
             }
 
-            // Create a new product object
-            $produit = Produit::make($result);
-
-            // If all went good, we will return the product to the controller
-            return $produit;
+            // Create a new product object and return it to the controller
+            return Produit::make($result);
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
