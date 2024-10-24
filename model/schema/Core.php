@@ -41,7 +41,6 @@ use Schema\Validator\{
      */
     IntegerRangeValidator,
     ArrayRangeValidator,
-    OptionalValidator,
     StringRangeValidator,
     /**
      * Validator interface
@@ -79,7 +78,7 @@ class Core
      * 
      * 
      */
-    private const complexConstraints = ["regex", "not_blank", "required", "optional"];
+    private const complexConstraints = ["regex", "not_blank", "required"];
     /**
      * 
      * 
@@ -197,8 +196,6 @@ class Core
                 return new RegexValidator($constraintValue);
             case "required":
                 return new RequiredValidator($constraintValue);
-            case "optional":
-                return new OptionalValidator($constraintValue);
         }
     }
 
@@ -221,10 +218,5 @@ class Core
             case "string":
                 return new StringRangeValidator($range);
         }
-    }
-
-    protected function getRequiredValidator(bool $isRequired): ValidatorInterface
-    {
-        return new RequiredValidator($isRequired);
     }
 }
