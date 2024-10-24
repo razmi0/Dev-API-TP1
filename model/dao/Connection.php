@@ -17,19 +17,17 @@ class Connection
     private $password = "";
     private $db_name = "db_labrest";
     private $table_name = "T_PRODUIT";
+    private ?Error $error = null;
 
 
     public function __construct()
     {
+        $this->error = new Error();
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
         } catch (PDOException $e) {
-            $error = new Error();
-            $error
-                ->setCode(500)
-                ->setError("Service non disponible")
-                ->setLocation("model/dao/Connection.php");
-            throw $error;
+            error_log($e->getMessage());
+            throw $this->error->e500("Service non disponible", [], "model/dao/Connection.php");
         }
     }
 
