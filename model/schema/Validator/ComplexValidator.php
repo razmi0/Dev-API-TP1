@@ -5,10 +5,6 @@ namespace Schema\Validator;
 use Schema\Validator\ValidatorInterface;
 use Schema\Validator\ValidatorResult;
 
-
-
-
-
 /**
  * 
  * Class NotBlankValidator
@@ -23,12 +19,10 @@ use Schema\Validator\ValidatorResult;
  */
 class NotBlankValidator implements ValidatorInterface
 {
+    private string $rule = "not_blank";
     /**
      * 
-     * 
-     * 
      * A value is not blank if it is not equal to a blank string, a blank array, false or null like in Symphony NotBlank constraint for forms.
-     * 
      * 
      */
     public function validate(mixed $value, string $key): ValidatorResult
@@ -37,6 +31,11 @@ class NotBlankValidator implements ValidatorInterface
             ? new ValidatorResult("not_blank", "not_blank", "blank", [$key], "Value cannot be blank")
             : new ValidatorResult("valid", "not_blank", "not_blank", [$key], "Value is not blank");
     }
+
+    public function getRule(): string
+    {
+        return $this->rule;
+    }
 }
 
 
@@ -44,6 +43,7 @@ class NotBlankValidator implements ValidatorInterface
 class RegexValidator implements ValidatorInterface
 {
     private string $pattern;
+    private string $rule = "regex";
 
     public function __construct(string $pattern)
     {
@@ -56,11 +56,17 @@ class RegexValidator implements ValidatorInterface
             ? new ValidatorResult("invalid_pattern", $this->pattern, $value, [$key], "Value does not match pattern")
             : new ValidatorResult("valid", $this->pattern, $value, [$key], "Value matches pattern");
     }
+
+    public function getRule(): string
+    {
+        return $this->rule;
+    }
 }
 
 class RequiredValidator implements ValidatorInterface
 {
     private bool $required;
+    private string $rule = "required";
 
     public function __construct(bool $required)
     {
@@ -72,20 +78,9 @@ class RequiredValidator implements ValidatorInterface
             ? new ValidatorResult("invalid_required", "required", "not defined", [$key], "Value is required")
             : new ValidatorResult("valid", "required", "defined", [$key], "Value is present");
     }
-}
 
-class OptionalValidator implements ValidatorInterface
-{
-    private bool $optional;
-
-    public function __construct(bool $optional)
+    public function getRule(): string
     {
-        $this->optional = $optional;
-    }
-    public function validate(mixed $value, string $key): ValidatorResult
-    {
-        return (is_null($value) && $this->optional)
-            ? new ValidatorResult("valid", "optional", "defined", [$key], "Value is optional")
-            : new ValidatorResult("invalid_optional", "optional", "not defined", [$key], "Value is not optional");
+        return $this->rule;
     }
 }

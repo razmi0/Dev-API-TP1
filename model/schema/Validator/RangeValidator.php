@@ -25,15 +25,13 @@ use Schema\Validator\ValidatorInterface as ValidatorInterface;
 
 /**
  * 
- * 
  * class RangeValidator
  * 
  * A class that represents the range validation logic.
- * 
- * 
  */
 class RangeValidator
 {
+
     /**
      * 
      * 
@@ -164,6 +162,7 @@ class RangeValidator
  */
 class IntegerRangeValidator extends RangeValidator implements ValidatorInterface
 {
+    private string $rule = "range";
 
     public function __construct(array $range)
     {
@@ -193,20 +192,23 @@ class IntegerRangeValidator extends RangeValidator implements ValidatorInterface
             return $this->noRangeResult($value, $key);
         }
     }
+
+    public function getRule(): string
+    {
+        return $this->rule;
+    }
 }
 
 /**
  * 
- * 
  * class ArrayRangeValidator
  * 
- * 
  * A class that represents the array range validation logic.
- * 
  * 
  */
 class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
 {
+    private string $rule = "range";
 
     public function __construct($range)
     {
@@ -215,10 +217,7 @@ class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
 
     /**
      * 
-     * 
      * An array is in range if it has a number of elements greater than or equal to the minimum value and less than or equal to the maximum value.
-     * 
-     * 
      * 
      */
     public function validate(mixed $value, string $key): ValidatorResult
@@ -238,6 +237,11 @@ class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
             return $this->noRangeResult($count, $key);
         }
     }
+
+    public function getRule(): string
+    {
+        return $this->rule;
+    }
 }
 
 /**
@@ -252,6 +256,7 @@ class ArrayRangeValidator extends RangeValidator implements ValidatorInterface
  */
 class StringRangeValidator extends RangeValidator implements ValidatorInterface
 {
+    private string $rule = "range";
 
     public function __construct($range)
     {
@@ -281,5 +286,10 @@ class StringRangeValidator extends RangeValidator implements ValidatorInterface
         } else if ($this->noRange()) {
             return $this->noRangeResult($size, $key);
         }
+    }
+
+    public function getRule(): string
+    {
+        return $this->rule;
     }
 }
