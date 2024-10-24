@@ -2,7 +2,6 @@
 
 require_once "../../Autoloader.php";
 
-
 use HTTP\Request;
 use HTTP\Response;
 use Model\Constant;
@@ -11,48 +10,33 @@ use Controller\Controller;
 use Model\Dao\ProduitDao;
 use Model\Entities\Produit;
 
-
-// Start the controller with the Request and Response objects
-$controller = new Controller(
-    [
-        "POST"
-    ],
+new Controller(
     new Request([
+        "methods" => ["POST"],
         "endpoint" => "/api/v1/creer.php",
     ]),
     new Response([
         "code" => 201,
         "message" => "Produit créé avec succès",
     ]),
-    new Schema(Constant::PRODUCT_CREATE_SCHEMA)
+    new Schema(
+        Constant::PRODUCT_CREATE_SCHEMA
+    ),
+    function () {
+
+        // Get the decoded client data
+        $client_data = $this->request->getClientDecodedData();
+
+        //Create a new product
+        $newProduct = Produit::make($client_data);
+
+        // Connect to the database
+        $produitDao = new ProduitDao();
+
+        // Create product in db and catch the inserted ID from the database
+        $insertedID = $produitDao->create($newProduct);
+
+        // Cast the id to integer and return the inserted ID to controller
+        return ["id" => intval($insertedID)];
+    },
 );
-
-// Handle the request with Request and Response in handleRequest closure and add the product schema
-$controller->handleRequest(function () {
-
-    // Get the client data
-    $client_data = $this->request->getClientDecodedData();
-
-    // Parse the client data with the schema
-    $data_parsed = $this->schema->safeParse($client_data);
-
-    // If the client data is invalid, throw an error
-    if ($data_parsed->getHasError()) {
-        throw $this->error
-            ->setCode(400)
-            ->setError("Données invalides")
-            ->setData($data_parsed->getErrorResults());
-    }
-
-    //Create a new product
-    $newProduct = Produit::make($client_data);
-
-    // Connect to the database
-    $produitDao = new ProduitDao();
-
-    // Catch the inserted ID from the database
-    $insertedID = $produitDao->create($newProduct);
-
-    // Return the inserted ID
-    return ["id" => intval($insertedID)];
-});
