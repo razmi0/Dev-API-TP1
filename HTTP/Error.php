@@ -3,7 +3,7 @@
 namespace HTTP;
 
 use Exception;
-
+use Utils\Console;
 
 /**
  * Class Error
@@ -64,41 +64,18 @@ class Error extends Exception
         return $this;
     }
 
-
-
-    public static function joinErrorLogs($array)
-    {
-        $reduced = "\n" . array_reduce($array, function ($acc, $str) {
-            return $acc . $str["label"] . ": " . json_encode($str["value"],  JSON_UNESCAPED_UNICODE) . "\n";
-        }, "");
-        return $reduced;
-    }
-
-    private function formatConsoleError()
-    {
-        $strs = [
-            ["label" => "[LOCATION] ", "value" => $this->location],
-            ["label" => "[MESSAGE]  ", "value" => $this->message],
-            ["label" => "[ERROR]    ", "value" => $this->error],
-            ["label" => "[DATA]     ", "value" => $this->data],
-            ["label" => "[CODE]     ", "value" => $this->code]
-        ];
-
-        $log = self::joinErrorLogs($strs);
-
-        return $log;
-    }
-
     public function sendAndDie()
     {
-        error_log($this->formatConsoleError());
+        Console::log($this->location, $this->message, $this->error, $this->data, $this->code);
         header("Content-Type: application/json; charset=UTF-8");
-        http_response_code($this->code);
-        echo json_encode([
+
+        $payload = json_encode([
             "message" => $this->message,
             "data" => $this->data,
             "error" => $this->error
         ]);
+        http_response_code($this->code);
+        echo $payload;
         die();
     }
 }

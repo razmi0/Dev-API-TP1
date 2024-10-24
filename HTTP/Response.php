@@ -2,6 +2,9 @@
 
 namespace HTTP;
 
+require_once "../../Autoloader.php";
+
+use Utils\Console;
 
 class Response
 {
@@ -13,12 +16,14 @@ class Response
     private string  $origin = "*";
     private array $methods = ["GET"];
     private int $age = 3600;
+    private string $location = "";
 
 
     public function __construct($response)
     {
         $this->code = $response["code"];
         $this->message = $response["message"];
+
         $this->content_type = $response["headers"]["content_type"] ?? "application/json";
         $this->origin = $response["headers"]["origin"] ?? "*";
         $this->methods = $response["headers"]["methods"] ?? ["GET"];
@@ -46,6 +51,12 @@ class Response
     public function setError($error)
     {
         $this->error = $error;
+        return $this;
+    }
+
+    public function setLocation($location)
+    {
+        $this->location = $location;
         return $this;
     }
 
@@ -85,9 +96,15 @@ class Response
         header("Access-Control-Age: " . $this->age);
         header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-        http_response_code($this->code);
+        Console::log($this->location, $this->message, $this->error, $this->data, $this->code);
 
-        echo json_encode(["message" => $this->message, "data" => $this->data ?? [], "error" => $this->error]);
+        $payload = json_encode([
+            "message" => $this->message,
+            "data" => $this->data ?? [],
+            "error" => $this->error
+        ]);
+        http_response_code($this->code);
+        echo $payload;
         die();
     }
 }
