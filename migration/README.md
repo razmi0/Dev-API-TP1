@@ -1,6 +1,6 @@
 # MIGRATION CMD
 
-This node cmd call a public api, get the data, transform it and sent it to TP1 db_labrest using local API.
+This node cmd call a public api, get the data, transform it and sent it to TP1 db_labrest using php local API.
 You can change the public API, the local API, the limit of data fetched here: [const.ts](./source/const.ts). Default values are:
 
 ```typescript
