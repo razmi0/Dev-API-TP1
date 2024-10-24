@@ -43,8 +43,9 @@ class Controller implements ControllerInterface
      */
     protected $handler;
 
-    public function __construct(Request $request, Response $response, Schema $schema = null, callable $handler)
+    public function __construct(Request $request, Response $response, Schema $schema = null, callable $handler, ...$args)
     {
+        // ...args is a placeholder for future use ( chaining middlewares, handlers ? etc )
         try {
             $this->request = $request;
             $this->response = $response;
@@ -63,29 +64,29 @@ class Controller implements ControllerInterface
             $this->error->setLocation($endpoint);
             $this->response->setLocation($endpoint);
 
-            // Middleware 1
+            /**
+             * Middleware 1
+             * */
             // We check if the method is authorized
             // If the method is not authorized, we throw an error and send it to the client
             if ($request->is_methods_not_authorized()) {
                 $error_message = "Seules les méthodes suivantes sont autorisées : " . implode(", ", $methods);
-                throw $this->error
-                    ->setError("Méthode non autorisée.")
-                    ->setCode(405)
-                    ->setMessage($error_message);
+                throw $this->error->HTTP405($error_message, [], $endpoint);
             }
 
-            // Middleware 2
+            /**
+             * Middleware 2
+             * */
             // We check if the client data is a valid JSON
             // If the data is not a valid JSON, we throw an error with the JSON error message and send it to the client
             if (!$request->getIsValidJson()) {
                 $error_message = $request->getJsonErrorMsg();
-                throw $this->error
-                    ->setError("Json invalide")
-                    ->setCode(400)
-                    ->setMessage("Le json est malformé : " . $error_message);
+                throw $this->error->HTTP400("Données invalides " . $error_message, [], $endpoint);
             }
 
-            // Middleware 3
+            /**
+             * Middleware 3
+             * */
             // We check if a schema is defined
             // If a schema is defined, we parse the client data with the schema
             // If the client data is invalid against the schema, we throw an error and send it to the client
@@ -93,10 +94,7 @@ class Controller implements ControllerInterface
                 $client_data = $request->getDecodedBody();
                 $data_parsed = $schema->safeParse($client_data);
                 if ($data_parsed->getHasError()) {
-                    throw $this->error
-                        ->setCode(400)
-                        ->setError("Données invalides")
-                        ->setData($data_parsed->getErrorResults());
+                    throw $this->error->HTTP400("Données invalides", $data_parsed->getErrorResults(), $endpoint);
                 }
             }
 

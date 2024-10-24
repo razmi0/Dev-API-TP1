@@ -29,12 +29,7 @@ new Controller(
 
         // If the id is not present in the query or in the body, throw an error
         if (!$idInQuery && !$idInBody) {
-            $error_message =
-                "Veuillez envoyer l'id du produit à rechercher. Vous pouvez envoyer l'id par le corps de la requête ou par l'url. L'id par l'url est prioritaire.";
-            throw $this->error
-                ->setCode(400)
-                ->setError("Requête invalide")
-                ->setMessage($error_message);
+            throw $this->error->HTTP400("Aucun id de produit n'a été fourni dans la requête.");
         }
 
         // Get the id and cast it to an integer

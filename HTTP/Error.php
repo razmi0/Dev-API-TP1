@@ -78,4 +78,73 @@ class Error extends Exception
         echo $payload;
         die();
     }
+
+    public static function HTTP404(string $msg, array $payload = [], string $location = null)
+    {
+        $error = new Error();
+        $error->setCode(404)
+            ->setLocation($location)
+            ->setMessage($msg)
+            ->setError("Page non trouvée")
+            ->setData($payload)
+            ->sendAndDie();
+    }
+
+    public static function HTTP405(string $msg, array $payload = [], string $location = null)
+    {
+        $error = new Error();
+        $error->setCode(405)
+            ->setLocation($location)
+            ->setMessage($msg)
+            ->setError("Méthode non autorisée")
+            ->setData($payload)
+            ->sendAndDie();
+    }
+
+    public static function HTTP400(string $msg, array $payload = [], string $location = null)
+    {
+        $error = new Error();
+        $error->setCode(400)
+            ->setLocation($location)
+            ->setMessage($msg)
+            ->setError("Requête invalide")
+            ->setData($payload)
+            ->sendAndDie();
+    }
+
+    public static function HTTP500(string $msg, array $payload = [], string $location = null)
+    {
+        $error = new Error();
+        $error->setCode(500)
+            ->setLocation($location)
+            ->setMessage($msg)
+            ->setError("Erreur interne")
+            ->setData($payload)
+            ->sendAndDie();
+    }
+
+    // No modification
+
+
+    public static function HTTP204(string $msg, array $payload = [], string $location = null)
+    {
+        $error = new Error();
+        $error->setCode(204)
+            ->setLocation($location)
+            ->setMessage($msg)
+            ->setError("Aucun contenu")
+            ->setData($payload)
+            ->sendAndDie();
+    }
+
+    public static function HTTP503(string $msg, array $payload = [], string $location = null)
+    {
+        $error = new Error();
+        $error->setCode(503)
+            ->setLocation($location)
+            ->setMessage($msg)
+            ->setError("Service non disponible")
+            ->setData($payload)
+            ->sendAndDie();
+    }
 }

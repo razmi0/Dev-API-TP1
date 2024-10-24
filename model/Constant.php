@@ -72,19 +72,19 @@ class Constant
             "type" => "string",
             "range" => [1, 65],
             "regex" => self::NAME_REGEX,
-            "required" => false
+            "required" => true
         ],
         "description" => [
             "type" => "string",
             "range" => [1, 65000],
             "regex" => self::DESCRIPTION_REGEX,
-            "required" => false
+            "required" => true
         ],
         "prix" => [
             "type" => "double",
             "range" => [0, null],
             "regex" => self::PRICE_REGEX,
-            "required" => false
+            "required" => true
         ]
     ];
 }
