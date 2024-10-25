@@ -14,7 +14,6 @@ class ProductDao
     private ?PDO $pdo = null;
     private ?Connection $connection = null;
     private ?Error $error = null;
-    private const columns = ["id", "name", "description", "prix", "date_creation"];
 
     public function __construct()
     {
