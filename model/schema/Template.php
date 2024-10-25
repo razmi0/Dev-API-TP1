@@ -61,7 +61,7 @@ class Template
      * 
      * 
      */
-    private const ALLOWED_TYPES = ['null', 'string', 'double', 'integer', 'array'];
+    private const ALLOWED_TYPES = ['null', 'string', 'double', 'integer', 'array', 'boolean', 'object', "string[]", "double[]", "integer[]", "null[]"];
     /**
      * 
      * 
@@ -69,7 +69,7 @@ class Template
      * 
      * 
      */
-    private const OPTIONAL_KEYS = ['range', 'regex', 'optional'];
+    private const OPTIONAL_KEYS = ['range', 'regex', 'required'];
 
     /**
      * 
