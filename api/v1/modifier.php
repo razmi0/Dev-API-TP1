@@ -10,7 +10,6 @@ use Model\Schema\Schema;
 use Controller\Controller;
 use Model\Dao\ProductDao;
 use Model\Entities\Produit;
-use HTTP\Error;
 
 // Start the controller with the Request and Response objects
 $controller = new Controller(
