@@ -77,7 +77,7 @@ class Curl
         $allOptSuccess = curl_setopt_array($this->ch, [
             CURLOPT_CUSTOMREQUEST => $options["method"],
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POSTFIELDS => $options["data"] ?? "",
+            CURLOPT_POSTFIELDS => array_key_exists("data", $options) ? $options["data"] ?? "" : "",
             CURLOPT_HTTPHEADER => $headers,
         ]);
 
