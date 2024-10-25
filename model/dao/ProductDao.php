@@ -310,10 +310,10 @@ class ProductDao
      * @return Product[]
      * 
      */
-    public function findSomeById(array $ids): array
+    public function findManyById(array $ids): array
     {
         try {
-            $this->error->setLocation("model/dao/ProductDao.php-> findSomeById");
+            $this->error->setLocation("model/dao/ProductDao.php-> findManyById");
 
             // Build the query
             $query = "SELECT * FROM " . $this->connection->getTableName() . " WHERE id IN (";
@@ -339,7 +339,7 @@ class ProductDao
 
             // If no product was found, we send a response with a 404 status code and an error message
             if (!$result) {
-                throw $this->error->HTTP404("Aucun produit trouvé", ["ids" => $ids], "model/dao/ProductDao.php-> findSomeById");
+                throw $this->error->HTTP404("Aucun produit trouvé", ["ids" => $ids], "model/dao/ProductDao.php-> findManyById");
             }
 
             // We map the products from the database to a new array of products entities and return it to the controller

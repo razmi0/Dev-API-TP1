@@ -41,7 +41,7 @@ new Controller(
         $dao = new ProductDao();
 
         // Get the product from the database
-        $products = $dao->findSomeById($ids);
+        $products = $dao->findManyById($ids);
 
         return ["products" => array_map(fn($product) => $product->toArray(), $products)];
     }
