@@ -21,15 +21,12 @@ new Controller(
     // No client data expected on this endpoint so no schema validation step is needed
     null,
     function () {
-        // Set the error location for debugging purpose
-        $this->error->setLocation("/api/v1/lire.php");
-
         // Create a new ProductDao object
         $ProductDao = new ProductDao();
 
         // Get all products from the database
         /**
-         * @var Produit[] $allProducts
+         * @var Product[] $allProducts
          */
         $allProducts = $ProductDao->findAll();
 

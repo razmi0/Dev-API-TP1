@@ -24,9 +24,6 @@ $controller = new Controller(
     ]),
     new Schema(Constant::UPDATE_SCHEMA),
     function () {
-        // Set the error location for debugging purpose
-        $this->error->setLocation("/api/v1/modifier.php");
-
         // Get the client data
         $client_data = $this->request->getDecodedBody();
 
