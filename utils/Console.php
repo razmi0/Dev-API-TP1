@@ -42,4 +42,11 @@ class Console
 
         error_log($log);
     }
+
+    public static function write(mixed $data): void
+    {
+        echo "<pre>";
+        var_export($data, true);
+        echo "</pre>";
+    }
 }
