@@ -72,3 +72,10 @@ DROP TABLE T_PRODUIT
 TRUNCATE TABLE T_PRODUIT
 
 ```
+
+## Get multiples ids
+
+```sql
+SELECT * FROM table
+WHERE id IN (1, 2, 3, 4, 5)
+```
