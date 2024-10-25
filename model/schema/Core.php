@@ -19,6 +19,7 @@ namespace Model\Schema;
 require_once 'Validator/TypeValidator.php';
 require_once 'Validator/ComplexValidator.php';
 require_once 'Validator/RangeValidator.php';
+require_once 'Validator/ArrayValidator.php';
 require_once 'Validator/ValidatorInterface.php';
 
 use Schema\Validator\{
@@ -43,67 +44,59 @@ use Schema\Validator\{
     ArrayRangeValidator,
     StringRangeValidator,
     /**
+     * Typed array validators
+     */
+    ArrayStringValidator,
+    ArrayDoubleValidator,
+    ArrayIntegerValidator,
+    ArrayNullValidator,
+    /**
      * Validator interface
      */
-    ValidatorInterface,
+    ValidatorInterface
 };
 
 /**
  * 
- * 
- * 
- * 
  * Class Core
- * 
  * Schema core logic for building the validation map.
  * 
  * @package Schema
  * @author Cuesta Thomas
  * @version 1.0
  * 
- * 
- * 
- * @todo Move rules to an ValidatorInterface[] to avoid switch case and better scalability when adding rules ?
- * 
- * 
- * 
  */
 class Core
 {
     /**
      * 
-     * 
      * All the complex constraints.
-     * 
-     * 
      * 
      */
     private const complexConstraints = ["regex", "not_blank", "required"];
     /**
      * 
-     * 
      * All the range constraints.
-     * 
-     * 
      * 
      */
     private const rangeConstraints = ["range"];
 
     /**
      * 
-     * 
      * All the type constraints.
-     * 
-     * 
      * 
      */
     private const typeConstraints = ["string", "double", "integer", "array", "null"];
 
     /**
      * 
+     * All the typed arrays.
+     * 
+     */
+    private const typedArrays = ["string[]", "double[]", "integer[]", "null[]"];
+    /**
      * 
      * Is the constraint a complex constraint ?
-     * 
      * 
      */
     protected function isComplex(string $constraint): bool
@@ -113,9 +106,7 @@ class Core
 
     /**
      * 
-     * 
      * Is the constraint a range constraint ?
-     * 
      * 
      */
     protected function isRange(string $constraint): bool
@@ -125,9 +116,7 @@ class Core
 
     /**
      * 
-     * 
      * Is the constraint a type constraint ?
-     * 
      * 
      */
     protected function isType(string $constraint): bool
@@ -137,12 +126,17 @@ class Core
 
     /**
      * 
+     * Is the constraint a typed array ?
      * 
-     * 
+     */
+    protected function isTypedArray(string $constraint): bool
+    {
+        return in_array($constraint, self::typedArrays);
+    }
+
+    /**
      * 
      * Get all the constraints as an array for information.
-     * 
-     * 
      * 
      */
     public function getConstraints(): array
@@ -150,14 +144,13 @@ class Core
         return [
             "complex" => self::complexConstraints,
             "range" => self::rangeConstraints,
-            "type" => self::typeConstraints
+            "type" => self::typeConstraints,
+            "typed_array" => self::typedArrays
         ];
     }
     /**
      * 
-     * 
      * Type rules are processed here : string, double, integer, array, null
-     * 
      * 
      */
     protected function processTypeRules(string $constraintValue): ValidatorInterface
@@ -182,9 +175,7 @@ class Core
 
     /**
      * 
-     * 
      * Complex rules are processed here : notBlank
-     * 
      * 
      */
     protected function processComplexRules(string $constraint, mixed $constraintValue): ValidatorInterface
@@ -201,9 +192,7 @@ class Core
 
     /**
      * 
-     * 
      * Range rules are processed here : integer, double, array, string
-     * 
      * 
      */
     protected function processRangeRules(array $range, string $type): ValidatorInterface
@@ -217,6 +206,25 @@ class Core
                 return new ArrayRangeValidator($range);
             case "string":
                 return new StringRangeValidator($range);
+        }
+    }
+
+    /**
+     * 
+     * Typed array rules are processed here : string[], double[], integer[], null[]
+     * 
+     */
+    protected function processTypedArrayRules(string $constraintValue): ValidatorInterface
+    {
+        switch ($constraintValue) {
+            case "string[]":
+                return new ArrayStringValidator();
+            case "double[]":
+                return new ArrayDoubleValidator();
+            case "integer[]":
+                return new ArrayIntegerValidator();
+            case "null[]":
+                return new ArrayNullValidator();
         }
     }
 }
