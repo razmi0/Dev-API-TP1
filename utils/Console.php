@@ -46,7 +46,7 @@ class Console
     public static function write(mixed $data): void
     {
         echo "<pre>";
-        var_export($data, true);
+        var_export($data, false);
         echo "</pre>";
     }
 }
