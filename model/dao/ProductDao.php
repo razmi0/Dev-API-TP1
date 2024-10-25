@@ -95,7 +95,7 @@ class ProductDao
      * @return Product[]
      * 
      */
-    public function findAll()
+    public function findAll(int $limit = null): array
     {
 
         try {
@@ -103,11 +103,17 @@ class ProductDao
 
             // Build the query
             $query = "SELECT * FROM " . $this->connection->getTableName() . " ORDER BY date_creation DESC";
+            $query .= $limit ? " LIMIT :limit" : "";
 
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
                 throw $this->error;
+            }
+
+            // Bind the parameters
+            if ($limit) {
+                $prepared->bindParam(':limit', $limit, PDO::PARAM_INT);
             }
 
             // Verify the execution of the query

@@ -43,6 +43,15 @@ class Constant
         ]
     ];
 
+    public const READ_ALL = [
+        "limit" => [
+            "type" => "integer",
+            "required" => false,
+            "range" => [1, null],
+            "regex" => self::ID_REGEX
+        ]
+    ];
+
     public const READ_ONE_SCHEMA = [
         "id" => [
             "type" => "integer",
