@@ -11,15 +11,16 @@ use PDO;
 
 class ProductDao
 {
-    private $pdo;
-    private $error;
+    private ?PDO $pdo = null;
+    private ?Connection $connection = null;
+    private ?Error $error = null;
 
     public function __construct()
     {
         try {
 
-            $connection = new Connection();
-            $this->pdo = $connection->getPDO();
+            $this->connection = new Connection();
+            $this->pdo = $this->connection->getPDO();
             $this->error = new Error();
         } catch (Error $e) {
             throw $e;
@@ -232,9 +233,9 @@ class ProductDao
             $prix = $produit->getPrix();
 
             $prepared->bindParam(':id', $id, PDO::PARAM_INT);
-            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
-            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
-            $prepared->bindParam(':prix', $prix, PDO::PARAM_INT);
+            $prepared->bindParam(':name', $name);
+            $prepared->bindParam(':description', $description);
+            $prepared->bindValue(':prix', $prix);
         } catch (Error $e) {
             $this->error->setLocation("model/dao/ProductDao.php-> bindParamsUpdate");
             throw $e;
@@ -253,23 +254,18 @@ class ProductDao
     public function update(Produit $produit): int
     {
 
-
         try {
-
-
-            $this->error
-                ->setLocation("model/dao/ProductDao.php-> update")
-                ->setMessage("Erreur lors de la modification du produit");
 
             $product_id = $produit->getId();
 
+            $error = ["Erreur lors de la mise à jour du produit", ["id" => $product_id], "model/dao/ProductDao.php -> update"];
             // Database Access step ( build the query, prepare it, execute it and return the result )
-            $query = "UPDATE T_PRODUIT SET name = :name, description = :description, prix = :prix WHERE id = :id";
+            $query =  $this->buildQuery($produit);
 
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw $this->error;
+                throw $this->error->HTTP500(...$error);
             }
 
             // Bind the parameters
@@ -278,7 +274,7 @@ class ProductDao
             // Verify the execution of the query
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw $this->error;
+                throw $this->error->HTTP500(...$error);
             }
             $affectedRows = $prepared->rowCount();
 
@@ -292,5 +288,24 @@ class ProductDao
             // If an error was catch, we send an informative error message back to the controller
             throw $e;
         }
+    }
+
+    private function buildQuery(Produit $produit): string
+    {
+        $query = "UPDATE T_PRODUIT SET ";
+
+        if (!empty($produit->getProductName()))
+            $query .= "name = :name, ";
+
+        if (!empty($produit->getDescription()))
+            $query .= "description = :description, ";
+
+        if (!empty($produit->getPrix()))
+            $query .= "prix = :prix ";
+
+        $query = rtrim($query, ", ");
+        $query .= " WHERE id = :id";
+
+        return $query;
     }
 }
