@@ -110,11 +110,12 @@ class Controller implements ControllerInterface
         // We provide and bind all the necessary data to a new Closure (a callback, an instance and a scope)
         $binded_handler = Closure::bind(
             /**
-             * the handler provided by the Controller consumer
+             * the callback provided by the Controller consumer
              */
             $this->handler,
             /**
-             * $this is the new this of the closure $handler and has all the necessary data (request, response, schema, error)
+             * $this is the new this of the closure $handler.
+             * This makes the controller's properties available in the closure ( $this->request, $this->response, $this->error, $this->schema ) 
              */
             $this,
             /**

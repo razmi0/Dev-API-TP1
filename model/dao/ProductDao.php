@@ -2,7 +2,7 @@
 
 namespace Model\Dao;
 
-use Model\Entities\Produit as Produit;
+use Model\Entities\Product as Product;
 use Model\Dao\Connection as Connection;
 use HTTP\Error as Error;
 use PDO;
@@ -29,7 +29,7 @@ class ProductDao
     }
 
     /**
-     * @param Produit $produit
+     * @param Product $produit
      * @throws Error 
      * @return string $insertedId
      */
@@ -92,7 +92,7 @@ class ProductDao
      * 
      * @description Find all products
      * @throws Error
-     * @return Produit[]
+     * @return Product[]
      * 
      */
     public function findAll()
@@ -123,7 +123,7 @@ class ProductDao
             }
 
             // We map the products from the database to a new array of products entities and return it to the controller
-            return array_map(fn($product) => Produit::make($product), $products_from_db);
+            return array_map(fn($product) => Product::make($product), $products_from_db);
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
@@ -135,10 +135,10 @@ class ProductDao
      * 
      * @param $id
      * @throws Error
-     * @return Produit
+     * @return Product
      * 
      */
-    public function findById(int $id): Produit
+    public function findById(int $id): Product
     {
 
 
@@ -172,7 +172,7 @@ class ProductDao
             }
 
             // Create a new product object and return it to the controller
-            return Produit::make($result);
+            return Product::make($result);
         } catch (Error $e) {
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
@@ -221,12 +221,12 @@ class ProductDao
 
     /**
      * 
-     * @param Produit $produit
+     * @param Product $produit
      * @throws Error
      * @return array
      * 
      */
-    public function update(Produit $produit): int
+    public function update(Product $produit): int
     {
 
         try {
@@ -289,6 +289,53 @@ class ProductDao
             return $id;
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
+            throw $e;
+        }
+    }
+
+    /**
+     * 
+     * @param array $ids
+     * @throws Error
+     * @return Product[]
+     * 
+     */
+    public function findSomeById(array $ids): array
+    {
+        try {
+            $this->error->setLocation("model/dao/ProductDao.php-> findSomeById");
+
+            // Build the query
+            $query = "SELECT * FROM " . $this->connection->getTableName() . " WHERE id IN (";
+
+            // We build the query with the number of ids
+            $query .= implode(",", array_fill(0, count($ids), "?"));
+            $query .= ")";
+
+            // Verify the preparation of the query
+            $prepared = $this->pdo->prepare($query);
+            if (!$prepared) {
+                throw $this->error;
+            }
+
+            // Verify the execution of the query
+            $stmt = $prepared->execute($ids);
+            if (!$stmt) {
+                throw $this->error;
+            }
+
+            // Fetch the result
+            $result = $prepared->fetchAll();
+
+            // If no product was found, we send a response with a 404 status code and an error message
+            if (!$result) {
+                throw $this->error->HTTP404("Aucun produit trouvé", ["ids" => $ids], "model/dao/ProductDao.php-> findSomeById");
+            }
+
+            // We map the products from the database to a new array of products entities and return it to the controller
+            return Product::makeBulk($result);
+        } catch (Error $e) {
+            // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
         }
     }

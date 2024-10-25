@@ -9,7 +9,7 @@ use Model\Constant;
 use Model\Schema\Schema;
 use Controller\Controller;
 use Model\Dao\ProductDao;
-use Model\Entities\Produit;
+use Model\Entities\Product;
 
 // Start the controller with the Request and Response objects
 $controller = new Controller(
@@ -24,10 +24,13 @@ $controller = new Controller(
     ]),
     new Schema(Constant::UPDATE_SCHEMA),
     function () {
+        // Set the error location for debugging purpose
+        $this->error->setLocation("/api/v1/modifier.php");
+
         // Get the client data
         $client_data = $this->request->getDecodedBody();
 
-        $product = Produit::make($client_data);
+        $product = Product::make($client_data);
 
         $productDao = new ProductDao();
 

@@ -8,7 +8,7 @@ use Model\Constant;
 use Model\Schema\Schema;
 use Controller\Controller;
 use Model\Dao\ProductDao;
-use Model\Entities\Produit;
+use Model\Entities\Product;
 
 new Controller(
     new Request([
@@ -23,12 +23,14 @@ new Controller(
         Constant::PRODUCT_CREATE_SCHEMA
     ),
     function () {
+        // Set the error location for debugging purpose
+        $this->error->setLocation("/api/v1/creer.php");
 
         // Get the decoded client data
         $client_data = $this->request->getDecodedBody();
 
         //Create a new product
-        $newProduct = Produit::make($client_data);
+        $newProduct = Product::make($client_data);
 
         // Connect to the database
         $ProductDao = new ProductDao();

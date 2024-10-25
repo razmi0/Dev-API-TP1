@@ -6,7 +6,7 @@ use HTTP\Request;
 use HTTP\Response;
 use Controller\Controller;
 use Model\Dao\ProductDao;
-use Model\Entities\Produit;
+use Model\Entities\Product;
 
 // Start the controller with the Request and Response objects
 new Controller(
@@ -21,6 +21,8 @@ new Controller(
     // No client data expected on this endpoint so no schema validation step is needed
     null,
     function () {
+        // Set the error location for debugging purpose
+        $this->error->setLocation("/api/v1/lire.php");
 
         // Create a new ProductDao object
         $ProductDao = new ProductDao();

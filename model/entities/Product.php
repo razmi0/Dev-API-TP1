@@ -3,7 +3,7 @@
 namespace Model\Entities;
 
 /**
- * Class Produit
+ * Class Product
  * @property string $id
  * @property string $name
  * @property string $description
@@ -22,7 +22,7 @@ namespace Model\Entities;
  * @method setDateCreation(string $date_creation)
  * @method toArray()
  */
-class Produit
+class Product
 {
     private $id = null;
     private $name = null;
@@ -39,15 +39,30 @@ class Produit
         $this->date_creation = $date_creation;
     }
 
-    public static function make(array $data): Produit
+    public static function make(array $data): Product
     {
-        return new Produit(
+        return new Product(
             $data["id"] ?? null,
             $data["name"] ?? null,
             $data["description"] ?? null,
             $data["prix"] ?? null,
             $data["date_creation"] ?? date("Y-m-d H:i:s"),
         );
+    }
+
+    public static function makeBulk(array $data): array
+    {
+        $products = [];
+        foreach ($data as $product) {
+            $products[] = new Product(
+                $product["id"] ?? null,
+                $product["name"] ?? null,
+                $product["description"] ?? null,
+                $product["prix"] ?? null,
+                $product["date_creation"] ?? date("Y-m-d H:i:s"),
+            );
+        }
+        return $products;
     }
 
 

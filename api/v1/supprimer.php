@@ -23,6 +23,8 @@ $controller = new Controller(
     ]),
     new Schema(Constant::DELETE_SCHEMA),
     function () {
+        // Set the error location for debugging purpose
+        $this->error->setLocation("/api/v1/supprimer.php");
 
         // Get the id from the body
         $id = $this->request->getDecodedBody("id");

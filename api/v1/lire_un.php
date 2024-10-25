@@ -20,6 +20,8 @@ new Controller(
     ]),
     new Schema(Constant::READ_ONE_SCHEMA),
     function () {
+        // Set the error location for debugging purpose
+        $this->error->setLocation("/api/v1/lire_un.php");
 
         // Get the id from the query
         $idInQuery = $this->request->getQueryParam("id");
