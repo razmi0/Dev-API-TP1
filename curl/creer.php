@@ -9,9 +9,6 @@ require_once "Autoloader.php";
 
 use Curl\Curl;
 
-// The endpoint
-const ENDPOINT = "create";
-
 // The minimum and maximum id
 $name = "Product name";
 $description = "Product description";

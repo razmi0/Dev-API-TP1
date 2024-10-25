@@ -9,9 +9,6 @@ require_once "Autoloader.php";
 
 use Curl\Curl;
 
-// The endpoint
-const ENDPOINT = "delete";
-
 // The minimum and maximum id
 const MIN_ID = 1;
 const MAX_ID = 200;
