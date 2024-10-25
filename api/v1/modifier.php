@@ -24,8 +24,6 @@ $controller = new Controller(
     ]),
     new Schema(Constant::UPDATE_SCHEMA),
     function () {
-
-
         // Get the client data
         $client_data = $this->request->getDecodedBody();
 
