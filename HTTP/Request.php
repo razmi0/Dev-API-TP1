@@ -207,7 +207,7 @@ class Request
         return array_map(fn($key) => isset($this->$key), $keys);
     }
 
-    public function getQueryParam($key): string
+    public function getQueryParam($key): string | null | array
     {
         return $this->query_params[$key] ?? "";
     }
