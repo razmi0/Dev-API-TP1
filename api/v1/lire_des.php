@@ -19,7 +19,7 @@ new Controller(
         "code" => 200,
         "message" => "Produits trouvés",
     ]),
-    null,
+    new Schema(Constant::READ_MANY_SCHEMA),
     function () {
         // Get the ids from the query as an associative array
         $idsInQuery = $this->request->getQueryParam("id");

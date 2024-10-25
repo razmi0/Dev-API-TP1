@@ -87,4 +87,11 @@ class Constant
             "required" => false
         ]
     ];
+
+    public const READ_MANY_SCHEMA = [
+        "id" => [
+            "type" => "integer[]",
+            "required" => false,
+        ]
+    ];
 }
