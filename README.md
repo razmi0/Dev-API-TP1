@@ -12,27 +12,24 @@ TP1 :
 
 - [x] (#1)Remplacer mysqli par PDO
 - [x] (#2)Incorporer dans mon entité un validateur pour les setters
-  - Note : un service a été créé [ici](./model/services/ProduitService.php)
-- [ ] choose a better type for the id and the date in the entity
-- [x] add message properties to json response object
-  - Note : une classe Response a été créée [ici](./utils/Response.php)
-  - Reserver la manipulation de Reponse à la classe Controller
-- [ ] (#3)Lisser les commentaires
-- [ ] (#4) Reflechir a refactoriser Controller
-- [ ] (#5) Nouveau design
-  - [ ] (#5.1) Creer dossier controller et y mettre les controllers
-  - [ ] (#5.2) Mettre le running de l'api dans le endpoint
-  - [ ] (#5.3) le running de l'api consiste en :
-    - Appeler le controller correspondant => Error => throw MethodNotAllowedException (405)
-    - Appeler le service de validation => Error => throw BadRequestException (400)
-    - Appeller le DAO => Error => throw InternalServerErrorException (500) / NotFoundException (404)
-    - Appeller Reponse => Error => throw InternalServerErrorException (500)
-- [x] (#6) Bouger validation services dans une classe Validator
-  - [x] (#6.1) Creer une classe Validator et ses methodes
-  - [x] (#6.2) lire.php
-  - [x] (#6.4) creer.php
-  - [x] (#6.5) modifier.php
-  - [x] (#6.6) supprimer.php
+- [x] choose a better type for the id and the date in the entity
+- [x] add message / error / data properties to json response object
+- [x] Creer un namespace HTTP pour Reponse, Request, Error
+- [x] Charger Error en methodes spécifiques selon les code de réponse HTTP (404, 500, 200, 201, 400)
+- [x] (#3)Lisser les commentaires
+- [x] (#4) Reflechir a refactoriser Controller
+- [x] (#5) Nouveau design Controller
+  - [x] (#5.1) Creer dossier controller et y mettre un controller assumant des mecanismes type middlewares commun à tous les endpoints
+  - [x] (#5.2) Mettre le running de l'api dans le endpoint
+  - [x] (#5.3) Mettre le running de l'api dans le endpoint mais dans un closure bindé au Controller
+- [x] (#6) Creer systeme de validation des données entrantes via une classe Schema et un systeme de templating de règles de validation
+  - [x] (#6.1) Creer une classe Schema et ses methodes
+  - [x] (#6.2) Creer une class Template et ses methodes pour verifier l'integrité du Schema
+  - [x] (#6.3) Creer une interface ValidatorInterface et contraintre les Validators à implementer cette interface
+  - [x] (#6.4) Intégrer le systeme de validation dans le controller ( middleware like)
+  - [x] (#6.5) Implémenter TypeValidator, ComplexValidator, RangeValidator pour l'instant
+- [ ] (#7) Reflechir à creer une classe QueryBuilder pour les requetes SQL
+- [ ] (#8) Reflechir à faire en sorte que le controller accepte de traiter plusieurs méthodes HTTP par endpoint
 
 ## TODO ANNEXE
 
