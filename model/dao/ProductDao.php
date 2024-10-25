@@ -84,6 +84,7 @@ class ProductDao
             // If an error was catch, we send an informative error message back to the controller
             throw $e;
         }
+        $this->connection->closeConnection();
     }
 
 
@@ -133,6 +134,7 @@ class ProductDao
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
         }
+        $this->connection->closeConnection();
     }
 
 
@@ -182,6 +184,7 @@ class ProductDao
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
         }
+        $this->connection->closeConnection();
     }
 
     /**
@@ -221,6 +224,7 @@ class ProductDao
         } catch (Error $e) {
             throw $e;
         }
+        $this->connection->closeConnection();
     }
 
 
@@ -296,6 +300,7 @@ class ProductDao
             // If an error was catch, we send an informative error message back to the controller
             throw $e;
         }
+        $this->connection->closeConnection();
     }
 
     /**
@@ -343,5 +348,6 @@ class ProductDao
             // If an error was catch, we send a response with a 500 status code and an error message
             throw $e;
         }
+        $this->connection->closeConnection();
     }
 }
