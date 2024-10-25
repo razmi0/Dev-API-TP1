@@ -20,7 +20,7 @@ new Controller(
         "message" => "Produit créé avec succès",
     ]),
     new Schema(
-        Constant::PRODUCT_CREATE_SCHEMA
+        Constant::CREATE_SCHEMA
     ),
     function () {
         // Set the error location for debugging purpose

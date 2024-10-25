@@ -10,7 +10,7 @@ use Model\Schema\Schema;
  * class Constant
  * 
  * All those constants emerged from the database
- * @property Schema $PRODUCT_CREATE_SCHEMA
+ * @property Schema $CREATE_SCHEMA
  */
 class Constant
 {
@@ -22,7 +22,7 @@ class Constant
     /**
      * This schema will be use in /api/v1/creer.php to validate client json
      */
-    public const PRODUCT_CREATE_SCHEMA = [
+    public const CREATE_SCHEMA = [
         "name" => [
             "type" => "string",
             "range" => [1, 65],
