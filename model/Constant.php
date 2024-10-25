@@ -18,6 +18,12 @@ class Constant
     private const DESCRIPTION_REGEX = "/^[a-zA-Z0-9-'%,.:\/&()|; ]+$/";
     private const PRICE_REGEX = "/^[0-9.]+$/";
     private const ID_REGEX = "/^[0-9]+$/";
+    private const columns = ["id", "name", "description", "prix", "date_creation"];
+
+    public function getColumns()
+    {
+        return self::columns;
+    }
 
     /**
      * This schema will be use in /api/v1/creer.php to validate client json
