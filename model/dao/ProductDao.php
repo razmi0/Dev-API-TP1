@@ -14,6 +14,7 @@ class ProductDao
     private ?PDO $pdo = null;
     private ?Connection $connection = null;
     private ?Error $error = null;
+    private const columns = ["id", "name", "description", "prix", "date_creation"];
 
     public function __construct()
     {
@@ -27,30 +28,6 @@ class ProductDao
         }
     }
 
-
-
-    private function bindParamsCreate($produit, $prepared)
-    {
-        try {
-            $name = $produit->getProductName();
-            $description = $produit->getDescription();
-            $prix = $produit->getPrix();
-            $date = $produit->getDateCreation();
-
-            $prepared->bindParam(':name', $name, PDO::PARAM_STR);
-            $prepared->bindParam(':description', $description, PDO::PARAM_STR);
-            // we use PARAM_STR for the type double :prix because PARAM_INT will lead to a loss of precision or error
-            $prepared->bindParam(':prix', $prix, PDO::PARAM_INT);
-            $prepared->bindParam(':date', $date, PDO::PARAM_STR);
-        } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProductDao.php-> bindParamsCreate");
-            throw $e;
-        }
-
-
-        return $prepared;
-    }
-
     /**
      * @param Produit $produit
      * @throws Error 
@@ -59,8 +36,12 @@ class ProductDao
     public function create($produit)
     {
         try {
+            // Setup the error message
             $this->error->setLocation("model/dao/ProductDao.php-> create");
-            $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation) VALUES (:name, :description, :prix, :date)";
+
+            // Build the query
+            $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation)";
+            $query .= " VALUES (:name, :description, :prix, :date_creation)";
 
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
@@ -69,7 +50,28 @@ class ProductDao
             }
 
             // Bind the parameters
-            $prepared = $this->bindParamsCreate($produit, $prepared);
+            $id = $produit->getId();
+            $name = $produit->getProductName();
+            $description = $produit->getDescription();
+            $prix = $produit->getPrix();
+            $date_creation = $produit->getDateCreation();
+
+            if (!is_null($id))
+                $prepared->bindParam(':id', $id, PDO::PARAM_INT);
+
+            // No PARAM_* default to PARAM_STR
+            if (!is_null($name))
+                $prepared->bindParam(':name', $name);
+
+            if (!is_null($description))
+                $prepared->bindParam(':description', $description);
+
+            // we use bindValue here because we want to keep the right type (double) for the price
+            if (!is_null($prix))
+                $prepared->bindValue(':prix', $prix);
+
+            if (!is_null($date_creation))
+                $prepared->bindParam(':date_creation', $date_creation);
 
             // Verify the execution of the query
             $stmt = $prepared->execute();
@@ -100,7 +102,7 @@ class ProductDao
             $this->error->setLocation("model/dao/ProductDao.php-> findAll");
 
             // Build the query
-            $query = "SELECT * FROM T_PRODUIT ORDER BY date_creation DESC";
+            $query = "SELECT * FROM " . $this->connection->getTableName() . " ORDER BY date_creation DESC";
 
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
@@ -144,7 +146,7 @@ class ProductDao
             $this->error->setLocation("model/dao/ProductDao.php-> findById");
 
             // Build the query
-            $query = "SELECT * FROM T_PRODUIT WHERE id = :id";
+            $query = "SELECT * FROM " . $this->connection->getTableName() . " WHERE id = :id";
 
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
@@ -190,7 +192,7 @@ class ProductDao
 
         try {
             // Build the query
-            $query = "DELETE FROM T_PRODUIT WHERE id = :id";
+            $query = "DELETE FROM " . $this->connection->getTableName() . " WHERE id = :id";
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
@@ -216,33 +218,6 @@ class ProductDao
         }
     }
 
-    /**
-     * 
-     * Helper method to bind the parameters for the update method
-     * @param Produit $produit
-     * @param PDOStatement $prepared
-     * @return PDOStatement
-     * 
-     */
-    private function bindParamsUpdate($produit, $prepared)
-    {
-        try {
-            $id = $produit->getId();
-            $name = $produit->getProductName();
-            $description = $produit->getDescription();
-            $prix = $produit->getPrix();
-
-            $prepared->bindParam(':id', $id, PDO::PARAM_INT);
-            $prepared->bindParam(':name', $name);
-            $prepared->bindParam(':description', $description);
-            $prepared->bindValue(':prix', $prix);
-        } catch (Error $e) {
-            $this->error->setLocation("model/dao/ProductDao.php-> bindParamsUpdate");
-            throw $e;
-        }
-
-        return $prepared;
-    }
 
     /**
      * 
@@ -256,11 +231,30 @@ class ProductDao
 
         try {
 
-            $product_id = $produit->getId();
+            // Get the id of the product
+            $id = $produit->getId();
+            $name = $produit->getProductName();
+            $description = $produit->getDescription();
+            $prix = $produit->getPrix();
 
-            $error = ["Erreur lors de la mise à jour du produit", ["id" => $product_id], "model/dao/ProductDao.php -> update"];
-            // Database Access step ( build the query, prepare it, execute it and return the result )
-            $query =  $this->buildQuery($produit);
+            // Setup the error message
+            $error = ["Erreur lors de la mise à jour du produit", ["id" => $id], "model/dao/ProductDao.php -> update"];
+
+            // Build the query
+            $query = "UPDATE " . $this->connection->getTableName() . " SET ";
+
+            if (!empty($name))
+                $query .= "name = :name, ";
+
+            if (!empty($description))
+                $query .= "description = :description, ";
+
+            if (!empty($prix))
+                $query .= "prix = :prix ";
+
+            // Remove the last comma and space
+            $query = rtrim($query, ", ");
+            $query .= " WHERE id = :id";
 
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
@@ -269,7 +263,16 @@ class ProductDao
             }
 
             // Bind the parameters
-            $prepared = $this->bindParamsUpdate($produit, $prepared);
+            $prepared->bindParam(':id', $id, PDO::PARAM_INT);
+
+            if (!empty($name))
+                $prepared->bindParam(':name', $name);
+
+            if (!empty($description))
+                $prepared->bindParam(':description', $description);
+
+            if (!empty($prix))
+                $prepared->bindValue(':prix', $prix);
 
             // Verify the execution of the query
             $stmt = $prepared->execute();
@@ -279,33 +282,14 @@ class ProductDao
             $affectedRows = $prepared->rowCount();
 
             if ($affectedRows == 0) {
-                throw $this->error->HTTP204("Aucune modification", ["id" => $product_id]);
+                throw $this->error->HTTP204("Aucune modification", ["id" => $id]);
             }
 
             // If all went good, we will return the id of the last inserted product to the controller
-            return $product_id;
+            return $id;
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             throw $e;
         }
-    }
-
-    private function buildQuery(Produit $produit): string
-    {
-        $query = "UPDATE T_PRODUIT SET ";
-
-        if (!empty($produit->getProductName()))
-            $query .= "name = :name, ";
-
-        if (!empty($produit->getDescription()))
-            $query .= "description = :description, ";
-
-        if (!empty($produit->getPrix()))
-            $query .= "prix = :prix ";
-
-        $query = rtrim($query, ", ");
-        $query .= " WHERE id = :id";
-
-        return $query;
     }
 }
