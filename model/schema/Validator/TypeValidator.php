@@ -113,7 +113,7 @@ class ArrayValidator implements ValidatorInterface
 {
     private string $rule = "array";
 
-    public function validate(mixed $value, string  $key): ValidatorResult
+    public function validate(mixed $value, string $key): ValidatorResult
     {
         $currentType = gettype($value);
         return !is_array($value)
