@@ -57,6 +57,7 @@ use Model\Schema\Template as Template;
  */
 
 use Exception as Exception;
+use Utils\Console;
 
 /**
  * 
@@ -377,7 +378,7 @@ class Schema extends SchemaCore
      * 
      * 
      */
-    public function safeParse($clientJson): Schema
+    public function safeParse(array $clientJson): Schema
     {
         // Check if the schema is set
         // --
@@ -418,11 +419,14 @@ class Schema extends SchemaCore
             if (!array_key_exists($key, $clientJson) && in_array($key, $notRequiredKeys)) {
                 // we only store the required rule in the results so we need to strip the other rules
                 // --
-                $required_rule = array_filter($rules, fn($rule) => $rule->getRule() === "required");
-                $validated = $required_rule[0]->validate($this->schema[$key], $key);
+                $required_rule_index = array_search("required", array_map(fn($rule) => $rule->getRule(), $rules));
+                $validated = $rules[$required_rule_index]->validate($this->schema[$key], $key);
                 $readable = $validated->getReadable();
                 $this->results[] = $readable;
                 $this->successResults[] = $readable;
+
+
+                // Continue to the next key
                 continue;
             }
 
