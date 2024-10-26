@@ -4,13 +4,14 @@ require_once "../../Autoloader.php";
 
 use HTTP\Request;
 use HTTP\Response;
+use HTTP\Error;
 use Controller\Controller;
+use Middleware\Middleware;
 use Model\Constant;
 use Model\Dao\ProductDao;
 use Model\Schema\Schema;
-use Utils\Console;
 
-new Controller(
+$app = new Controller(
     new Request([
         "methods" => ["GET"],
         "endpoint" => "/api/v1/lire_des.php",
@@ -19,7 +20,11 @@ new Controller(
         "code" => 200,
         "message" => "Produits trouvés",
     ]),
-    new Schema(Constant::READ_MANY_SCHEMA),
+    new Middleware([
+        "checkAllowedMethods" => [],
+        "checkValidJson" => [],
+        "checkExpectedData" => new Schema(Constant::READ_MANY_SCHEMA),
+    ]),
     function () {
         // Get the ids from the query as an associative array
         $idsInQuery = $this->request->getQueryParam("id");
@@ -29,7 +34,7 @@ new Controller(
 
         // If the id is not present in the query or in the body, throw an error
         if (!$idsInQuery && !$idsInBody) {
-            throw $this->error->HTTP400("Aucun ids de produits n'a été fourni dans la requête.");
+            throw Error::HTTP400("Aucun ids de produits n'a été fourni dans la requête.");
         }
 
         // Get the ids and cast them to an array of integers
@@ -43,6 +48,12 @@ new Controller(
         // Get the product from the database
         $products = $dao->findManyById($ids);
 
-        return ["products" => array_map(fn($product) => $product->toArray(), $products)];
+        // Map the products to an array
+        $productArray = array_map(fn($product) => $product->toArray(), $products);
+
+        // Return the products array
+        return ["products" => $productArray];
     }
 );
+
+$app->run();

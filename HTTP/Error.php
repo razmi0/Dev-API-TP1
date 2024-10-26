@@ -16,27 +16,6 @@ class Error extends Exception
     protected $message = null;
     private $error = null;
     private $data = [];
-    private $location = null;
-
-    public function __construct($code = 0, $message = null, $error = null, $data = [], $location = null)
-    {
-        $this->code = $code;
-        $this->message = $message;
-        $this->error = $error;
-        $this->data = $data;
-        $this->location = $location;
-    }
-
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    public function setLocation($location)
-    {
-        $this->location = $location;
-        return $this;
-    }
 
     public function setMessage($message)
     {
@@ -49,8 +28,6 @@ class Error extends Exception
         $this->code = $code;
         return $this;
     }
-
-
 
     public function setError($error)
     {
@@ -66,7 +43,7 @@ class Error extends Exception
 
     public function sendAndDie()
     {
-        Console::log($this->location, $this->message, $this->error, $this->data, $this->code);
+        Console::log($this->message, $this->error, $this->data, $this->code);
         header("Content-Type: application/json; charset=UTF-8");
 
         $payload = json_encode([
@@ -74,6 +51,7 @@ class Error extends Exception
             "data" => $this->data,
             "error" => $this->error
         ]);
+
         http_response_code($this->code);
         echo $payload;
         die();
@@ -83,7 +61,6 @@ class Error extends Exception
     {
         $error = new Error();
         $error->setCode(404)
-            ->setLocation($location)
             ->setMessage($msg)
             ->setError("Page non trouvée")
             ->setData($payload)
@@ -94,7 +71,6 @@ class Error extends Exception
     {
         $error = new Error();
         $error->setCode(405)
-            ->setLocation($location)
             ->setMessage($msg)
             ->setError("Méthode non autorisée")
             ->setData($payload)
@@ -105,7 +81,6 @@ class Error extends Exception
     {
         $error = new Error();
         $error->setCode(400)
-            ->setLocation($location)
             ->setMessage($msg)
             ->setError("Requête invalide")
             ->setData($payload)
@@ -116,7 +91,6 @@ class Error extends Exception
     {
         $error = new Error();
         $error->setCode(500)
-            ->setLocation($location)
             ->setMessage($msg)
             ->setError("Erreur interne")
             ->setData($payload)
@@ -130,7 +104,6 @@ class Error extends Exception
     {
         $error = new Error();
         $error->setCode(204)
-            ->setLocation($location)
             ->setMessage($msg)
             ->setError("Aucun contenu")
             ->setData($payload)
@@ -141,7 +114,6 @@ class Error extends Exception
     {
         $error = new Error();
         $error->setCode(503)
-            ->setLocation($location)
             ->setMessage($msg)
             ->setError("Service non disponible")
             ->setData($payload)
