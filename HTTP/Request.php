@@ -63,10 +63,8 @@ class Request
     protected ?string $host = "";
     protected ?string $port = "";
     protected ?string $path = "";
-    protected ?string $query = "";
 
     // URI parameters
-    protected array $url_params = [];
     protected array $query_params = [];
 
     private ?Error $error  = null;
@@ -87,18 +85,14 @@ class Request
             // Get the endpoint (the file name)
             $this->endpoint = $request["endpoint"] ?? "";
 
-            // Get the URI parameters (scheme, host, port, path, query)
-            $this->url_params = parse_url($_SERVER["REQUEST_URI"]);
-
             // Assign URI components to class properties
-
             // build the URI parameters
             [
                 $this->scheme,
                 $this->host,
                 $this->port,
                 $this->path,
-                $this->query,
+                $this->query_params,
             ] = $this->buildURIParams();
 
             // build the URI flags
@@ -110,19 +104,14 @@ class Request
                 $this->has_query,
             ] = $this->buildURIFlags();
 
-            // Parse the query parameters for easy access into associative array (key => value)
-            if ($this->has_query) {
-                parse_str($this->query, $this->query_params);
-            }
-
-            // Get the client data
+            // Get the raw client data and store it in the class property for easy access
             $this->client_raw_json = file_get_contents("php://input") ?? "";
 
-            // Decode the client data
-            // if no data is present, set the decoded data to an empty array
+            // Decode the client data for easy access too
+            // if no data is present, the decoded data will be an empty array
             $this->client_decoded_data = $this->safeDecode($this->client_raw_json);
-        } catch (Error $e) {
-            throw $e;
+        } catch (Error) {
+            throw $this->error->HTTP500("Une erreur interne s'est produite", [], "Request");
         }
     }
 
@@ -188,22 +177,23 @@ class Request
 
     private function buildURIParams(): array
     {
+        parse_str($_SERVER["QUERY_STRING"], $output);
         return [ // http, https
-            empty($_SERVER['HTTPS']) ? 'http' : 'https',
+            $_SERVER['REQUEST_SCHEME'],
             // localhost
             $_SERVER["HTTP_HOST"] ?? null,
             // 80
             $_SERVER['SERVER_PORT'] ?? null,
             // /api/v1/{endpoint}.php
-            $this->url_params['path'] ?? null,
+            parse_url($_SERVER["REQUEST_URI"])["path"] ?? null,
             // ?param1=1?param2=2
-            $this->url_params['query'] ?? null,
+            $output ?? null,
         ];
     }
 
     private function buildURIFlags(): array
     {
-        $keys = ["scheme", "host", "port", "path", "query"];
+        $keys = ["scheme", "host", "port", "path", "query_params"];
         return array_map(fn($key) => isset($this->$key), $keys);
     }
 
