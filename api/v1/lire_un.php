@@ -28,7 +28,7 @@ new Controller(
 
         // If the id is not present in the query or in the body, throw an error
         if (!$idInQuery && !$idInBody) {
-            throw $this->error->HTTP400("Aucun id de produit n'a été fourni dans la requête.");
+            throw $this->error->HTTP400("Aucun id de produit n'a été fourni dans la requête.", [], "lire_un");
         }
 
         // Get the id and cast it to an integer
