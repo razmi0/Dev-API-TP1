@@ -8,6 +8,7 @@ RewriteEngine On
 # -- Redirection vers la page d'accueil -- #
 RewriteRule ^/?$ index.php
 
+
 # --Liste de tous les produits-- #
 RewriteRule ^api/v1.0/produit/list/?$ api/v1/lire.php
 # ------------------------------ #
@@ -24,8 +25,10 @@ RewriteRule ^api/v1.0/produit/update/?$ api/v1/modifier.php
 
 
 # --Supprimer un produit-- #
+
 # id dans body
 RewriteRule ^api/v1.0/produit/delete/?$ api/v1/supprimer.php
+
 # id dans url
 RewriteRule ^api/v1.0/produit/delete/([0-9]+)/?$ api/v1/supprimer.php?id=$1
 # ------------------------------ #
