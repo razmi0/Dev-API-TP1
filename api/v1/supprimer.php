@@ -10,9 +10,10 @@ use Model\Constant;
 use Model\Dao\ProductDao;
 use Model\Schema\Schema;
 use HTTP\Error;
+use Middleware\Middleware;
 
 // Start the controller with the Request and Response objects
-$controller = new Controller(
+$app = $controller = new Controller(
     new Request([
         "methods" => ["DELETE"],
         "endpoint" => "/api/v1/supprimer.php",
@@ -21,7 +22,11 @@ $controller = new Controller(
         "code" => 200,
         "message" => "Produit supprimé avec succès",
     ]),
-    new Schema(Constant::DELETE_SCHEMA),
+    new Middleware([
+        "checkAllowedMethods" => [],
+        "checkValidJson" => [],
+        "checkExpectedData" => new Schema(Constant::DELETE_SCHEMA),
+    ]),
     function () {
         // Get the id from the body
         $id = $this->request->getDecodedBody("id");
@@ -29,7 +34,7 @@ $controller = new Controller(
         // If the id is not present in the body, throw an error
         if (!$id) {
             $error_message = "Veuillez fournir un id de produit dans le corps de la requête au format JSON.";
-            throw $this->error->HTTP400("Données invalides", $error_message);
+            throw Error::HTTP400("Données invalides : " .  $error_message, []);
         }
 
         // Start the DAO
@@ -40,9 +45,12 @@ $controller = new Controller(
 
         // If no product was found, we send a 204 with no content in response body as HTTP specification states
         if ($affectedRows === 0) {
-            throw $this->error->HTTP204("Aucun produit trouvé", ["id" => $id]);
+            throw Error::HTTP204("Aucun produit trouvé", ["id" => $id]);
         }
 
+        // Return the id
         return ["id" => $id];
     }
 );
+
+$app->run();

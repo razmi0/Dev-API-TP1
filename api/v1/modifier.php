@@ -8,11 +8,12 @@ use HTTP\Response;
 use Model\Constant;
 use Model\Schema\Schema;
 use Controller\Controller;
+use Middleware\Middleware;
 use Model\Dao\ProductDao;
 use Model\Entities\Product;
 
 // Start the controller with the Request and Response objects
-$controller = new Controller(
+$app = new Controller(
 
     new Request([
         "methods" => ["PUT"],
@@ -22,17 +23,27 @@ $controller = new Controller(
         "code" => 200,
         "message" => "Produit modifié avec succès",
     ]),
-    new Schema(Constant::UPDATE_SCHEMA),
+    new Middleware([
+        "checkAllowedMethods" => [],
+        "checkValidJson" => [],
+        "checkExpectedData" => new Schema(Constant::UPDATE_SCHEMA),
+    ]),
     function () {
         // Get the client data
         $client_data = $this->request->getDecodedBody();
 
+        // Create a new product
         $product = Product::make($client_data);
 
+        // Start the DAO
         $productDao = new ProductDao();
 
+        // Update the product in the database and catch the id
         $id = $productDao->update($product);
 
+        // Return the id
         return ["id" => $id];
     }
 );
+
+$app->run();

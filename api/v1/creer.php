@@ -7,10 +7,11 @@ use HTTP\Response;
 use Model\Constant;
 use Model\Schema\Schema;
 use Controller\Controller;
+use Middleware\Middleware;
 use Model\Dao\ProductDao;
 use Model\Entities\Product;
 
-new Controller(
+$app = new Controller(
     new Request([
         "methods" => ["POST"],
         "endpoint" => "/api/v1/creer.php",
@@ -19,13 +20,12 @@ new Controller(
         "code" => 201,
         "message" => "Produit créé avec succès",
     ]),
-    new Schema(
-        Constant::CREATE_SCHEMA
-    ),
+    new Middleware([
+        "checkAllowedMethods" => [],
+        "checkValidJson" => [],
+        "checkExpectedData" => new Schema(Constant::CREATE_SCHEMA),
+    ]),
     function () {
-        // Set the error location for debugging purpose
-        $this->error->setLocation("/api/v1/creer.php");
-
         // Get the decoded client data
         $client_data = $this->request->getDecodedBody();
 
@@ -42,3 +42,6 @@ new Controller(
         return ["id" => intval($insertedID)];
     },
 );
+
+
+$app->run();

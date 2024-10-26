@@ -28,10 +28,9 @@ class Console
         return $reduced;
     }
 
-    public static function log($location, $message, $error, $data, $code): void
+    public static function log($message, $error, $data, $code): void
     {
         $strs = [
-            ["label" => "[LOCATION] ", "value" => $location],
             ["label" => "[MESSAGE]  ", "value" => $message],
             ["label" => "[ERROR]    ", "value" => $error],
             ["label" => "[DATA]     ", "value" => $data],
