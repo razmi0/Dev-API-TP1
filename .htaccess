@@ -1,5 +1,13 @@
 RewriteEngine On
 
+
+#-------------------------#
+#----- Redirections ----- #
+#-------------------------#
+
+# -- Redirection vers la page d'accueil -- #
+RewriteRule ^/?$ index.php
+
 # --Liste de tous les produits-- #
 RewriteRule ^api/v1.0/produit/list/?$ api/v1/lire.php
 # ------------------------------ #
@@ -37,3 +45,39 @@ RewriteRule ^api/v1.0/produit/list/some/?$ api/v1/lire_des.php
 # id dans url ( match avec id[]=1&id[]=2&id[]=3 ... )
 RewriteRule ^api/v1.0/produit/list/some/((id\[\]=\d+&?)+)/?$ api/v1/lire_des.php?$1
 # ------------------------------ #
+
+
+#------------------------#
+#-- Routes interdites -- #
+#------------------------#
+
+
+# -- Les dossiers du projet -- #
+RewriteRule ^utils/?$ - [F,L]
+RewriteRule ^controller/?$ - [F,L]
+RewriteRule ^curl/?$ - [F,L]
+RewriteRule ^http/?$ - [F,L]
+RewriteRule ^model/?$ - [F,L]
+RewriteRule ^mysql/?$ - [F,L]
+# ------------------------------ #
+
+
+# -- Les fichiers du projet -- #
+
+
+#-- Fichier README ( regex correspondant à tous les fichiers commencant par les lettres "r" & "e" & "a", casse sensible ) -- #
+<Files ~ "([Rr][Ee][Aa])">
+  Require all denied
+</Files>
+
+
+#-- Fichier Autoloader ( regex correspondant à tous les fichiers commencant par "a", casse sensible ) -- #
+<Files ~ "([Aa])">
+  Require all denied
+</Files>
+
+# -- Tous les fichiers commençant par "." -- #
+<Files ~ "^\..*">
+  Require all denied
+</Files>
+
