@@ -90,6 +90,7 @@ class ProductDao
     /**
      * 
      * @description Find all products
+     * @param int $limit
      * @throws Error
      * @return Product[]
      * 
@@ -138,7 +139,7 @@ class ProductDao
 
     /**
      * 
-     * @param $id
+     * @param int $id
      * @throws Error
      * @return Product
      * 
