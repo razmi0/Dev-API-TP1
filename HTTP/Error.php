@@ -57,6 +57,12 @@ class Error extends Exception
         die();
     }
 
+    /**
+     * HTTP404
+     * 
+     * 404 Not found error 
+     * 
+     */
     public static function HTTP404(string $msg, array $payload = [], string $location = null)
     {
         $error = new Error();
@@ -67,6 +73,12 @@ class Error extends Exception
             ->sendAndDie();
     }
 
+    /**
+     * HTTP405
+     * 
+     * 405 Method not allowed error
+     * 
+     */
     public static function HTTP405(string $msg, array $payload = [], string $location = null)
     {
         $error = new Error();
@@ -77,6 +89,12 @@ class Error extends Exception
             ->sendAndDie();
     }
 
+    /**
+     * HTTP400
+     * 
+     * 400 Bad request error
+     * 
+     */
     public static function HTTP400(string $msg, array $payload = [], string $location = null)
     {
         $error = new Error();
@@ -87,6 +105,12 @@ class Error extends Exception
             ->sendAndDie();
     }
 
+    /**
+     * HTTP500
+     * 
+     * 500 Internal server error
+     * 
+     */
     public static function HTTP500(string $msg, array $payload = [], string $location = null)
     {
         $error = new Error();
@@ -97,9 +121,12 @@ class Error extends Exception
             ->sendAndDie();
     }
 
-    // No modification
-
-
+    /**
+     * HTTP204
+     * 
+     * 204 No content error (no data to return)
+     * 
+     */
     public static function HTTP204(string $msg, array $payload = [], string $location = null)
     {
         $error = new Error();
@@ -110,6 +137,12 @@ class Error extends Exception
             ->sendAndDie();
     }
 
+    /**
+     * HTTP503
+     * 
+     * 503 Service unavailable error
+     * 
+     */
     public static function HTTP503(string $msg, array $payload = [], string $location = null)
     {
         $error = new Error();
