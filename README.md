@@ -1,12 +1,14 @@
 # TP1 Basic CRUD API
 
-- notes
-  - controller => dao => base de données
-  - chaque transfert entre couche est objet ( entité)
+## Installation
 
-## Project structure
+This API is documented using Swagger-PHP. To generate the documentation, you need to install the swagger-php package :
 
-## TODO
+```bash
+composer install
+```
+
+## Todo
 
 TP1 :
 
@@ -37,10 +39,92 @@ TP1 :
 - [ ] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
 - [ ] (#14) Remplacer certaines redirections par /produits/
 
-## TODO ANNEXE
-
-- reflechir a une fonxtion de construction de query update sur-mesure.
-
-## HISTORY
+## History
 
 API endpoint are finnally done in commit : 9872f770f4815b03a5127703cff4e60e3b2456a1 👍
+
+## Project structure
+
+```plaintext
+📁 TP1
+    📁 api
+        📁 v1
+            ─ creer.php
+            ─ lire_des.php
+            ─ lire_un.php
+            ─ lire.php
+            ─ modifier.php
+            ─ supprimer.php
+    📁 controller
+        ─ Controller.php
+    📁 curl
+        ─ creer.php
+        ─ Curl.php
+        ─ lire_des.php
+        ─ lire_un.php
+        ─ lire.php
+        ─ modifier.php
+        ─ supprimer.php
+    📁 http
+        ─ Error.php
+        ─ Request.php
+        ─ Response.php
+    📁 images
+        ─ theme-icon.svg
+    📁 js
+        📁 src
+            ─ APIFetch.ts
+            ─ const.ts
+            ─ dom.ts
+            ─ index.ts
+            ─ storage.ts
+            ─ syncId.ts
+            ─ theme-toggle.ts
+            ─ types.ts
+        ─ README.md
+        ─ tsconfig.json
+    📁 middleware
+        ─ Middleware.php
+    📁 model
+        📁 dao
+            ─ Connection.php
+            ─ ProductDao.php
+        📁 entities
+            ─ Product.php
+        📁 schema
+            📁 Validator
+                ─ ArrayValidator.php
+                ─ ComplexValidator.php
+                ─ RangeValidator.php
+                ─ TypeValidator.php
+                ─ ValidatorError.php
+                ─ ValidatorInterface.php
+                ─ ValidatorResult.php
+            ─ Core.php
+            ─ Schema.php
+            ─ Template.php
+        ─ Constant.php
+    📁 mysql
+        ─ bdd.md
+    📁 utils
+        📁 migration
+            📁 src
+                ─ const.ts
+                ─ migrate.ts
+                ─ type.ts
+            ─ const.js
+            ─ migrate.js
+            ─ README.md
+            ─ tsconfig.json
+        ─ Console.php
+        ─ truncateDb.php
+        ─ watch_access_log.sh
+        ─ watch_error_log.sh
+    ─ .gitignore
+    ─ .htaccess
+    ─ Autoloader.php
+    ─ composer.json
+    ─ composer.lock
+    ─ index.php
+    ─ README.md
+```
