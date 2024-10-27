@@ -107,6 +107,6 @@ $app->setHandler(
 );
 
 // Run the configured controller : 
-//          - Run the middlewares
+//          - Run the middlewares sequentially
 //          - Run the handler
 $app->run();
