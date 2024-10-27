@@ -36,7 +36,6 @@ class ProductDao
     {
         try {
             // Setup the error message
-            $this->error->setLocation("model/dao/ProductDao.php-> create");
 
             // Build the query
             $query = "INSERT INTO T_PRODUIT (name, description, prix, date_creation)";
@@ -99,7 +98,6 @@ class ProductDao
     {
 
         try {
-            $this->error->setLocation("model/dao/ProductDao.php-> findAll");
 
             // Build the query
             $query = "SELECT * FROM " . $this->connection->getTableName() . " ORDER BY date_creation DESC";
@@ -150,7 +148,6 @@ class ProductDao
 
 
         try {
-            $this->error->setLocation("model/dao/ProductDao.php-> findById");
 
             // Build the query
             $query = "SELECT * FROM " . $this->connection->getTableName() . " WHERE id = :id";
@@ -313,7 +310,6 @@ class ProductDao
     public function findManyById(array $ids): array
     {
         try {
-            $this->error->setLocation("model/dao/ProductDao.php-> findManyById");
 
             // Build the query
             $query = "SELECT * FROM " . $this->connection->getTableName() . " WHERE id IN (";
