@@ -25,47 +25,54 @@ use Model\Schema\Schema;
  * 
  * @property Request $request
  * @property Response $response
- * @property Middleware $middleware
- * @property callable $handler
  * 
- * @method __construct(Request $request, Schema $schema, Response $response) Dependency injection
- * @method handleRequest(callable $handler): void
+ * @method void setMiddleware(Middleware $middleware)
+ * @method void setHandler(callable $handler)
+ * @method void handleBusinessLogic(callable $handler)
+ * @method void run()
  * 
  */
 class Controller
 {
     protected ?Response $response = null;
     protected ?Request $request = null;
+    protected ?Middleware $middleware = null;
     /**
      * @var callable $handler The callback provided by the consumer to handle the request
      */
     protected $handler;
 
-    public function __construct(Request $request, Response $response, Middleware $middleware, callable $handler)
+    public function __construct(Request $request, Response $response)
     {
 
         try {
             $this->request = $request;
             $this->response = $response;
-            $this->handler = $handler;
 
-            // We set the request object to the middleware
-            $middleware->setRequest($this->request);
-
-            // We launch the middleware
-            $middleware->handleMiddleware();
-
-            // We get the authorized methods from the request
+            // We get the authorized methods from the request and set them to the response
             $methods = $request->getAuthorizedMethods();
-
-            // We set the authorized methods for the response header
             $response->setMethods($methods);
-        } catch (Error $e) {
-            $e->sendAndDie();
+        } catch (\Throwable $th) {
+            throw Error::HTTP500("Erreur interne", [], "Controller");
         }
     }
 
-    private function handleRequest(callable $handler): void
+    public function setMiddleware(Middleware $middleware): void
+    {
+        $this->middleware = $middleware;
+        $this->middleware->setRequest($this->request);
+    }
+
+    public function setHandler(callable $handler): void
+    {
+        $this->handler = $handler;
+    }
+
+    /**
+     * Handle the business logic of the controller providing a context of execution to the handler with a scope and an object (closure)
+     * Store the response data in the response object and send it to the client
+     */
+    protected function handleBusinessLogic(callable $handler): void
     {
         // We provide and bind all the necessary data to a new Closure (a callback, an instance and a scope)
         $binded_handler = Closure::bind(
@@ -94,15 +101,20 @@ class Controller
     }
 
     /**
-     * Run the business logic
+     * Start the configured controller
      * 
      */
     public function run(): void
     {
-        try {
-            $this->handleRequest($this->handler);
-        } catch (Error $e) {
-            $e->sendAndDie();
+        // We check if the handler is set and callable and if the middleware is set
+        if (!$this->handler || !is_callable($this->handler) || !$this->middleware) {
+            throw Error::HTTP500("Erreur interne", [], "Controller");
         }
+
+        // We launch the middleware logic
+        $this->middleware->handleMiddleware();
+
+        // We launch the business logic
+        $this->handleBusinessLogic($this->handler);
     }
 }
