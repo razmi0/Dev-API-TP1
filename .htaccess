@@ -44,9 +44,9 @@ RewriteRule ^api/v1.0/produit/listone/([0-9]+)/?$ api/v1/lire_un.php?id=$1
 
 # --Lire une liste défini de produit-- #
 # id dans body
-RewriteRule ^api/v1.0/produit/list/some/?$ api/v1/lire_des.php
+RewriteRule ^api/v1.0/produit/listmany/?$ api/v1/lire_des.php
 # id dans url ( match avec id[]=1&id[]=2&id[]=3 ... )
-RewriteRule ^api/v1.0/produit/list/some/((id\[\]=\d+&?)+)/?$ api/v1/lire_des.php?$1
+RewriteRule ^api/v1.0/produit/listmany/((id\[\]=\d+&?)+)/?$ api/v1/lire_des.php?$1
 # ------------------------------ #
 
 
