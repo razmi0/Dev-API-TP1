@@ -82,7 +82,7 @@ class Middleware
         // If the method is not authorized, we throw an error and send it to the client
         if ($this->request->is_methods_not_authorized()) {
             $error_message = "Seules les méthodes suivantes sont autorisées : " . implode(", ", $this->request->getAuthorizedMethods());
-            throw Error::HTTP405($error_message, [], $this->request->getEndpoint());
+            throw Error::HTTP405($error_message, [], "checkAllowedMethods");
         }
     }
 
@@ -99,7 +99,7 @@ class Middleware
         // If the data is not a valid JSON, we throw an error with the JSON error message and send it to the client
         if (!$this->request->getIsValidJson()) {
             $error_message = $this->request->getJsonErrorMsg();
-            throw Error::HTTP400("Données invalides " . $error_message, [], $this->request->getEndpoint());
+            throw Error::HTTP400("Données invalides " . $error_message, [], "checkValidJson");
         }
     }
 
@@ -119,7 +119,7 @@ class Middleware
             $client_data = $this->request->getDecodedBody();
             $data_parsed = $schema->safeParse($client_data);
             if ($data_parsed->getHasError()) {
-                throw Error::HTTP400("Données invalides", $data_parsed->getErrorResults(), $this->request->getEndpoint());
+                throw Error::HTTP400("Données invalides", $data_parsed->getErrorResults(), "checkExpectedData");
             }
         }
     }
