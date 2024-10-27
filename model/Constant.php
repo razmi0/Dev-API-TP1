@@ -10,7 +10,14 @@ use Model\Schema\Schema;
  * class Constant
  * 
  * All those constants emerged from the database
- * @property Schema $CREATE_SCHEMA
+ * 
+ * @property Schema CREATE_SCHEMA
+ * @property Schema READ_ALL
+ * @property Schema READ_ONE_SCHEMA
+ * @property Schema DELETE_SCHEMA
+ * @property Schema UPDATE_SCHEMA
+ * @property Schema READ_MANY_SCHEMA
+ * 
  */
 class Constant
 {
@@ -56,7 +63,7 @@ class Constant
     public const READ_ONE_SCHEMA = [
         "id" => [
             "type" => "integer",
-            "required" => true,
+            "required" => false,
             "range" => [1, null],
             "regex" => self::ID_REGEX
         ],
