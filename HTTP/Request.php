@@ -32,7 +32,7 @@ use HTTP\Error;
  * 
  * @method string getClientRawJson()
  * 
- * @method bool is_methods_not_authorized()
+ * @method bool is_methods_not_authorized() 
  * 
  */
 class Request
@@ -41,7 +41,6 @@ class Request
     // Request & Response related properties
     protected string $request_method = "";
     protected array $authorized_methods = [];
-    protected string $endpoint = "";
 
     // Client data related properties
     protected string $client_raw_json = "";
@@ -81,9 +80,6 @@ class Request
 
             // Get the authorized methods (GET, POST, PUT, DELETE, ...)
             $this->authorized_methods = $request["methods"] ?? [];
-
-            // Get the endpoint (the file name)
-            $this->endpoint = $request["endpoint"] ?? "";
 
             // Assign URI components to class properties
             // build the URI parameters
