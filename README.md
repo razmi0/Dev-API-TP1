@@ -35,6 +35,7 @@ TP1 :
 - [ ] (#11) Supprimer toutes traces de la propriété $location dans les classes en particulier dans Error, Request, Response
 - [ ] (#12) Modifier les endpoints dans les script curl car les redirections sont maintenant en place
 - [ ] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
+- [ ] (#14) Remplacer certaines redirections par /produits/
 
 ## TODO ANNEXE
 
