@@ -74,6 +74,8 @@ $app->setMiddleware(
     )
 );
 
+// We set the handler for the controller to do the business logic
+// The handler is the core of the controller, it contains the business logic
 $app->setHandler(
 
     function () {
