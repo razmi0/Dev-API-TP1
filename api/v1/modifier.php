@@ -56,11 +56,21 @@ $app = new Controller($request, $response);
 // Middleware object
 $app->setMiddleware(
     new Middleware(
-        [
-            "checkAllowedMethods" => [],
-            "checkValidJson" => [],
-            "checkExpectedData" => new Schema(Constant::UPDATE_SCHEMA),
-        ]
+
+        // Context : Middleware scope and new Middleware object
+        // In this context, we access to : Request and Middleware objects
+
+        function () {
+
+            // Check if the request method is allowed else throw an error ( 405 Method Not Allowed )
+            $this->checkAllowedMethods();
+
+            // Check if the request body is a valid JSON else throw an error ( 400 Bad Request )
+            $this->checkValidJson();
+
+            // Check if the request body contains the expected data else throw an error ( 400 Bad Request )
+            $this->checkExpectedData(new Schema(Constant::UPDATE_SCHEMA));
+        }
     )
 );
 
