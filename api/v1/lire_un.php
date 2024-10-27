@@ -53,7 +53,6 @@ $response = new Response([
 // Controller object
 $app = new Controller($request, $response);
 
-
 // Middleware object
 $app->setMiddleware(
     new Middleware(
