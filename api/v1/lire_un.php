@@ -20,16 +20,18 @@ $app = new Controller(
         "code" => 200,
         "message" => "Produit trouvé",
     ]),
-    new Middleware([
-        "checkAllowedMethods" => [],
-        "checkValidJson" => [],
-        "checkExpectedData" => new Schema(Constant::READ_ONE_SCHEMA),
-    ]),
+    new Middleware(
+        function () {
+            $this->checkAllowedMethods();
+            $this->checkValidJson();
+            $this->checkExpectedData(new Schema(Constant::READ_ONE_SCHEMA));
+        }
+    ),
     function () {
-        // Get the id from the query
+        // Get the id from the query ( string | null )
         $idInQuery = $this->request->getQueryParam("id");
 
-        // Get the id from the body
+        // Get the id from the body ( integer | null )
         $idInBody = $this->request->getDecodedBody("id");
 
         // If the id is not present in the query or in the body, throw an error
@@ -37,8 +39,11 @@ $app = new Controller(
             throw Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.", [], "lire_un");
         }
 
-        // Get the id and cast it to an integer
-        $id = $idInQuery  ? (int)$idInQuery : (int)$idInBody;
+        // Get the id and cast it to an integer if it is from the query
+        /**
+         * @var int $id
+         */
+        $id = $idInQuery  ? (int)$idInQuery : $idInBody;
 
         // Start the DAO
         $dao = new ProductDao();
@@ -46,6 +51,7 @@ $app = new Controller(
         // Get the product from the database
         $product = $dao->findById($id);
 
+        // Return the product as an array
         return ["products" => $product->toArray()];
     }
 );
