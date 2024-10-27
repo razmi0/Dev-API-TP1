@@ -56,7 +56,7 @@ class Constant
     public const READ_ONE_SCHEMA = [
         "id" => [
             "type" => "integer",
-            "required" => false,
+            "required" => true,
             "range" => [1, null],
             "regex" => self::ID_REGEX
         ],
