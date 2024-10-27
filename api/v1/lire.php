@@ -41,23 +41,26 @@ $app = new Controller(
     //                    OBJECT : new Controller ($this)
     function () {
 
-        // Get the limit from the query parameters
+        // Get the limit from the query parameters ( string | null )
         $limitInQuery = $this->request->getQueryParam("limit");
 
-        // Get the limit from the body
+        // Get the limit from the body ( integer | null )
         $limitInBody = $this->request->getDecodedBody("limit");
 
-        // Get the limit and cast it to an integer
-        $limit = $limitInQuery ? (int)$limitInQuery : (int)$limitInBody;
+        // Get the limit and cast it to an integer if it is from the query
+        /**
+         * @var int $limit
+         */
+        $limit = $limitInQuery ? (int)$limitInQuery : $limitInBody;
 
         // Create a new ProductDao object
-        $ProductDao = new ProductDao();
+        $dao = new ProductDao();
 
         // Get all products from the database
         /**
          * @var Product[] $allProducts
          */
-        $allProducts = $ProductDao->findAll($limit);
+        $allProducts = $dao->findAll($limit);
 
         // Map the products to an array
         $productsArray = array_map(fn($product) => $product->toArray(), $allProducts);
