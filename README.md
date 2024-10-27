@@ -31,6 +31,10 @@ TP1 :
 - [ ] (#7) Reflechir à creer une classe QueryBuilder pour les requetes SQL
 - [ ] (#8) Reflechir à faire en sorte que le controller accepte de traiter plusieurs méthodes HTTP par endpoint
 - [x] (#9) Mettre le handler du controller directement dans la method run()
+- [ ] (#10) Refacto Error et centraliser son utilisation sur les méthodes statiques HTTP
+- [ ] (#11) Supprimer toutes traces de la propriété $location dans les classes en particulier dans Error, Request, Response
+- [ ] (#12) Modifier les endpoints dans les script curl car les redirections sont maintenant en place
+- [ ] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
 
 ## TODO ANNEXE
 
