@@ -52,8 +52,8 @@ class Controller
             // We set the request object to the middleware
             $middleware->setRequest($this->request);
 
-            // We run the middleware
-            $middleware->run();
+            // We launch the middleware
+            $middleware->handleMiddleware();
 
             // We get the authorized methods from the request
             $methods = $request->getAuthorizedMethods();
@@ -93,6 +93,10 @@ class Controller
             ->sendAndDie();
     }
 
+    /**
+     * Run the business logic
+     * 
+     */
     public function run(): void
     {
         try {
