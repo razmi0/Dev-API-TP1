@@ -5,6 +5,7 @@ namespace Middleware;
 
 require_once '../../Autoloader.php';
 
+use Closure;
 use HTTP\Request;
 use HTTP\Error;
 use Model\Schema\Schema;
@@ -16,18 +17,21 @@ use Exception;
  * class Middleware
  * 
  * @property Request $request
- * @property array $middlewares An associative array of middlewares and their arguments
+ * @property callable $handler
  * 
  */
 class Middleware
 {
 
     private ?Request $request = null;
-    private ?array $middlewares = null;
+    /**
+     * @var callable $handler The callback provided by the consumer to handle the request
+     */
+    private $handler = null;
 
-    public function __construct(array $middlewares)
+    public function __construct(callable $handler)
     {
-        $this->middlewares = $middlewares;
+        $this->handler = $handler;
     }
 
     public function setRequest(Request $request): void
@@ -35,26 +39,42 @@ class Middleware
         $this->request = $request;
     }
 
-    public function run(): void
+    public function handleMiddleware(): void
     {
-        if (!$this->request) {
-            throw new Error("Request object is not set");
-        }
-
         try {
-            foreach ($this->middlewares as $middleware => $arguments) {
-                if (method_exists($this, $middleware)) {
-                    $this->$middleware($arguments);
-                }
-            }
-        } catch (Exception $e) {
-            throw $e;
+
+            // We create a new closure where the handler provided by the consumer is binded 
+            // to the $this object (new Middleware) and a new scope (Middleware)
+            $binded_handler = Closure::bind(
+                /**
+                 * The handler provided by the consumer
+                 */
+                $this->handler,
+                /**
+                 * The newThis object giving access to the request object and the middleware object in the handler
+                 */
+                $this,
+                /**
+                 * The new scope of the handler
+                 */
+                self::class,
+            );
+
+            // We execute the binded handler
+            // All middleware return void so no need to grab a return value
+            $binded_handler();
+        } catch (Error) {
+            throw Error::HTTP500("Erreur interne du serveur", [], "Middleware");
         }
     }
 
-
     /**
-     * Middleware 1
+     * 
+     * Middleware
+     * 
+     * @return void
+     * @throws Error
+     * 
      * */
     protected function checkAllowedMethods(): void
     {
@@ -67,7 +87,11 @@ class Middleware
     }
 
     /**
-     * Middleware 2
+     * Middleware
+     * 
+     * @return void
+     * @throws Error
+     * 
      * */
     protected function checkValidJson(): void
     {
@@ -80,7 +104,11 @@ class Middleware
     }
 
     /**
-     * Middleware 3
+     * Middleware
+     * 
+     * @return void
+     * @throws Error
+     * 
      * */
     protected function checkExpectedData(Schema $schema): void
     {
