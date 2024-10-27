@@ -2,11 +2,11 @@
 
 //  _____ _______ _______ _______ _______ _______ _______ _______
 // |                                                             |
-// |               READ_MANY PRODUCT ENDPOINT                    |
+// |               READ MANY PRODUCT ENDPOINT                    |
 // |                                                             |
 // |          endpoint :  [GET] /api/v1.0/produit/listmany       |
 // |          file     :        /api/v1/lire_des.php             |
-// |          goal     :  retrieve many products                 |
+// |          goal     :  retrieve many products from db         |
 // |_____________________________________________________________|
 //
 
