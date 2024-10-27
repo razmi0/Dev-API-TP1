@@ -30,6 +30,7 @@ TP1 :
   - [x] (#6.5) Implémenter TypeValidator, ComplexValidator, RangeValidator pour l'instant
 - [ ] (#7) Reflechir à creer une classe QueryBuilder pour les requetes SQL
 - [ ] (#8) Reflechir à faire en sorte que le controller accepte de traiter plusieurs méthodes HTTP par endpoint
+- [ ] (#9) Mettre le handler du controller directement dans la method run()
 
 ## TODO ANNEXE
 
