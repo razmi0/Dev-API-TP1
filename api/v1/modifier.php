@@ -74,9 +74,11 @@ $app->setMiddleware(
     )
 );
 
-// We set the handler for the controller to do the business logic
-// The handler is the core of the controller, it contains the business logic
-$app->setHandler(
+// We set the business logic of the controller and run sequentially the middlewares and the handler
+$app->run(
+
+    // Context : Controller scope and new Controller object
+    // In this scope, we access to : Request, Response, Middleware objects
 
     function () {
         // Get the client data
@@ -98,9 +100,3 @@ $app->setHandler(
         return ["id" => (int)$id];
     }
 );
-
-
-// Run the configured controller : 
-//          - Run the middlewares sequentially
-//          - Run the handler
-$app->run();

@@ -73,9 +73,8 @@ $app->setMiddleware(
     )
 );
 
-// We set the handler for the controller to do the business logic
-// The handler is the core of the controller, it contains the business logic
-$app->setHandler(
+// We set the business logic of the controller and run sequentially the middlewares and the handler
+$app->run(
 
     function () {
         // Get the id from the query
@@ -111,8 +110,3 @@ $app->setHandler(
         return ["products" => $product->toArray()];
     }
 );
-
-// Run the configured controller : 
-//          - Run the middlewares sequentially
-//          - Run the handler
-$app->run();
