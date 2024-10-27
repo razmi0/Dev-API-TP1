@@ -5,8 +5,8 @@
 // |                                                             |
 // |                 CREATE PRODUCT ENDPOINT                     |
 // |                                                             |
-// |          endpoint :  [POST] /TP1/api/v1.0/produit/new       |
-// |          file     :         /TP1/api/v1/creer.php           |
+// |          endpoint :  [POST] /api/v1.0/produit/new           |
+// |          file     :         /api/v1/creer.php               |
 // |          goal     :  create a product in database           |
 // |_____________________________________________________________|
 //
