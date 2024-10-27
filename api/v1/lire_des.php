@@ -1,46 +1,114 @@
 <?php
 
+//  _____ _______ _______ _______ _______ _______ _______ _______
+// |                                                             |
+// |               READ_MANY PRODUCT ENDPOINT                    |
+// |                                                             |
+// |          endpoint :  [GET] /api/v1.0/produit/listmany       |
+// |          file     :        /api/v1/lire_des.php             |
+// |          goal     :  retrieve many products                 |
+// |_____________________________________________________________|
+//
+
 require_once "../../Autoloader.php";
 
+
+/**
+ * 
+ * IMPORTS
+ * 
+ */
+
+// HTTP classes
 use HTTP\Request;
 use HTTP\Response;
 use HTTP\Error;
+
+// Controller class
 use Controller\Controller;
+
+// Middleware class
 use Middleware\Middleware;
+
+// Model classes
 use Model\Constant;
 use Model\Dao\ProductDao;
 use Model\Schema\Schema;
 
-$app = new Controller(
-    new Request([
-        "methods" => ["GET"],
-        "endpoint" => "/api/v1/lire_des.php",
-    ]),
-    new Response([
-        "code" => 200,
-        "message" => "Produits trouvés",
-    ]),
-    new Middleware([
-        "checkAllowedMethods" => [],
-        "checkValidJson" => [],
-        "checkExpectedData" => new Schema(Constant::READ_MANY_SCHEMA),
-    ]),
+/**
+ * 
+ * INSTRUCTIONS
+ * 
+ */
+
+// The request object is configured for GET requests only on this endpoint
+$request = new Request([
+    "methods" => ["GET"],
+    "endpoint" => "/api/v1/lire_des.php",
+]);
+
+// The response object is configured to return a 200 status code and a successfull message
+$response = new Response([
+    "code" => 200,
+    "message" => "Produits trouvés",
+]);
+
+// Controller object
+$app = new Controller($request, $response);
+
+// Middleware object
+$app->setMiddleware(
+    new Middleware(
+
+        // Context : Middleware scope and new Middleware object
+        // In this context, we access to : Request and Middleware objects
+
+        function () {
+            // Check if the request method is allowed else throw an error               ( 405 Method Not Allowed )
+            $this->checkAllowedMethods();
+
+            // Check if the request body is a valid JSON else throw an error            ( 400 Bad Request )
+            $this->checkValidJson();
+
+            // Check if the request body contains the expected data else throw an error ( 400 Bad Request )
+            $this->checkExpectedData(new Schema(Constant::READ_MANY_SCHEMA));
+        }
+    )
+);
+
+// We set the handler for the controller to do the business logic
+// The handler is the core of the controller, it contains the business logic
+$app->setHandler(
+
+    // Context : Controller scope and new Controller object
+    // In this scope, we access to : Request, Response, Middleware objects
+
     function () {
+
         // Get the ids from the query as an associative array
+        /**
+         * @var string[] $idsInQuery
+         */
         $idsInQuery = $this->request->getQueryParam("id");
 
         // Get the ids from the body
+        /**
+         * @var int[] $idsInBody
+         */
         $idsInBody = $this->request->getDecodedBody("id");
 
-        // If the id is not present in the query or in the body, throw an error
+        // If the ids are not present in the query or in the body, throw an error
         if (!$idsInQuery && !$idsInBody) {
             throw Error::HTTP400("Aucun ids de produits n'a été fourni dans la requête.");
         }
 
-        // Get the ids and cast them to an array of integers
+        // Get the ids and cast them to an array of integers if they are from the query
+        /**
+         * @var int[] $ids
+         */
         $ids = $idsInQuery
             ? array_map(fn($id) => (int)$id, $idsInQuery)
-            : array_map(fn($id) => (int)$id, $idsInBody);
+            : $idsInBody;
 
         // Start the DAO
         $dao = new ProductDao();
@@ -51,9 +119,12 @@ $app = new Controller(
         // Map the products to an array
         $productArray = array_map(fn($product) => $product->toArray(), $products);
 
-        // Return the products array
+        // Return the products array to the controller
         return ["products" => $productArray];
     }
 );
 
+// Run the configured controller : 
+//          - Run the middlewares sequentially
+//          - Run the handler
 $app->run();
