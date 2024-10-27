@@ -37,10 +37,6 @@ class Controller
     protected ?Response $response = null;
     protected ?Request $request = null;
     protected ?Middleware $middleware = null;
-    /**
-     * @var callable $handler The callback provided by the consumer to handle the request
-     */
-    protected $handler;
 
     public function __construct(Request $request, Response $response)
     {
@@ -63,17 +59,21 @@ class Controller
         $this->middleware->setRequest($this->request);
     }
 
-    public function setHandler(callable $handler): void
-    {
-        $this->handler = $handler;
-    }
-
     /**
      * Handle the business logic of the controller providing a context of execution to the handler with a scope and an object (closure)
      * Store the response data in the response object and send it to the client
      */
-    protected function handleBusinessLogic(callable $handler): void
+    public function run(callable $handler): void
     {
+        // We check if the handler is set and callable and if the middleware is set
+        if (!$handler || !is_callable($handler) || !$this->middleware) {
+            throw Error::HTTP500("Erreur interne", [], "Controller");
+        }
+
+        // We launch the middleware logic
+        $this->middleware->handleMiddleware();
+
+        // We launch the business logic
         // We provide and bind all the necessary data to a new Closure (a callback, an instance and a scope)
         $binded_handler = Closure::bind(
             /**
@@ -98,23 +98,5 @@ class Controller
         $this->response
             ->setData($response_data)
             ->sendAndDie();
-    }
-
-    /**
-     * Start the configured controller
-     * 
-     */
-    public function run(): void
-    {
-        // We check if the handler is set and callable and if the middleware is set
-        if (!$this->handler || !is_callable($this->handler) || !$this->middleware) {
-            throw Error::HTTP500("Erreur interne", [], "Controller");
-        }
-
-        // We launch the middleware logic
-        $this->middleware->handleMiddleware();
-
-        // We launch the business logic
-        $this->handleBusinessLogic($this->handler);
     }
 }
