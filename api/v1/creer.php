@@ -1,47 +1,112 @@
 <?php
 
+
+//  _____ _______ _______ _______ _______ _______ _______ _______
+// |                                                             |
+// |                 CREATE PRODUCT ENDPOINT                     |
+// |                                                             |
+// |          endpoint :  [POST] /TP1/api/v1.0/produit/new       |
+// |          file     :         /TP1/api/v1/creer.php           |
+// |          goal     :  create a product in database           |
+// |_____________________________________________________________|
+//
+
 require_once "../../Autoloader.php";
 
+/**
+ * 
+ * IMPORTS
+ * 
+ */
+
+// HTTP classes
 use HTTP\Request;
 use HTTP\Response;
-use Model\Constant;
-use Model\Schema\Schema;
+
+// Controller class
 use Controller\Controller;
+
+// Middleware class
 use Middleware\Middleware;
+
+// Model classes
+use Model\Constant;
 use Model\Dao\ProductDao;
 use Model\Entities\Product;
+use Model\Schema\Schema;
 
-$app = new Controller(
-    new Request([
-        "methods" => ["POST"],
-        "endpoint" => "/api/v1/creer.php",
-    ]),
-    new Response([
-        "code" => 201,
-        "message" => "Produit créé avec succès",
-    ]),
-    new Middleware([
-        "checkAllowedMethods" => [],
-        "checkValidJson" => [],
-        "checkExpectedData" => new Schema(Constant::CREATE_SCHEMA),
-    ]),
+/**
+ * 
+ * INSTRUCTIONS
+ * 
+ */
+
+// The request object is configured for POST requests only on this endpoint
+$request = new Request([
+    "methods" => ["POST"],
+]);
+
+// The response object is configured to return a 201 status code and a successfull message
+$response = new Response([
+    "code" => 201,
+    "message" => "Produit créé avec succès",
+]);
+
+// Controller object
+$app = new Controller($request, $response);
+
+// Middleware object
+$app->setMiddleware(
+    new Middleware(
+
+        // Context : Middleware scope and new Middleware object
+        // In this context, we access to : Request and Middleware objects
+
+        function () {
+            // Check if the request method is allowed else throw an error               ( 405 Method Not Allowed )
+            $this->checkAllowedMethods();
+
+            // Check if the request body is a valid JSON else throw an error            ( 400 Bad Request )
+            $this->checkValidJson();
+
+            // Check if the request body contains the expected data else throw an error ( 400 Bad Request )
+            $this->checkExpectedData(new Schema(Constant::CREATE_SCHEMA));
+        }
+    )
+);
+
+// We set the handler for the controller to do the business logic
+// The handler is the core of the controller, it contains the business logic
+$app->setHandler(
+
+    // Context : Controller scope and new Controller object
+    // In this scope, we access to : Request, Response, Middleware objects
+
     function () {
-        // Get the decoded client data
+        /**
+         * Decoded body from the request
+         * @var array $client_data
+         */
         $client_data = $this->request->getDecodedBody();
 
-        //Create a new product
+        // Create a new product
         $newProduct = Product::make($client_data);
 
-        // Connect to the database
-        $ProductDao = new ProductDao();
+        // Start the DAO
+        $dao = new ProductDao();
 
-        // Create product in db and catch the inserted ID from the database
-        $insertedID = $ProductDao->create($newProduct);
+        // The DAO create method create a new product in the database and return the inserted ID
+        /**
+         *  @var string $insertedID
+         */
+        $insertedID = $dao->create($newProduct);
 
         // Cast the id to integer and return the inserted ID to controller
-        return ["id" => intval($insertedID)];
+        return ["id" => (int)$insertedID];
     },
 );
 
-
+// Run the configured controller : 
+//          - Run the middlewares
+//          - Run the handler
 $app->run();
