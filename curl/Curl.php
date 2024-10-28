@@ -14,23 +14,25 @@ use Exception;
  * This class is a wrapper for the curl library
  * 
  * @property string URL : The base URL of the API
+ * @property int code : The HTTP code of the response
  * @property array ENDPOINTS : create, read_all, read_one, update, delete, read_many
  * @property CurlHandle $ch : The curl handle
- * @property string $result : The result of the curl session
+ * @property mixed $result : The result of the curl session
  */
 class Curl
 {
-    public const URL = "http://localhost/TP1/api/v1/";
+    public const URL = "http://localhost/TP1/api/v1.0/produit/";
     public const ENDPOINTS = [
-        "create" => "creer.php",
-        "read_all" => "lire.php",
-        "read_one" => "lire_un.php",
-        "update" => "modifier.php",
-        "delete" => "supprimer.php",
-        "read_many" => "lire_des.php"
+        "create" => "new",
+        "read_all" => "list",
+        "read_one" => "listone",
+        "update" => "update",
+        "delete" => "delete",
+        "read_many" => "listmany"
     ];
     private ?CurlHandle $ch = null;
-    private ?string $result = null;
+    private mixed $result = null;
+    private int $code = 0;
 
     /**
      * Constructor
@@ -79,6 +81,8 @@ class Curl
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POSTFIELDS => array_key_exists("data", $options) ? $options["data"] ?? "" : "",
             CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HEADER => true,
+            CURLOPT_NOBODY => false
         ]);
 
         // If one of the options failed, throw an exception
@@ -97,13 +101,23 @@ class Curl
             // Execute the curl session
             $response = curl_exec($this->ch);
 
+            // To get the body AND the header at the same time, we need to split the response
+
+            $header_size = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+
+            // First part is the header ( not used )
+            // $header = substr($response, 0, $header_size);
+
+            // Second part is the body(int $headerSize to end of the string), we store it in the result property as an array
+            $this->result = json_decode(substr($response, $header_size), true);
+
+            // Get the HTTP code
+            $this->code = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
+
             // throw an exception if an error occurs
             if ($response === false) {
                 throw new Exception("An error occur in the API" . curl_error($this->ch));
             }
-
-            // Store the response as a json string
-            $this->result = json_encode($response);
 
             // Close the curl session
             curl_close($this->ch);
@@ -112,13 +126,19 @@ class Curl
         }
     }
 
-    public function getResult(): string
+    public function getResult(): mixed
     {
+
         return $this->result;
+    }
+
+    public function getCode(): int
+    {
+        return $this->code;
     }
 
     public function print_results(): void
     {
-        var_export(json_decode($this->result, true));
+        var_export($this->result);
     }
 }
