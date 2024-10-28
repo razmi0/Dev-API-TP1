@@ -1,4 +1,12 @@
-Some utility scripts :
+# Bin
+
+use :
+
+```bash
+composer run-script <script_name>
+```
+
+Some utility scripts [see](../composer.json) :
 
 ```json
 "scripts": {
