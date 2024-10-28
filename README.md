@@ -8,6 +8,17 @@ This API is documented using Swagger-PHP. To generate the documentation, you nee
 composer install
 ```
 
+You can run all this scripts to improve your development experience :
+
+```json
+"scripts": {
+    "db:truncate": "php ./bin/truncate.php",
+    "db:migrate": "node ./bin/migration/migrate.js",
+    "watch:server": "./bin/watch_access_log.sh",
+    "watch:error": "./bin/watch_error_log.sh"
+  },
+```
+
 ## Todo
 
 TP1 :
@@ -55,6 +66,13 @@ API endpoint are finnally done in commit : 9872f770f4815b03a5127703cff4e60e3b245
             ─ lire.php
             ─ modifier.php
             ─ supprimer.php
+    📁 bin
+        📁 migration
+            ─ const.js
+            ─ migrate.js
+        ─ truncateDb.php
+        ─ watch_access_log.sh
+        ─ watch_error_log.sh
     📁 controller
         ─ Controller.php
     📁 curl
@@ -104,7 +122,7 @@ API endpoint are finnally done in commit : 9872f770f4815b03a5127703cff4e60e3b245
             ─ Schema.php
             ─ Template.php
         ─ Constant.php
-    📁 mysql
+    📁 sql
         ─ bdd.md
     📁 utils
         📁 migration
@@ -117,9 +135,6 @@ API endpoint are finnally done in commit : 9872f770f4815b03a5127703cff4e60e3b245
             ─ README.md
             ─ tsconfig.json
         ─ Console.php
-        ─ truncateDb.php
-        ─ watch_access_log.sh
-        ─ watch_error_log.sh
     ─ .gitignore
     ─ .htaccess
     ─ Autoloader.php
