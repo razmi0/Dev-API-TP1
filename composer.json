@@ -3,7 +3,8 @@
     "db:truncate": "php ./bin/truncate.php",
     "db:migrate": "node ./bin/migration/migrate.js",
     "watch:server": "./bin/watch_access_log.sh",
-    "watch:error": "./bin/watch_error_log.sh"
+    "watch:error": "./bin/watch_error_log.sh",
+    "curl:run": "php ./curl/scripts/lire.php && php ./curl/scripts/creer.php && php ./curl/scripts/modifier.php && php ./curl/scripts/supprimer.php && php ./curl/scripts/lire_un.php && php ./curl/scripts/lire_des.php"
   },
   "require": {
     "zircote/swagger-php": "^4.11"
