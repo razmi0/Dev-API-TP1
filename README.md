@@ -30,20 +30,10 @@ You can run all this scripts to improve your development experience :
 
 ### No top priority
 
-Naming :
-
-- [ ] (#16) Rennomer Middleware/Controller => ProductMiddleware/ProductController
-
 Error :
 
 - [ ] (#10) Refacto Error en statique 100%
 - [ ] (#11) Supprimer toutes traces de la propriété $location dans les classes en particulier dans Error, Request, Response
-
-Curl :
-
-- [ ] (#12) Modifier les endpoints dans les script curl car les redirections sont maintenant en place
-- [ ] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
-- [ ] (#14) Remplacer certaines redirections par /produits/
 
 ### meh
 
@@ -73,6 +63,10 @@ Curl :
   - [x] (#6.4) Intégrer le systeme de validation dans le controller ( middleware like)
   - [x] (#6.5) Implémenter TypeValidator, ComplexValidator, RangeValidator pour l'instant
 - [x] (#9) Mettre le handler du controller directement dans la method run()
+- [x] (#16) Rennomer Middleware/Controller => ProductMiddleware/ProductController
+- [x] (#12) Modifier les endpoints dans les script curl car les redirections sont maintenant en place
+- [x] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
+- [x] (#14) Remplacer certaines redirections par /produits/
 
 ## Project structure
 
