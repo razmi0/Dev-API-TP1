@@ -14,6 +14,9 @@ You can run all this scripts to improve your development experience :
 "scripts": {
     "db:truncate": "php ./bin/truncate.php",
     "db:migrate": "node ./bin/migration/migrate.js",
+
+    // Only mac and linux systems (.sh files) :
+
     "watch:server": "./bin/watch_access_log.sh",
     "watch:error": "./bin/watch_error_log.sh"
   },
@@ -21,7 +24,35 @@ You can run all this scripts to improve your development experience :
 
 ## Todo
 
-TP1 :
+### Top priority
+
+- [ ] (#15) Implémenter swagger
+
+### No top priority
+
+Naming :
+
+- [ ] (#16) Rennomer Middleware/Controller => ProductMiddleware/ProductController
+
+Error :
+
+- [ ] (#10) Refacto Error en statique 100%
+- [ ] (#11) Supprimer toutes traces de la propriété $location dans les classes en particulier dans Error, Request, Response
+
+Curl :
+
+- [ ] (#12) Modifier les endpoints dans les script curl car les redirections sont maintenant en place
+- [ ] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
+- [ ] (#14) Remplacer certaines redirections par /produits/
+
+### meh
+
+- [ ] (#7) Reflechir à creer une classe QueryBuilder pour les requetes SQL
+- [ ] (#8) Reflechir à faire en sorte que le controller accepte de traiter plusieurs méthodes HTTP par endpoint
+
+## History
+
+<_API endpoint are finnally done in commit : 9872f770f4815b03a5127703cff4e60e3b2456a1 👍_>
 
 - [x] (#1)Remplacer mysqli par PDO
 - [x] (#2)Incorporer dans mon entité un validateur pour les setters
@@ -41,18 +72,7 @@ TP1 :
   - [x] (#6.3) Creer une interface ValidatorInterface et contraintre les Validators à implementer cette interface
   - [x] (#6.4) Intégrer le systeme de validation dans le controller ( middleware like)
   - [x] (#6.5) Implémenter TypeValidator, ComplexValidator, RangeValidator pour l'instant
-- [ ] (#7) Reflechir à creer une classe QueryBuilder pour les requetes SQL
-- [ ] (#8) Reflechir à faire en sorte que le controller accepte de traiter plusieurs méthodes HTTP par endpoint
 - [x] (#9) Mettre le handler du controller directement dans la method run()
-- [ ] (#10) Refacto Error et centraliser son utilisation sur les méthodes statiques HTTP
-- [ ] (#11) Supprimer toutes traces de la propriété $location dans les classes en particulier dans Error, Request, Response
-- [ ] (#12) Modifier les endpoints dans les script curl car les redirections sont maintenant en place
-- [ ] (#13) Rajouter un call sur le endpoint read_many dans les scripts curl
-- [ ] (#14) Remplacer certaines redirections par /produits/
-
-## History
-
-API endpoint are finnally done in commit : 9872f770f4815b03a5127703cff4e60e3b2456a1 👍
 
 ## Project structure
 
