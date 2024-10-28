@@ -1,5 +1,11 @@
 {
-    "require": {
-        "zircote/swagger-php": "^4.11"
-    }
+  "scripts": {
+    "db:truncate": "php ./bin/truncate.php",
+    "db:migrate": "node ./bin/migration/migrate.js",
+    "watch:server": "./bin/watch_access_log.sh",
+    "watch:error": "./bin/watch_error_log.sh"
+  },
+  "require": {
+    "zircote/swagger-php": "^4.11"
+  }
 }
