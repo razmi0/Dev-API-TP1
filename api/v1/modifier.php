@@ -23,10 +23,10 @@ use HTTP\Request;
 use HTTP\Response;
 
 // Controller class
-use Controller\Controller;
+use Controller\ProductController as Controller;
 
 // Middleware class
-use Middleware\Middleware;
+use Middleware\ProductMiddleware as Middleware;
 
 // Model classes
 use Model\Constant;

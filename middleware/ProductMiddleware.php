@@ -20,7 +20,7 @@ use Exception;
  * @property callable $handler
  * 
  */
-class Middleware
+class ProductMiddleware
 {
 
     private ?Request $request = null;

@@ -8,7 +8,7 @@ use Closure;
 use HTTP\Error;
 use HTTP\Request;
 use HTTP\Response;
-use Middleware\Middleware;
+use Middleware\ProductMiddleware as Middleware;
 use Model\Schema\Schema;
 
 /**
@@ -32,7 +32,7 @@ use Model\Schema\Schema;
  * @method void run()
  * 
  */
-class Controller
+class ProductController
 {
     protected ?Response $response = null;
     protected ?Request $request = null;
