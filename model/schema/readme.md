@@ -30,7 +30,7 @@ ValidatoError is deletable as he is poor boiler plate code.
 ## Core
 
 Validators barrel file and some sorting functionnality with private constants.
-Schema use core to distribute the data to the validators.
+Schema extends core to distribute the data to the validators.
 
 ```mermaid
 flowchart RL
