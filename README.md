@@ -1,5 +1,7 @@
 # TP1 Basic CRUD API
 
+hi
+
 ## Installation
 
 This API is documented using Swagger-PHP. To generate the documentation, you need to install the swagger-php package :
