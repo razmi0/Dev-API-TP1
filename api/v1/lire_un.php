@@ -1,5 +1,15 @@
 <?php
 
+
+
+use Core\Endpoint;
+use HTTP\{Error, Request, Response};
+use Middleware\Middleware;
+use Model\{Constant, Dao\ProductDao, Schema\Schema};
+
+require_once "../../vendor/autoload.php";
+
+
 //  _____ _______ _______ _______ _______ _______ _______ _______
 // |                                                             |
 // |                READ ONE PRODUCT ENDPOINT                    |
@@ -10,95 +20,66 @@
 // |_____________________________________________________________|
 //
 
-require_once "../../vendor/autoload.php";
 
 /**
  * 
- * IMPORTS
+ * ListOneEndpoint
+ * 
+ * This class extends the Endpoint class.
+ * The parent Endpoint class is an abstract class that defines the basic structure of an endpoint and
+ * the ListOneEndpoint class is a concrete class that implements the logic of the create endpoint.
+ * 
+ * @property Request $request
+ * @property Response $response
+ * @property Middleware $middleware
+ * @property Schema $schema
+ * 
+ * @method __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+ * @method handleMiddleware(): void
+ * @method handleRequest(): array
+ * @method handleResponse(mixed $data): void
  * 
  */
+final class ListOneEndpoint extends Endpoint
+{
 
-// HTTP classes
-use HTTP\Request;
-use HTTP\Response;
-use HTTP\Error;
+    // The only method allowed for this endpoint
+    public const ENDPOINT_METHOD = "GET";
 
-// Controller class
-use Controller\ProductController as Controller;
-
-// Middleware class
-use Middleware\ProductMiddleware as Middleware;
-
-// Model classes
-use Model\Constant;
-use Model\Dao\ProductDao;
-use Model\Schema\Schema;
-
-/**
- * 
- * INSTRUCTIONS
- * 
- */
-// The request object is configured for GET requests only on this endpoint
-$request = new Request([
-    "methods" => ["GET"],
-]);
-
-// The response object is configured to return a 200 status code and a successfull message
-$response = new Response([
-    "code" => 200,
-    "message" => "Produit trouvé",
-]);
-
-// Controller object
-$app = new Controller($request, $response);
-
-// Middleware object
-$app->setMiddleware(
-    new Middleware(
-
-        // Context : Middleware scope and new Middleware object
-        // In this context, we access to : Request and Middleware objects
-
-        function () {
-            // Check if the request method is allowed else throw an error                ( 405 Method Not Allowed )
-            $this->checkAllowedMethods();
-
-            // Check if the request body is a valid JSON else throw an error             ( 400 Bad Request )
-            $this->checkValidJson();
-
-            // Check if the request body contains the expected data else throw an error  ( 400 Bad Request )
-            $this->checkExpectedData(new Schema(Constant::READ_ONE_SCHEMA));
-        }
-    )
-);
-
-// We set the business logic of the controller and run sequentially the middlewares and the handler
-$app->run(
-
-    function () {
-        // Get the id from the query
+    // dependency injection here
+    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    {
         /**
-         * @var string $idInQuery
-         */
-        $idInQuery = $this->request->getQueryParam("id");
+         * The parent Endpoint assign the properties (request, response, middleware, schema) as protected properties
+         * @see Core/Endpoint.php
+         **/
+        parent::__construct($request, $response, $middleware, $schema);
+    }
 
-        // Get the id from the body
+    /**
+     * 🧠 handleRequest contain the core logic of the endpoint
+     */
+    public function handleRequest(): array
+    {
+
         /**
-         * @var int $idInBody
+         * Check if the ids are present in the query or in the body
          */
-        $idInBody = $this->request->getDecodedBody("id");
+        $isIdInQuery = $this->request->getHasQuery();
+        $isIdInBody = $this->request->getHasData();
 
         // If the id is not present in the query or in the body, throw an error
-        if (!$idInQuery && !$idInBody) {
-            Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.", [], "lire_un");
-        }
+        if (!$isIdInQuery && !$isIdInBody)
+            Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.");
 
-        // Get the id and cast it to an integer if it is from the query
+
         /**
+         * Get the id and cast it to an integer if it is from the query
          * @var int $id
          */
-        $id = $idInQuery  ? (int)$idInQuery : $idInBody;
+        $id = $isIdInQuery
+            ? (int)$this->request->getQueryParam("id")
+            : $this->request->getDecodedBody("id");
 
         // Start the DAO
         $dao = new ProductDao();
@@ -107,6 +88,118 @@ $app->run(
         $product = $dao->findById($id);
 
         // Return the product as an array
-        return ["products" => $product->toArray()];
+        return ["product" => $product->toArray()];
     }
+
+
+    /**
+     * ✅ The middleware object will handle all the checks to avoid a bad request
+     */
+    public function handleMiddleware(): void
+    {
+
+        // Check if the request method is allowed (GET only)
+        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);            // if error return 405 Method Not Allowed
+
+        // Check if the request body is a valid JSON
+        $this->middleware->checkValidJson();                                        // if error, return 400 Bad Request
+
+        // Check if the request body contains the expected data 
+        // (name type, length, regex ; description type, length, regex ; ect...)
+        $this->middleware->checkExpectedData($this->schema);                        // if error, return 400 Bad Request
+
+    }
+
+
+    /**
+     * 📡 handleResponse is responsible for sending the response back to the client
+     */
+    public function handleResponse(mixed $data): void
+    {
+        // Send the response with a 200 status code and a success message
+        $this->response
+            ->setPayload($data)
+            ->sendAndDie();
+    }
+}
+
+
+
+// ENDPOINT INSTRUCTIONS 👇
+// --
+
+
+
+
+/**
+ * our request object with all incoming informations (headers, body, method, query string etc...)
+ * @see http/Request.php
+ */
+$request = new Request();
+
+
+
+
+
+/**
+ * our template rules to validate the client data in the request body
+ * @see model/schema/Schema.php
+ */
+$schema = new Schema(
+    [
+        "id" => [
+            "type" => "integer",
+            "required" => false,
+            "range" => [1, null],
+            "regex" => Constant::ID_REGEX
+        ],
+    ]
 );
+
+
+
+
+/**
+ * our middleware object with all the necessary methods to check the incoming request
+ * @see middleware/Middleware.php
+ */
+$middleware = new Middleware($request);
+
+
+
+
+/**
+ * our response object with all the necessary methods to send a response to the client
+ * @see http/Response.php
+ */
+$response = new Response([
+    "code" => 200,
+    "message" => "Produit trouvé",
+    "header" => [
+        "methods" => [ListOneEndpoint::ENDPOINT_METHOD]
+    ]
+]);
+
+
+
+
+
+// Create the endpoint with above configuration
+$endpoint = new ListOneEndpoint($request, $response, $middleware, $schema);
+
+
+
+
+// Run the endpoint as we configured it
+// --
+
+// ✅ First the middleware checks ( valid data, valid method, valid json)
+$endpoint->handleMiddleware();
+
+// 🧠 Then the core logic of the endpoint ( instantiate a new product and the dao, create the product in the database, return the inserted ID)
+$data = $endpoint->handleRequest();
+
+// 📡 Finally the response to the client ( send the response with the inserted ID, configured headers and status code 201)
+$endpoint->handleResponse($data);
+
+// --
