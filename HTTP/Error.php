@@ -2,7 +2,7 @@
 
 namespace HTTP;
 
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use Utils\Console;
 
@@ -36,7 +36,7 @@ class Error
         return $this;
     }
 
-    private function setData($data)
+    private function setPayload($data)
     {
         $this->data = $data;
         return $this;
@@ -70,7 +70,7 @@ class Error
         $error->setCode(404)
             ->setMessage($msg)
             ->setError("Page non trouvée")
-            ->setData($payload)
+            ->setPayload($payload)
             ->sendAndDie();
     }
 
@@ -86,7 +86,7 @@ class Error
         $error->setCode(405)
             ->setMessage($msg)
             ->setError("Méthode non autorisée")
-            ->setData($payload)
+            ->setPayload($payload)
             ->sendAndDie();
     }
 
@@ -102,7 +102,7 @@ class Error
         $error->setCode(400)
             ->setMessage($msg)
             ->setError("Requête invalide")
-            ->setData($payload)
+            ->setPayload($payload)
             ->sendAndDie();
     }
 
@@ -118,7 +118,7 @@ class Error
         $error->setCode(500)
             ->setMessage($msg)
             ->setError("Erreur interne")
-            ->setData($payload)
+            ->setPayload($payload)
             ->sendAndDie();
     }
 
@@ -134,7 +134,7 @@ class Error
         $error->setCode(204)
             ->setMessage($msg)
             ->setError("Aucun contenu")
-            ->setData($payload)
+            ->setPayload($payload)
             ->sendAndDie();
     }
 
@@ -150,7 +150,7 @@ class Error
         $error->setCode(503)
             ->setMessage($msg)
             ->setError("Service non disponible")
-            ->setData($payload)
+            ->setPayload($payload)
             ->sendAndDie();
     }
 }
