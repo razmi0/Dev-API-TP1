@@ -139,7 +139,7 @@ $schema = new Schema(
             "type" => "integer",
             "required" => true,
             "range" => [1, null],
-            "regex" => self::ID_REGEX
+            "regex" => Constant::ID_REGEX
         ]
     ]
 );
