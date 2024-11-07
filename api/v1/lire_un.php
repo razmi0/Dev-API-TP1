@@ -10,7 +10,7 @@
 // |_____________________________________________________________|
 //
 
-require_once "../../Autoloader.php";
+require_once "../../vendor/autoload.php";
 
 /**
  * 
@@ -91,7 +91,7 @@ $app->run(
 
         // If the id is not present in the query or in the body, throw an error
         if (!$idInQuery && !$idInBody) {
-            throw Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.", [], "lire_un");
+            Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.", [], "lire_un");
         }
 
         // Get the id and cast it to an integer if it is from the query

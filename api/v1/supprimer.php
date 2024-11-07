@@ -1,5 +1,15 @@
 <?php
 
+
+
+use Core\Endpoint;
+use HTTP\{Error, Request, Response};
+use Middleware\Middleware;
+use Model\{Constant, Dao\ProductDao, Entity\Product, Schema\Schema};
+
+require_once "../../vendor/autoload.php";
+
+
 //  _____ _______ _______ _______ _______ _______ _______ _______
 // |                                                             |
 // |                DELETE PRODUCT ENDPOINT                      |
@@ -10,85 +20,68 @@
 // |_____________________________________________________________|
 //
 
-require_once "../../Autoloader.php";
-
 
 /**
  * 
- * IMPORTS
+ * DeleteEndpoint
  * 
+ * This class extends the Endpoint class.
+ * The parent Endpoint class is an abstract class that defines the basic structure of an endpoint and
+ * the DeleteEndpoint class is a concrete class that implements the logic of the delete endpoint.
+ * 
+ * @property Request $request
+ * @property Response $response
+ * @property Middleware $middleware
+ * @property Schema $schema
+ * 
+ * @method __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+ * @method handleMiddleware(): void
+ * @method handleRequest(): array
+ * @method handleResponse(mixed $data): void
  */
-// HTTP classes
-use HTTP\Request;
-use HTTP\Response;
-use HTTP\Error;
+final class DeleteEndpoint extends Endpoint
+{
 
-// Controller class
-use Controller\ProductController as Controller;
+    // The only method allowed for this endpoint
+    public const ENDPOINT_METHOD = "DELETE";
 
-// Middleware class
-use Middleware\ProductMiddleware as Middleware;
-
-// Model classes
-use Model\Constant;
-use Model\Dao\ProductDao;
-use Model\Schema\Schema;
-
-/**
- * 
- * INSTRUCTIONS
- * 
- */
-
-// The request object is configured for DELETE requests only on this endpoint
-$request = new Request([
-    "methods" => ["DELETE"],
-]);
-
-// The response object is configured to return a 200 status code and a successfull message
-$response = new Response([
-    "code" => 200,
-    "message" => "Produit supprimé avec succès",
-]);
-
-// Controller object
-$app = new Controller($request, $response);
-
-// Middleware object
-$app->setMiddleware(
-    new Middleware(
-
-        // Context : Middleware scope and new Middleware object
-        // In this context, we access to : Request and Middleware objects
-
-        function () {
-            // Check if the request method is allowed else throw an error                ( 405 Method Not Allowed )
-            $this->checkAllowedMethods();
-
-            // Check if the request body is a valid JSON else throw an error             ( 400 Bad Request )
-            $this->checkValidJson();
-
-            // Check if the request body contains the expected data else throw an error  ( 400 Bad Request )
-            $this->checkExpectedData(new Schema(Constant::DELETE_SCHEMA));
-        }
-    )
-);
-
-// We set the business logic of the controller and run sequentially the middlewares and the handler
-$app->run(
-
-    function () {
-        // Get the id from the body
+    // dependency injection here
+    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    {
         /**
+         * The parent Endpoint assign the properties (request, response, middleware, schema) as protected properties
+         * @see Core/Endpoint.php
+         **/
+        parent::__construct($request, $response, $middleware, $schema);
+    }
+
+    /**
+     * ✅ The middleware object will handle all the checks to avoid a bad request
+     */
+
+    public function handleMiddleware(): void
+    {
+        // Check if the request method is allowed else throw an error                ( 405 Method Not Allowed )
+        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);
+
+        // Check if the request body is a valid JSON else throw an error             ( 400 Bad Request )
+        $this->middleware->checkValidJson();
+
+        // Check if the request body contains the expected data else throw an error  ( 400 Bad Request )
+        $this->middleware->checkExpectedData($this->schema);
+    }
+
+    /**
+     * 🧠  The request object will handle the business logic
+     */
+    public function handleRequest(): array
+    {
+        /**
+         * Get the id from the body
          * @var int $id
          */
-        $id = $this->request->getDecodedBody("id");
+        $id = (int)$this->request->getDecodedBody("id");
 
-        // If the id is not present in the body, throw an error
-        if (!$id) {
-            $error_message = "Veuillez fournir un id de produit dans le corps de la requête au format JSON.";
-            throw Error::HTTP400("Données invalides : " .  $error_message, []);
-        }
 
         // Start the DAO
         $dao = new ProductDao();
@@ -98,10 +91,99 @@ $app->run(
 
         // If no product was found, we send a 204 with no content in response body as HTTP specification states
         if ($affectedRows === 0) {
-            throw Error::HTTP204("Aucun produit trouvé", ["id" => $id]);
+            $this->response->setCode(204);
         }
 
-        // Return the id
-        return ["id" => $id];
+        // No response data to return, even if the product was deleted
+        return [];
     }
+
+    /**
+     * 📡 The response object will handle the response
+     */
+    public function handleResponse(mixed $data): void
+    {
+        // Send the response with a 200 status code and a success message
+        $this->response
+            ->setPayload($data)
+            ->sendAndDie();
+    }
+}
+
+
+
+
+// ENDPOINT INSTRUCTIONS 👇
+// --
+
+
+
+
+
+/**
+ * our request object with all incoming informations (headers, body, method, query string etc...)
+ * @see http/Request.php
+ */
+$request = new Request();
+
+
+
+
+/**
+ * our template rules to validate the client data in the request body
+ * @see model/schema/Schema.php
+ */
+$schema = new Schema(
+    [
+        "id" => [
+            "type" => "integer",
+            "required" => true,
+            "range" => [1, null],
+            "regex" => self::ID_REGEX
+        ]
+    ]
 );
+
+
+
+/**
+ * Our middleware object that will handle all the checks to avoid a bad request and validate the incoming request
+ * @see middleware/Middleware.php
+ */
+$middleware = new Middleware($request);
+
+
+
+
+
+// The response object is configured to return a 200 status code and a successfull message
+$response = new Response([
+    "code" => 200,
+    "message" => "Produit supprimé avec succès",
+    "header" => [
+        "methods" => [DeleteEndpoint::ENDPOINT_METHOD]
+    ]
+]);
+
+
+
+
+// The endpoint is created with all the necessary objects
+$endpoint = new DeleteEndpoint($request, $response, $middleware, $schema);
+
+
+
+
+// Run the endpoint as we configured it
+// --
+
+// ✅ First the middleware checks ( valid data, valid method, valid json)
+$endpoint->handleMiddleware();
+
+// 🧠 Then the core logic of the endpoint ( instantiate a new product and the dao, create the product in the database, return the inserted ID)
+$data = $endpoint->handleRequest();
+
+// 📡 Finally the response to the client ( send the response with the inserted ID, configured headers and status code 201)
+$endpoint->handleResponse($data);
+
+// --
