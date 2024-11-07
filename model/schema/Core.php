@@ -22,7 +22,7 @@ require_once 'Validator/RangeValidator.php';
 require_once 'Validator/ArrayValidator.php';
 require_once 'Validator/ValidatorInterface.php';
 
-use Schema\Validator\{
+use Schema\Validators\{
     /**
      * Type validators
      */
