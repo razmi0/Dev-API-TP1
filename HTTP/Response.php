@@ -2,7 +2,7 @@
 
 namespace HTTP;
 
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use Exception;
 use HTTP\Payload;
@@ -11,8 +11,6 @@ use Utils\Console;
 
 class Response
 {
-    private const POSSIBLE_CODES = [200, 201, 202, 204, 400, 401, 403, 404, 405, 500];
-    private const POSSIBLE_METHODS = ["GET", "POST", "PUT", "DELETE"];
     private ?int $code = null;
 
     private array $header = [];
@@ -25,17 +23,13 @@ class Response
     public function __construct($config)
     {
 
-        // if no code or method header throw an exception
-        // if code is not valid throw an exception
-        // if methods are not valid throw an exception
-        self::validateConfig($config);
 
         // valid config now
         $this->code = $config["code"];
 
         $this->payload = new Payload([
             "message" => $config["message"] ?? "",
-            "data" => key_exists("data", $config) && is_array($config["data"]) ? $config["data"] : [],
+            "data" =>  $config["data"] ?? [],
             "error" => $config["error"] ?? ""
         ]);
 
@@ -47,36 +41,6 @@ class Response
             "Access-Control-Age: " => $config["header"]["age"] ?? 3600, // default 3600
             "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With" => ""
         ];
-    }
-
-    private static function validateConfig(array $config): void
-    {
-        $mandatoryError = "Code and methods required in Response, received : ";
-        $codeError = "Invalid response code, received : ";
-        $methodsError = "Invalid methods, received : ";
-
-        if (!self::checkMandatoryFields($config))
-            throw new Exception($mandatoryError . "code : " .  $config["code"] . "methods :" . $config["methods"]); // not valid config
-        if (!self::checkValidCode($config["code"]))
-            throw new Exception($codeError . $config["code"]); // not valid code
-        if (!self::checkValidMethods($config["header"]["methods"]))
-            throw new Exception($methodsError . self::methodsToString($config["header"]["methods"]) . " expected : " . self::methodsToString(self::POSSIBLE_METHODS)); // not valid methods
-
-    }
-
-    private static function checkMandatoryFields(array $config): bool
-    {
-        return key_exists("code", $config) && key_exists("header", $config) && key_exists("methods", $config["header"]);
-    }
-
-    private static function checkValidMethods(array $methods): bool
-    {
-        return count(array_diff($methods, self::POSSIBLE_METHODS)) === 0;
-    }
-
-    private static function checkValidCode(int $code): bool
-    {
-        return in_array($code, self::POSSIBLE_CODES);
     }
 
     private static function methodsToString(array $methods): string
@@ -96,7 +60,7 @@ class Response
         return $this;
     }
 
-    public function setData($data): self
+    public function setPayload($data): self
     {
         $this->payload->setData($data);
         return $this;
@@ -156,28 +120,6 @@ class Response
 
         // end the script
 
-        var_export($this);
-
-        // die();
+        die();
     }
 }
-
-
-$response = new Response([
-    "code" => 200,
-    "error" => null,
-    "message" => "Produit obtenu avec succés",
-    "data" => [
-        "produits" => [
-            "id" => 200,
-            "nom" => "Produit 1",
-            "prix" => 1000,
-            "quantite" => 10
-        ]
-    ],
-    "header" => [
-        "methods" => ["GET"],
-    ]
-]);
-
-$response->sendAndDie();
