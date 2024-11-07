@@ -6,7 +6,7 @@
  * path : /api/v1.0/produit/listone
  */
 
-require_once "Autoloader.php";
+require_once "vendor/autoload.php";
 
 use Curl\Curl as Session;
 use Curl\CurlTest as Test;

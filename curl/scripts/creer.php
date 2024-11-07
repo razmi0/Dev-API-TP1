@@ -6,7 +6,7 @@
  * path : /api/v1.0/produit/new
  */
 
-require_once "Autoloader.php";
+require_once "vendor/autoload.php";
 
 use Curl\Curl as Session;
 use Curl\CurlTest as Test;
@@ -21,7 +21,10 @@ $data = [
     "prix" => rand(MAX_PRICE, MIN_PRICE)
 ];
 
-// curl is an object configuration for the curl session
+/**
+ * curl is an object configuration for the curl session
+ * @see Curl/Curl.php
+ */
 $curl = new Session(
     [
         "endpoint" => "create",
@@ -45,5 +48,12 @@ $returned_id = $curl->getResult()["data"]["id"];
 // Define condition
 $condition = $http_code === 201 && $returned_id !== null;
 
-// Test the condition
-Test::assert($returned_id !== null && $http_code === 201, "Must return an id : $returned_id and a status code $http_code", $returned_id);
+/**
+ * Test the condition
+ * @see Curl/CurlTest.php
+ */
+Test::assert(
+    $returned_id !== null && $http_code === 201,
+    "Must return an id : $returned_id and a status code $http_code",
+    $returned_id
+);

@@ -7,13 +7,10 @@
  * path : /api/v1.0/produit/list
  */
 
-require_once "Autoloader.php";
+require_once "vendor/autoload.php";
 
 use Curl\Curl as Session;
 use Curl\CurlTest as Test;
-use Utils\Console;
-
-var_dump(sprintf(Console::COLORS['green'], "The response is OK"));
 
 
 $limit = 10;
