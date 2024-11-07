@@ -9,7 +9,7 @@
 require_once "vendor/autoload.php";
 
 use Curl\Session;
-use Curl\CurlTest as Test;
+use Curl\Test as Test;
 
 const MAX_PRICE = 1;
 const MIN_PRICE = 1000;
@@ -50,7 +50,7 @@ $condition = $http_code === 201 && $returned_id !== null;
 
 /**
  * Test the condition
- * @see Curl/CurlTest.php
+ * @see Curl/Test.php
  */
 Test::assert(
     $returned_id !== null && $http_code === 201,

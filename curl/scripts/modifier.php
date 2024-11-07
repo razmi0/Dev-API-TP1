@@ -9,7 +9,7 @@
 require_once "vendor/autoload.php";
 
 use Curl\Session;
-use Curl\CurlTest as Test;
+use Curl\Test as Test;
 
 const MIN_ID = 1;
 const MAX_ID = 200;
