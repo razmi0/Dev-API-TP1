@@ -8,7 +8,7 @@
 
 require_once "vendor/autoload.php";
 
-use Curl\Curl as Session;
+use Curl\Session;
 use Curl\CurlTest as Test;
 
 const MIN_ID = 1;
