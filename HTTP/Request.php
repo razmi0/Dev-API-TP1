@@ -37,20 +37,20 @@ class Request
 
     // Request related properties
 
-    protected string $request_method = "";
+    private string $request_method = "";
 
     // Body request data related properties
 
-    protected string $client_raw_json = "";
-    protected array $client_decoded_data = [];
-    protected bool $has_data = false;
-    protected bool $is_valid_json = true;
-    protected string $json_error_msg = "";
+    private string $client_raw_json = "";
+    private array $client_decoded_data = [];
+    private bool $has_data = false;
+    private bool $is_valid_json = true;
+    private string $json_error_msg = "";
 
     // Query related properties
 
-    protected bool $has_query = false;
-    protected array $query_params = [];
+    private bool $has_query = false;
+    private array $query_params = [];
 
 
     public function __construct()
@@ -69,11 +69,17 @@ class Request
             // Get the client payload from body and store it for easy access
             $this->client_raw_json = file_get_contents("php://input") ?? "";
 
+            // utility property to check if the request has data in body
+            if (!empty($this->client_raw_json)) {
+                $this->has_data = true;
+            }
+
             // Decode the client data here with a pure function and destructuring the return 
             // safeDecode is safe and doesn't throw an error ( check is in middleware )
-            [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
+            if ($this->has_data)
+                [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
         } catch (Error) {
-            throw Error::HTTP500(`Une erreur interne s'est produite : $this->json_error_msg`, [], "Request");
+            Error::HTTP500(`Une erreur interne s'est produite`, []);
         }
     }
 
@@ -82,11 +88,7 @@ class Request
      */
     public static function safeDecode(string $json): array
     {
-        $validJson = [
-            "decoded" => [],
-            "valid" => false,
-            "message" => ""
-        ];
+        $error = "";
 
         // json to associative array or empty array
         $decoded = json_decode($json, true) ?? [];
@@ -95,16 +97,11 @@ class Request
         if (json_last_error() !== JSON_ERROR_NONE) {
 
             // store the error message
-            $validJson["message"] = json_last_error_msg();
+            $error = "[JSON ERROR] : " . json_last_error_msg();
         }
 
-        // empty is false in case of empty array
-        $validJson["valid"] = !empty($decoded);
-
-        // store the decoded data
-        $validJson["decoded"] = $decoded;
-
-        return $validJson; // [decoded, valid, message]
+        //      [data,       isValid,       error]
+        return [$decoded, !empty($decoded), $error];
     }
 
     public function getDecodedBody(string $key = null): mixed
@@ -130,5 +127,15 @@ class Request
     public function getQueryParam($key): string | null | array
     {
         return $this->query_params[$key] ?? "";
+    }
+
+    public function getRequestMethod(): string
+    {
+        return $this->request_method;
+    }
+
+    public function getHasQuery(): bool
+    {
+        return $this->has_query;
     }
 }
