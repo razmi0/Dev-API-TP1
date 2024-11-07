@@ -16,7 +16,6 @@
       "Model\\Schema\\Validators\\": "model/schema/Validator",
       "Model\\Entity\\": "model/entity/",
       "Curl\\": "curl/",
-      "Controller\\": "controller/",
       "Middleware\\": "middleware/",
       "Utils\\": "utils/"
     }
