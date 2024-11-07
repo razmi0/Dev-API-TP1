@@ -20,7 +20,8 @@ You can run all this scripts to improve your development experience :
     // Only mac and linux systems (.sh files) :
 
     "watch:server": "./bin/watch_access_log.sh",
-    "watch:error": "./bin/watch_error_log.sh"
+    "watch:error": "./bin/watch_error_log.sh",
+    "curl:run": "php ./curl/<filename>.php && php ./curl/<filename>.php ect",
   },
 ```
 
