@@ -2,7 +2,7 @@
 
 namespace Model\Dao;
 
-use Model\Entities\Product as Product;
+use Model\Entity\Product as Product;
 use Model\Dao\Connection as Connection;
 use HTTP\Error as Error;
 use PDO;
@@ -286,14 +286,11 @@ class ProductDao
             if (!$stmt) {
                 throw $this->error->HTTP500(...$error);
             }
+
             $affectedRows = $prepared->rowCount();
 
-            if ($affectedRows == 0) {
-                throw $this->error->HTTP204("Aucune modification", ["id" => $id]);
-            }
-
-            // If all went good, we will return the id of the last inserted product to the controller
-            return $id;
+            // return the number of affected rows
+            return $affectedRows;
         } catch (Error $e) {
             // If an error was catch, we send an informative error message back to the controller
             throw $e;
