@@ -10,7 +10,7 @@
 
 use Model\Dao\Connection;
 
-require_once "./Autoloader.php";
+require_once "./vendor/autoload.php";
 
 
 try {
