@@ -1,9 +1,9 @@
 <?php
 
-namespace Schema\Validator;
+namespace Schema\Validators;
 
-use Schema\Validator\ValidatorInterface;
-use Schema\Validator\ValidatorResult;
+use Schema\Validators\ValidatorInterface;
+use Schema\Validators\ValidatorResult;
 
 
 // string[], double[], integer[], null[]

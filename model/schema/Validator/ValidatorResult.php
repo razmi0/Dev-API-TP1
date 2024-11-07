@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Schema\Validator;
+namespace Schema\Validators;
 
 /**
  * Class ValidatorResult

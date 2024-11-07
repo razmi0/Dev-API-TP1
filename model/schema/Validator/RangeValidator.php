@@ -14,13 +14,13 @@
  * 
  **/
 
-namespace Schema\Validator;
+namespace Schema\Validators;
 
 require_once 'ValidatorInterface.php';
 require_once 'ValidatorResult.php';
 
-use Schema\Validator\ValidatorResult as ValidatorResult;
-use Schema\Validator\ValidatorInterface as ValidatorInterface;
+use Schema\Validators\ValidatorResult as ValidatorResult;
+use Schema\Validators\ValidatorInterface as ValidatorInterface;
 
 
 /**
