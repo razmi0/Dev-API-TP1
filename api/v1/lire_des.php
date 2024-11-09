@@ -170,6 +170,10 @@ $schema = new Schema(
 /**
  * our middleware object with all the necessary methods to check the incoming request
  * @see middleware/Middleware.php
+ * 
+ * @throws Error 405 Method Not Allowed
+ * @throws Error 400 Bad Request
+ * 
  */
 $middleware = new Middleware($request);
 

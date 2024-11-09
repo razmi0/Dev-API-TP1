@@ -169,6 +169,9 @@ $schema = new Schema([
 /**
  * Our middleware object that will handle all the checks to avoid a bad request and validate the incoming request
  * @see middleware/Middleware.php
+ * 
+ * @throws HTTP 405 Method Not Allowed
+ * @throws HTTP 400 Bad Request
  */
 $middleware = new Middleware($request);
 
