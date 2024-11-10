@@ -3,8 +3,8 @@
 
 use Core\Endpoint;
 use HTTP\{Error, Request, Response};
-use Middleware\{Middleware, Validators\Validator};
-use Model\{Constant, Dao\ProductDao, Entity\Product};
+use Middleware\{Middleware, Validators\Validator, Validators\Constant};
+use Model\{Dao\ProductDao, Entity\Product};
 
 require_once "../../vendor/autoload.php";
 
