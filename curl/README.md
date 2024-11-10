@@ -10,6 +10,6 @@ composer run-script curl:run
 
 Very simple class, it provides a simple interface to make curl requests.
 
-## CurlTest class
+## Test class
 
 Assert a condition and emit terminal formated messages.

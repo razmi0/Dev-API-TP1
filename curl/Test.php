@@ -6,13 +6,13 @@ use Utils\Console;
 
 /**
  * 
- * class CurlTest
+ * class Test
  * 
  * It implements a simple assertion method to test the results of the curl session
  * Since php version ^7.0, the assert function is disabled by default so i made one just in case.
  *
  */
-class CurlTest
+class Test
 {
 
     public static function assert($condition, $description, $data = null)

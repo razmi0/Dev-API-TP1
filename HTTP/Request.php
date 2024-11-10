@@ -11,142 +11,99 @@ use HTTP\Error;
  * 
  * Class Request
  * 
- * @property string $request_method
+ * very important class
  * 
- * @property array $authorized_methods
+ * @property string $request_method The request method
  * 
- * @property string $endpoint
+ * @property string $client_raw_json The raw body content of the request
+ * @property array $client_decoded_data The decoded body content of the request
+ * @property bool $has_data If the request has data
+ * @property bool $is_valid_json If the request body is a valid json
+ * @property string $json_error_msg The json error message
  * 
- * @property string $client_raw_json
+ * @property bool $has_query If the request has query parameters
+ * @property array $query_params The query parameters
  * 
- * @property array $client_decoded_data
- * 
- * 
- * @method string getRequestMethod()
- * 
- * @method array getAuthorizedMethods()
- * 
- * @method string getEndpoint()
- * 
- * @method array getDecodedBody()
- * 
- * @method string getClientRawJson()
- * 
- * @method bool is_methods_not_authorized() 
+ * @method getRequestMethod()
+ * @method getDecodedBody()
+ * @method getIsValidJson()
+ * @method getJsonErrorMsg()
+ * @method getHasData()
+ * @method getQueryParam()
  * 
  */
 class Request
 {
 
-    // Request & Response related properties
-    protected string $request_method = "";
-    protected array $authorized_methods = [];
+    // Request related properties
 
-    // Client data related properties
-    protected string $client_raw_json = "";
-    protected array $client_decoded_data = [];
-    protected bool $has_data = false;
-    protected bool $valid_json = true;
-    protected string $json_error_msg = "";
+    private string $request_method = "";
 
-    // URI related properties
-    // flags
-    protected bool $has_scheme = false;
-    protected bool $has_host = false;
-    protected bool $has_port = false;
-    protected bool $has_path = false;
-    protected bool $has_query = false;
+    // Body request data related properties
 
-    // URI components
-    protected ?string $scheme = "";
-    protected ?string $host = "";
-    protected ?string $port = "";
-    protected ?string $path = "";
+    private string $client_raw_json = "";
+    private array $client_decoded_data = [];
+    private bool $has_data = false;
+    private bool $is_valid_json = true;
+    private string $json_error_msg = "";
 
-    // URI parameters
-    protected array $query_params = [];
+    // Query related properties
 
-    private ?Error $error  = null;
+    private bool $has_query = false;
+    private array $query_params = [];
 
-    public function __construct(array $request)
+
+    public function __construct()
     {
-        $this->error = new Error();
-
         try {
 
-
-            // Get the request method (GET, POST, PUT, DELETE, ...)
+            // Set the request method from server global variable
             $this->request_method = $_SERVER["REQUEST_METHOD"] ?? "";
 
-            // Get the authorized methods (GET, POST, PUT, DELETE, ...)
-            $this->authorized_methods = $request["methods"] ?? [];
+            // Set the query parameters from the server global variable
+            parse_str($_SERVER["QUERY_STRING"], $this->query_params);
 
-            // Assign URI components to class properties
-            // build the URI parameters
-            [
-                $this->scheme,
-                $this->host,
-                $this->port,
-                $this->path,
-                $this->query_params,
-            ] = $this->buildURIParams();
+            // Query utility property for easy uses
+            $this->has_query = !empty($this->query_params);
 
-            // build the URI flags
-            [
-                $this->has_scheme,
-                $this->has_host,
-                $this->has_port,
-                $this->has_path,
-                $this->has_query,
-            ] = $this->buildURIFlags();
-
-            // Get the raw client data and store it in the class property for easy access
+            // Get the client payload from body and store it for easy access
             $this->client_raw_json = file_get_contents("php://input") ?? "";
 
-            // Decode the client data for easy access too
-            // if no data is present, the decoded data will be an empty array
-            $this->client_decoded_data = $this->safeDecode($this->client_raw_json);
+            // utility property to check if the request has data in body
+            if (!empty($this->client_raw_json)) {
+                $this->has_data = true;
+            }
+
+            // Decode the client data here with a pure function and destructuring the return 
+            // safeDecode is safe and doesn't throw an error ( check is in middleware )
+            if ($this->has_data)
+                [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
         } catch (Error) {
-            throw $this->error->HTTP500("Une erreur interne s'est produite", [], "Request");
+            Error::HTTP500(`Une erreur interne s'est produite`, []);
         }
     }
 
     /**
-     * decode the client data setting the json error message if the json is invalid
+     * decode the client data and return an array with the decoded data, a boolean if the json is valid and the error message
      */
-    private function safeDecode(string $json): array
+    public static function safeDecode(string $json): array
     {
-        // json => associative array
-        $decoted = json_decode($json, true) ?? [];
+        $error = "";
 
-        if (!json_last_error() === JSON_ERROR_NONE) {
-            $this->json_error_msg = json_last_error_msg();
-            $this->valid_json = false;
+        // json to associative array or empty array
+        $decoded = json_decode($json, true) ?? [];
+
+        // if not valid json
+        if (json_last_error() !== JSON_ERROR_NONE) {
+
+            // store the error message
+            $error = "[JSON ERROR] : " . json_last_error_msg();
         }
 
-        $this->has_data = !empty($decoted);
-        return $decoted;
+        //      [data,       isValid,       error]
+        return [$decoded, !empty($decoded), $error];
     }
 
-    public function is_methods_not_authorized(): bool
-    {
-        return !in_array($this->request_method, $this->authorized_methods);
-    }
-
-    public function setAuthorizedMethods(array $methods)
-    {
-        $this->authorized_methods = $methods;
-        return $this;
-    }
-
-    public function getAuthorizedMethods(): array
-    {
-        return $this->authorized_methods;
-    }
-    public function getEndpoint(): string
-    {
-        return $this->endpoint;
-    }
     public function getDecodedBody(string $key = null): mixed
     {
         if ($key) {
@@ -156,41 +113,15 @@ class Request
     }
     public function getIsValidJson(): bool
     {
-        return $this->valid_json;
+        return $this->is_valid_json;
     }
     public function getJsonErrorMsg(): string
     {
         return $this->json_error_msg;
     }
-    public function getClientRawJson(): string
-    {
-        return $this->client_raw_json;
-    }
     public function getHasData(): bool
     {
         return $this->has_data;
-    }
-
-    private function buildURIParams(): array
-    {
-        parse_str($_SERVER["QUERY_STRING"], $output);
-        return [ // http, https
-            $_SERVER['REQUEST_SCHEME'],
-            // localhost
-            $_SERVER["HTTP_HOST"] ?? null,
-            // 80
-            $_SERVER['SERVER_PORT'] ?? null,
-            // /api/v1/{endpoint}.php
-            parse_url($_SERVER["REQUEST_URI"])["path"] ?? null,
-            // ?param1=1?param2=2
-            $output ?? null,
-        ];
-    }
-
-    private function buildURIFlags(): array
-    {
-        $keys = ["scheme", "host", "port", "path", "query_params"];
-        return array_map(fn($key) => isset($this->$key), $keys);
     }
 
     public function getQueryParam($key): string | null | array
@@ -198,18 +129,13 @@ class Request
         return $this->query_params[$key] ?? "";
     }
 
-    public function getPath(): string
+    public function getRequestMethod(): string
     {
-        return $this->path;
+        return $this->request_method;
     }
 
-    public function getFlag($flag): bool
+    public function getHasQuery(): bool
     {
-        return $this->$flag;
-    }
-
-    public function getURIComponent($key): string
-    {
-        return $this->$key;
+        return $this->has_query;
     }
 }

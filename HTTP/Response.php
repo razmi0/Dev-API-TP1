@@ -2,109 +2,124 @@
 
 namespace HTTP;
 
-require_once "../../Autoloader.php";
+require_once "../../vendor/autoload.php";
 
+use Exception;
+use HTTP\Payload;
 use Utils\Console;
+
 
 class Response
 {
-    private int $code = 0;
-    private ?array $data = [];
-    private string $message = "";
-    private string $error = "";
-    private string $content_type = "application/json";
-    private string  $origin = "*";
-    private array $methods = ["GET"];
-    private int $age = 3600;
-    private string $location = "";
+    private ?int $code = null;
 
+    private array $header = [];
 
-    public function __construct($response)
+    // Default payload
+    private ?Payload $payload = null;
+
+    // The constructor sets a default configuration for the response
+    // Code and methods are required
+    public function __construct($config)
     {
-        $this->code = $response["code"];
-        $this->message = $response["message"];
 
-        $this->content_type = $response["headers"]["content_type"] ?? "application/json";
-        $this->origin = $response["headers"]["origin"] ?? "*";
-        $this->methods = $response["headers"]["methods"] ?? ["GET"];
-        $this->age = $response["headers"]["age"] ?? 3600;
+
+        // valid config now
+        $this->code = $config["code"];
+
+        $this->payload = new Payload([
+            "message" => $config["message"] ?? "",
+            "data" =>  $config["data"] ?? [],
+            "error" => $config["error"] ?? ""
+        ]);
+
+        // keep a default header if not provided
+        $this->header = [
+            "Access-Control-Allow-Methods: " => self::methodsToString($config["header"]["methods"]), // default ["GET"]
+            "Content-Type: " => $config["header"]["content_type"] ?? "application/json", // default "application/json"
+            "Access-Control-Allow-Origin: " => $config["header"]["origin"] ?? "*", // default "*"
+            "Access-Control-Age: " => $config["header"]["age"] ?? 3600, // default 3600
+            "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With" => ""
+        ];
     }
 
-    public function setCode($code)
+    private static function methodsToString(array $methods): string
+    {
+        return implode(", ", $methods);
+    }
+
+    public function setCode($code): self
     {
         $this->code = $code;
         return $this;
     }
 
-    public function setMessage($message)
+    public function setMessage($message): self
     {
-        $this->message = $message;
+        $this->payload->setMessage($message);
         return $this;
     }
 
-    public function setData($data)
+    public function setPayload($data): self
     {
-        $this->data = $data;
+        $this->payload->setData($data);
         return $this;
     }
 
-    public function setError($error)
+    public function setError(string $error): self
     {
-        $this->error = $error;
+        $this->payload->setError($error);
         return $this;
     }
 
-    public function setLocation($location)
+    public function setContentType(string $content_type): self
     {
-        $this->location = $location;
+        $this->header = [...$this->header, "content_type" => $content_type];
         return $this;
     }
 
-    public function setContentType($content_type)
+    public function setOrigin(string $origin): self
     {
-        $this->content_type = $content_type;
+        $this->header = [...$this->header, "origin" => $origin];
         return $this;
     }
 
-    public function setOrigin($origin)
+    public function setMethods(array $methods): self
     {
-        $this->origin = $origin;
+        $this->header = [...$this->header, "methods" => self::methodsToString($methods)];
         return $this;
     }
 
-    public function setMethods($methods)
+    public function setAge($age): self
     {
-        $this->methods = $methods;
-        return $this;
-    }
-
-    public function setAge($age)
-    {
-        $this->age = $age;
+        $this->header = [...$this->header, "age" => $age];
         return $this;
     }
 
     public function sendAndDie()
     {
-        // No response object instanciated so we die
-        if ($this->code === 0) {
-            die();
+
+        // set the headers
+        foreach ($this->header as $key => $value) {
+            header($key . $value);
         }
-        header("Content-Type: " . $this->content_type);
-        header("Access-Control-Allow-Origin: " . $this->origin);
-        header("Access-Control-Allow-Methods: " . implode(", ", $this->methods));
-        header("Access-Control-Age: " . $this->age);
-        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-        Console::log($this->location, $this->message, $this->error, $this->data, $this->code);
+        // log the response to error log for debugging
+        Console::log(
+            $this->payload->getMessage(),
+            $this->payload->getError(),
+            $this->payload->getData(),
+            $this->code
+        );
 
-        $payload = json_encode([
-            "message" => $this->message,
-            "data" => $this->data ?? [],
-            "error" => $this->error
-        ]);
+        // set the response code
         http_response_code($this->code);
-        echo $payload;
+
+        // send the payload to the client
+        echo $this->payload->toJson();
+
+        // end the script
+
         die();
     }
 }

@@ -6,26 +6,21 @@
  * path : /api/v1.0/produit/update
  */
 
-require_once "Autoloader.php";
+require_once "vendor/autoload.php";
 
-use Curl\Curl as Session;
-use Curl\CurlTest as Test;
+use Curl\Session;
+use Curl\Test as Test;
 
 const MIN_ID = 1;
 const MAX_ID = 200;
 
-// The random id, name, description and prix
-$id = rand(MIN_ID, MAX_ID);
-$name = "Product name";
-$description = "Product description";
-$prix = rand(1, 1000);
 
 // The data to send
 $data = [
-    "id" => $id,
-    "name" => $name,
-    "description" => $description,
-    "prix" => $prix
+    "id" => rand(MIN_ID, MAX_ID),
+    "name" => "Product name",
+    "description" => "Product description",
+    "prix" => (float)rand(1, 1000) + 0.99,
 ];
 
 // The curl object and parameters
@@ -43,8 +38,15 @@ $curl = new Session(
 // Execute the curl session and close it
 $curl->executeAndClose();
 
-// Get the id returned on this endpoint
-$returned_id = $curl->getResult()["data"]["id"];
+
+// Get the response http code
+$http_code = $curl->getCode();
+
+// Define condition. 
+$condition =
+    $http_code === 200 || // OK update event
+    $http_code === 204; // No content no update event
+
 
 // Test if the id is the same as the one sent
-Test::assert($id === $returned_id, "The id sent is $id, the id returned is $returned_id");
+Test::assert($condition, "The response code must be 200 or 204 and was $http_code");

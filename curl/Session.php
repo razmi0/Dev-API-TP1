@@ -9,7 +9,7 @@ use Exception;
 
 /**
  * 
- * class Curl
+ * class Session
  * 
  * This class is a wrapper for the curl library
  * 
@@ -19,7 +19,7 @@ use Exception;
  * @property CurlHandle $ch : The curl handle
  * @property mixed $result : The result of the curl session
  */
-class Curl
+class Session
 {
     public const URL = "http://localhost/TP1/api/v1.0/produit/";
     public const ENDPOINTS = [

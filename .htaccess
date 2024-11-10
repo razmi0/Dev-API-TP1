@@ -57,7 +57,8 @@ RewriteRule ^api/v1.0/produit/listmany/((id\[\]=\d+&?)+)/?$ api/v1/lire_des.php?
 
 # -- Les dossiers du projet -- #
 RewriteRule ^utils/?$ - [F,L]
-RewriteRule ^controller/?$ - [F,L]
+RewriteRule ^core/?$ - [F,L]
+RewriteRule ^middleware/?$ - [F,L]
 RewriteRule ^curl/?$ - [F,L]
 RewriteRule ^http/?$ - [F,L]
 RewriteRule ^model/?$ - [F,L]
