@@ -2,8 +2,8 @@
 
 use Core\Endpoint;
 use HTTP\{Request, Response};
-use Middleware\Middleware;
-use Model\{Constant, Dao\ProductDao, Entity\Product, Schema\Schema};
+use Middleware\{Middleware, Validators\Validator};
+use Model\{Constant, Dao\ProductDao, Entity\Product};
 
 require_once "../../vendor/autoload.php";
 
@@ -30,9 +30,9 @@ require_once "../../vendor/autoload.php";
  * @property Request $request
  * @property Response $response
  * @property Middleware $middleware
- * @property Schema $schema
+ * @property Validator $validator
  * 
- * @method __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+ * @method __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
  * @method handleMiddleware(): void
  * @method handleRequest(): array
  * @method handleResponse(mixed $data): void
@@ -45,13 +45,13 @@ final class CreateEndpoint extends Endpoint
 
 
     // dependency injection here
-    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
     {
         /**
          * The parent Endpoint assign the properties (request, response, middleware, schema) as protected properties
          * @see Core/Endpoint.php
          **/
-        parent::__construct($request, $response, $middleware, $schema);
+        parent::__construct($request, $response, $middleware, $validator);
     }
 
     /**
@@ -68,7 +68,7 @@ final class CreateEndpoint extends Endpoint
 
         // Check if the request body contains the expected data 
         // (name type, length, regex ; description type, length, regex ; ect...)
-        $this->middleware->checkExpectedData($this->schema);                        // if error, return 400 Bad Request
+        $this->middleware->checkExpectedData($this->validator);                        // if error, return 400 Bad Request
 
     }
 
@@ -124,7 +124,7 @@ $request = new Request();
 
 
 // our template rules to validate the client data in the request body
-$schema = new Schema(
+$validator = new Validator(
     [
         "name" => [
             "type" => "string",
@@ -183,7 +183,7 @@ $response = new Response([
 
 
 // Create the endpoint object with above configuration
-$endpoint = new CreateEndpoint($request, $response, $middleware, $schema);
+$endpoint = new CreateEndpoint($request, $response, $middleware, $validator);
 
 
 

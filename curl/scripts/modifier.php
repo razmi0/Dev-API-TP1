@@ -20,7 +20,7 @@ $data = [
     "id" => rand(MIN_ID, MAX_ID),
     "name" => "Product name",
     "description" => "Product description",
-    "prix" => rand(1, 1000)
+    "prix" => (float)rand(1, 1000) + 0.99,
 ];
 
 // The curl object and parameters

@@ -3,8 +3,8 @@
 
 use Core\Endpoint;
 use HTTP\{Error, Request, Response};
-use Middleware\Middleware;
-use Model\{Dao\ProductDao, Entity\Product, Schema\Schema};
+use Middleware\{Middleware, Validators\Validator};
+use Model\{Constant, Dao\ProductDao, Entity\Product};
 
 require_once "../../vendor/autoload.php";
 
@@ -33,9 +33,9 @@ require_once "../../vendor/autoload.php";
  * @property Request $request
  * @property Response $response
  * @property Middleware $middleware
- * @property Schema $schema
+ * @property Validator $validator
  * 
- * @method __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+ * @method __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
  * @method handleMiddleware(): void
  * @method handleRequest(): array
  * @method handleResponse(mixed $data): void
@@ -48,13 +48,13 @@ final class ListManyEndpoint extends Endpoint
     public const ENDPOINT_METHOD = "GET";
 
     // dependency injection here
-    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
     {
         /**
          * The parent Endpoint assign the properties (request, response, middleware, schema) as protected properties
          * @see Core/Endpoint.php
          **/
-        parent::__construct($request, $response, $middleware, $schema);
+        parent::__construct($request, $response, $middleware, $validator);
     }
 
     /**
@@ -71,7 +71,7 @@ final class ListManyEndpoint extends Endpoint
 
         // Check if the request body contains the expected data 
         // (name type, length, regex ; description type, length, regex ; ect...)
-        $this->middleware->checkExpectedData($this->schema);                        // if error, return 400 Bad Request
+        $this->middleware->checkExpectedData($this->validator);                        // if error, return 400 Bad Request
 
     }
 
@@ -155,11 +155,14 @@ $request = new Request();
  * our template rules to validate the client data in the request body
  * @see model/schema/Schema.php
  */
-$schema = new Schema(
+$validator = new Validator(
     [
         "id" => [
             "type" => "integer[]",
             "required" => false,
+            "range" => [1, null],
+            "regex" => Constant::ID_REGEX,
+            "nullable" => false
         ]
     ]
 );
@@ -197,7 +200,7 @@ $response = new Response([
 
 
 // Create the endpoint with above configuration
-$endpoint = new ListManyEndpoint($request, $response, $middleware, $schema);
+$endpoint = new ListManyEndpoint($request, $response, $middleware, $validator);
 
 
 

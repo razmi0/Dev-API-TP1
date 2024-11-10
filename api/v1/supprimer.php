@@ -4,8 +4,8 @@
 
 use Core\Endpoint;
 use HTTP\{Error, Request, Response};
-use Middleware\Middleware;
-use Model\{Constant, Dao\ProductDao, Entity\Product, Schema\Schema};
+use Middleware\{Middleware, Validators\Validator};
+use Model\{Constant, Dao\ProductDao, Entity\Product};
 
 require_once "../../vendor/autoload.php";
 
@@ -32,9 +32,9 @@ require_once "../../vendor/autoload.php";
  * @property Request $request
  * @property Response $response
  * @property Middleware $middleware
- * @property Schema $schema
+ * @property Validator $validator
  * 
- * @method __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+ * @method __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
  * @method handleMiddleware(): void
  * @method handleRequest(): array
  * @method handleResponse(mixed $data): void
@@ -46,13 +46,13 @@ final class DeleteEndpoint extends Endpoint
     public const ENDPOINT_METHOD = "DELETE";
 
     // dependency injection here
-    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
     {
         /**
          * The parent Endpoint assign the properties (request, response, middleware, schema) as protected properties
          * @see Core/Endpoint.php
          **/
-        parent::__construct($request, $response, $middleware, $schema);
+        parent::__construct($request, $response, $middleware, $validator);
     }
 
     /**
@@ -68,7 +68,7 @@ final class DeleteEndpoint extends Endpoint
         $this->middleware->checkValidJson();
 
         // Check if the request body contains the expected data else throw an error  ( 400 Bad Request )
-        $this->middleware->checkExpectedData($this->schema);
+        $this->middleware->checkExpectedData($this->validator);
     }
 
     /**
@@ -133,7 +133,7 @@ $request = new Request();
  * our template rules to validate the client data in the request body
  * @see model/schema/Schema.php
  */
-$schema = new Schema(
+$validator = new Validator(
     [
         "id" => [
             "type" => "integer",
@@ -172,7 +172,7 @@ $response = new Response([
 
 
 // The endpoint is created with all the necessary objects
-$endpoint = new DeleteEndpoint($request, $response, $middleware, $schema);
+$endpoint = new DeleteEndpoint($request, $response, $middleware, $validator);
 
 
 

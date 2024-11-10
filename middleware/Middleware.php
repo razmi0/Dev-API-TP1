@@ -7,7 +7,7 @@ require_once '../../vendor/autoload.php';
 
 use HTTP\Error;
 use HTTP\Request;
-use Model\Schema\Schema;
+use Middleware\Validators\Validator;
 
 /**
  * 
@@ -70,16 +70,16 @@ class Middleware
      * @return void
      * 
      * */
-    public function checkExpectedData(Schema $schema): void
+    public function checkExpectedData(Validator $validator): void
     {
         // We check if a schema is defined
         // If a schema is defined, we parse the client data with the schema
         // If the client data is invalid against the schema, we throw an error and send it to the client
-        if ($schema) {
+        if ($validator) {
             $client_data = $this->request->getDecodedBody();
-            $data_parsed = $schema->safeParse($client_data);
-            if ($data_parsed->getHasError()) {
-                Error::HTTP400("Données invalides", $data_parsed->getErrorResults());
+            $data_parsed = $validator->safeParse($client_data);
+            if ($data_parsed->getIsValid() === false) {
+                Error::HTTP400("Données invalides", $data_parsed->getErrors());
             }
         }
     }

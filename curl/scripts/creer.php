@@ -18,8 +18,9 @@ const MIN_PRICE = 1000;
 $data = [
     "name" => "Product name",
     "description" => "Product description",
-    "prix" => rand(MAX_PRICE, MIN_PRICE)
+    "prix" => (float)(rand(MAX_PRICE, MIN_PRICE)) + 0.99,
 ];
+
 
 /**
  * curl is an object configuration for the curl session

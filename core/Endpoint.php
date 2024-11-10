@@ -5,9 +5,8 @@ namespace Core;
 
 use HTTP\{Request, Response};
 use Middleware\Middleware;
-use Model\Schema\Schema;
 use Exception;
-
+use Middleware\Validators\Validator;
 
 /**
  * 
@@ -21,7 +20,7 @@ use Exception;
  * 
  * @property Response $response
  * @property Request $request
- * @property Schema $schema
+ * @property Validator $validator
  * @property Middleware $middleware
  * 
  * @method handleMiddleware()
@@ -33,10 +32,10 @@ abstract class Endpoint
 
     protected Response $response;
     protected Request $request;
-    protected Schema $schema;
+    protected Validator $validator;
     protected Middleware $middleware;
 
-    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
     {
 
         /**
@@ -50,7 +49,7 @@ abstract class Endpoint
 
         $this->request = $request;
         $this->response = $response;
-        $this->schema = $schema;
+        $this->validator = $validator;
         $this->middleware = $middleware;
     }
 

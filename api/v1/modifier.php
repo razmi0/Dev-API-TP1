@@ -3,8 +3,8 @@
 
 use Core\Endpoint;
 use HTTP\{Request, Response};
-use Middleware\Middleware;
-use Model\{Constant, Dao\ProductDao, Entity\Product, Schema\Schema};
+use Middleware\{Middleware, Validators\Validator};
+use Model\{Constant, Dao\ProductDao, Entity\Product};
 
 require_once "../../vendor/autoload.php";
 
@@ -31,9 +31,9 @@ require_once "../../vendor/autoload.php";
  * @property Request $request
  * @property Response $response
  * @property Middleware $middleware
- * @property Schema $schema
+ * @property Validator $validator
  * 
- * @method __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+ * @method __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
  * @method handleMiddleware(): void
  * @method handleRequest(): array
  * @method handleResponse(mixed $data): void
@@ -48,13 +48,13 @@ final class UpdateEndpoint extends Endpoint
     public const ENDPOINT_METHOD = "PUT";
 
     // dependency injection here
-    public function __construct(Request $request, Response $response, Middleware $middleware, Schema $schema)
+    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
     {
         /**
          * The parent Endpoint assign the properties (request, response, middleware, schema) as protected properties
          * @see Core/Endpoint.php
          **/
-        parent::__construct($request, $response, $middleware, $schema);
+        parent::__construct($request, $response, $middleware, $validator);
     }
 
     /**
@@ -69,7 +69,7 @@ final class UpdateEndpoint extends Endpoint
         $this->middleware->checkValidJson();
 
         // Check if the request body contains the expected data else throw an error ( 400 Bad Request )
-        $this->middleware->checkExpectedData($this->schema);
+        $this->middleware->checkExpectedData($this->validator);
     }
 
     /**
@@ -138,7 +138,7 @@ $request = new Request();
  * our template rules to validate the client data in the request body
  * @see model/schema/Schema.php
  */
-$schema = new Schema([
+$validator = new Validator([
     "id" => [
         "type" => "integer",
         "required" => true,
@@ -149,19 +149,22 @@ $schema = new Schema([
         "type" => "string",
         "range" => [1, 65],
         "regex" => Constant::NAME_REGEX,
-        "required" => false
+        "required" => false,
+        "nullable" => true
     ],
     "description" => [
         "type" => "string",
         "range" => [1, 65000],
         "regex" => Constant::DESCRIPTION_REGEX,
-        "required" => false
+        "required" => false,
+        "nullable" => true
     ],
     "prix" => [
         "type" => "double",
         "range" => [0, null],
         "regex" => Constant::PRICE_REGEX,
-        "required" => false
+        "required" => false,
+        "nullable" => true
     ]
 ]);
 
@@ -193,7 +196,7 @@ $response = new Response([
 
 
 // The endpoint is instanciated with the request, response, middleware and schema objects
-$endpoint = new UpdateEndpoint($request, $response, $middleware, $schema);
+$endpoint = new UpdateEndpoint($request, $response, $middleware, $validator);
 
 
 

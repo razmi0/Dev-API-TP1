@@ -12,11 +12,10 @@
       "Core\\": "core/",
       "Model\\": "model/",
       "Model\\DAO\\": "model/dao/",
-      "Model\\Schema\\": "model/schema/",
-      "Model\\Schema\\Validators\\": "model/schema/Validator",
       "Model\\Entity\\": "model/entity/",
       "Curl\\": "curl/",
       "Middleware\\": "middleware/",
+      "Middleware\\Validators\\": "middleware/validator/",
       "Utils\\": "utils/"
     }
   },
