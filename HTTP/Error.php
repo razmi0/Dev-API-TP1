@@ -532,6 +532,39 @@ use Utils\Console;
 
 
 
+
+        // Schema for the 404 Response (all)
+        new OA\Schema(
+            schema: "NOT_FOUND_RESPONSE",
+            type: "object",
+            properties: [
+                new OA\Property(
+                    property: "error",
+                    type: "string",
+                    description: "The error message",
+                    example: "Ressource non trouvée"
+                ),
+                new OA\Property(
+                    property: "message",
+                    type: "string",
+                    description: "The error message",
+                    example: "Aucun produit trouvé"
+                ),
+                new OA\Property(
+                    property: "data",
+                    type: "array",
+                    description: "An empty array",
+                    items: new OA\Items(
+                        type: "null",
+                    ),
+                    example: []
+                )
+            ]
+        ),
+
+
+
+
         // Schema for the 400 Response (update)
         new OA\Schema(
             schema: "BAD_REQUEST_RESPONSE_UPDATE",

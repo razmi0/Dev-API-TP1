@@ -160,6 +160,7 @@ use OpenApi\Attributes as OA;
             )
         ),
         responses: [
+
             new OA\Response(
                 response: 200,
                 description: "Success : the products have been retrieved. The response contains a list of products in a JSON array format in the products key.",
@@ -175,6 +176,14 @@ use OpenApi\Attributes as OA;
                 )
 
             ),
+            new OA\Response(
+                response: 404,
+                description: "Not found : no products have been found in the database",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/NOT_FOUND_RESPONSE"
+                )
+            ),
+
             new OA\Response(
                 response: 405,
                 description: "Method not allowed : only GET method is allowed",
@@ -246,6 +255,13 @@ use OpenApi\Attributes as OA;
                     ref: "#/components/schemas/BAD_REQUEST_RESPONSE_LISTONE",
                 )
 
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Not found : no products have been found in the database",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/NOT_FOUND_RESPONSE"
+                )
             ),
             new OA\Response(
                 response: 405,
@@ -371,8 +387,9 @@ use OpenApi\Attributes as OA;
 
             new OA\Response(
                 response: 204,
-                description: "No content : the product has not been found in the database",
+                description: "No content : the product has been found but update didn't change anything",
             ),
+
             new OA\Response(
                 response: 400,
                 description: "Bad request : the request body is not valid",
@@ -462,6 +479,13 @@ use OpenApi\Attributes as OA;
                     ref: "#/components/schemas/BAD_REQUEST_RESPONSE_LISTMANY",
                 )
 
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Not found : no products have been found in the database",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/NOT_FOUND_RESPONSE"
+                )
             ),
             new OA\Response(
                 response: 405,

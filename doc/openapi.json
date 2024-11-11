@@ -146,6 +146,16 @@
                             }
                         }
                     },
+                    "404" : {
+                        "description": "No content : no products found in the database",
+                        "content" : {
+                            "application/json" : {
+                                "schema" : {
+                                    "$ref" : "#/components/schemas/SUCCESS_LIST_RESPONSE"
+                                }
+                            }
+                        }
+                    },
                     "400": {
                         "description": "Bad request : the request body is not valid",
                         "content": {
