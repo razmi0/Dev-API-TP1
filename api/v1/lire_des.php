@@ -163,7 +163,7 @@ $validator = new Validator(
             "required" => false,
             "range" => [1, null],
             "regex" => Constant::ID_REGEX,
-            "nullable" => false
+            "nullable" => true
         ]
     ]
 );

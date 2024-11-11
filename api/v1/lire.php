@@ -157,6 +157,7 @@ $validator = new Validator(
         "limit" => [
             "type" => "integer",
             "required" => false,
+            "nullable" => true,
             "range" => [1, null],
             "regex" => Constant::ID_REGEX
         ]

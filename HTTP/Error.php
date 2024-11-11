@@ -2,10 +2,9 @@
 
 namespace HTTP;
 
-require_once "vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use OpenApi\Attributes as OA;
-use OpenApi\Attributes\Schema;
 use Utils\Console;
 
 /**
