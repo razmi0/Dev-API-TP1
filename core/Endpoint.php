@@ -422,7 +422,7 @@ use OpenApi\Attributes as OA;
 
 
     OA\GET(
-        path: "/TP1/api/v1.0/produit/listmany/",
+        path: "/TP1/api/v1.0/produit/listmany/{id[]}",
         operationId: "findManyById",
         tags: ["Product", "READ"],
         description: "This endpoint allows you to retrieve many products from the database. The parameter id[] is required and must be passed as a query parameter or in the request body",
