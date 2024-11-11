@@ -20,7 +20,6 @@ const findSection = (sectionName: string) => {
 
 // all sections
 const inputSections = Array.from(document.querySelectorAll("[data-endpoint]")) as HTMLElement[],
-  selectedIdSection = document.querySelector("[data-output='id']") as HTMLElement,
   readSection = findSection("read"),
   readOneSection = findSection("read-one"),
   createSection = findSection("create"),
@@ -46,6 +45,9 @@ export const dom = {
     section: createSection,
     btn: createSection.querySelector("button"),
     output: createSection.nextElementSibling as HTMLElement,
+    outputError: createSection.nextElementSibling.querySelector("#error") as HTMLDivElement,
+    outputMessage: createSection.nextElementSibling.querySelector("#message") as HTMLDivElement,
+    outputData: createSection.nextElementSibling.querySelector("#error_data") as HTMLDivElement,
     inputs: Array.from(createSection.querySelectorAll("input")) as HTMLInputElement[],
   },
   update: {
@@ -58,11 +60,10 @@ export const dom = {
     section: deleteSection,
     btn: deleteSection.querySelector("button"),
     output: deleteSection.nextElementSibling as HTMLElement,
+    outputError: deleteSection.nextElementSibling.querySelector("#error") as HTMLDivElement,
+    outputData: deleteSection.nextElementSibling.querySelector("#error_data") as HTMLDivElement,
+    outputMessage: deleteSection.nextElementSibling.querySelector("#message") as HTMLDivElement,
     input: deleteSection.querySelector("input") as HTMLInputElement,
-  },
-  selectedId: {
-    section: selectedIdSection,
-    output: selectedIdSection.querySelector("output"),
   },
 } as const;
 
@@ -91,6 +92,7 @@ create.inputs.forEach((input) => {
  * it is a vanilla and simple <FormControl> React like component
  * **/
 export const insertText = ({ ctn, text, code = null, error = false, classList = "" }: InsertTextOptions) => {
+  console.log(text, error);
   const prefix = error ? "[ERROR] : " : "";
   const suffix = code ? `-- Code ${code}` : "";
   const className = error ? "pico-color-red-500" : "";

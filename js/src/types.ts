@@ -34,7 +34,7 @@ export type ClientData = {
     price: number;
   };
   DELETE: {
-    id: string;
+    id: number;
   };
   UPDATE: Omit<Product, "date_creation">;
   READALL: never;

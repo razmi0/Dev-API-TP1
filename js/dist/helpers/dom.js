@@ -14,7 +14,7 @@ const findSection = (sectionName) => {
     return inputSections.find((section) => section.dataset.endpoint === sectionName);
 };
 // all sections
-const inputSections = Array.from(document.querySelectorAll("[data-endpoint]")), selectedIdSection = document.querySelector("[data-output='id']"), readSection = findSection("read"), readOneSection = findSection("read-one"), createSection = findSection("create"), updateSection = findSection("update"), deleteSection = findSection("delete");
+const inputSections = Array.from(document.querySelectorAll("[data-endpoint]")), readSection = findSection("read"), readOneSection = findSection("read-one"), createSection = findSection("create"), updateSection = findSection("update"), deleteSection = findSection("delete");
 /**
  * We export DOM elements as a huge object store in a constant where all elements are grouped by their section
  */
@@ -34,6 +34,9 @@ export const dom = {
         section: createSection,
         btn: createSection.querySelector("button"),
         output: createSection.nextElementSibling,
+        outputError: createSection.nextElementSibling.querySelector("#error"),
+        outputMessage: createSection.nextElementSibling.querySelector("#message"),
+        outputData: createSection.nextElementSibling.querySelector("#error_data"),
         inputs: Array.from(createSection.querySelectorAll("input")),
     },
     update: {
@@ -46,11 +49,10 @@ export const dom = {
         section: deleteSection,
         btn: deleteSection.querySelector("button"),
         output: deleteSection.nextElementSibling,
+        outputError: deleteSection.nextElementSibling.querySelector("#error"),
+        outputData: deleteSection.nextElementSibling.querySelector("#error_data"),
+        outputMessage: deleteSection.nextElementSibling.querySelector("#message"),
         input: deleteSection.querySelector("input"),
-    },
-    selectedId: {
-        section: selectedIdSection,
-        output: selectedIdSection.querySelector("output"),
     },
 };
 // We extract all the elements grouped by their section ( here delete, readOne)
@@ -74,6 +76,7 @@ create.inputs.forEach((input) => {
  * it is a vanilla and simple <FormControl> React like component
  * **/
 export const insertText = ({ ctn, text, code = null, error = false, classList = "" }) => {
+    console.log(text, error);
     const prefix = error ? "[ERROR] : " : "";
     const suffix = code ? `-- Code ${code}` : "";
     const className = error ? "pico-color-red-500" : "";

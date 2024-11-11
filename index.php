@@ -54,23 +54,34 @@
             max-height: 40vh;
         }
 
-        [data-output='id'] {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            padding-inline: 0.8rem;
-            padding-block: 0.4rem;
-            margin-bottom: 20px;
-            margin-right: 20px;
-            background: var(--pico-color-grey-100);
-            border-radius: 1rem;
-            box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
-            font-size: 0.8rem;
-            color: var(--pico-color-grey-900);
+        article {
+            position: relative;
+        }
 
-            & small {
-                font-variant-numeric: tabular-nums;
-            }
+
+        #error,
+        #message {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin-right: 0.4rem;
+        }
+
+        #error {
+            margin-top: 0.8rem;
+
+        }
+
+        #message {
+            margin-top: calc(0.8rem + 2ch);
+        }
+
+        pre {
+
+            max-height: 40vh;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
     <header>
@@ -117,6 +128,13 @@
                 </form>
             </section>
             <section>
+
+                <div class="grid">
+                    <div id='error'></div>
+                    <pre id='error_data'>
+                        </pre>
+                    <div id='message'></div>
+                </div>
             </section>
         </article>
 
@@ -197,13 +215,15 @@
                 </form>
             </section>
             <section>
+                <div class="grid">
+                    <div id='error'></div>
+                    <pre id='error_data'>
+                        </pre>
+                    <div id='message'></div>
+                </div>
 
             </section>
         </article>
-        <section data-output='id'>
-            <small>Selected id : </small>
-            <output></output>
-        </section>
     </main>
 </body>
 
