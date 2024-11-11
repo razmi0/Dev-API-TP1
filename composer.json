@@ -8,6 +8,7 @@
   },
   "autoload": {
     "psr-4": {
+      "API\\Endpoints\\": "api/v1/",
       "HTTP\\": "http/",
       "Core\\": "core/",
       "Model\\": "model/",
@@ -21,5 +22,8 @@
   },
   "config": {
     "process-timeout": 0
+  },
+  "require": {
+    "zircote/swagger-php": "^4.11"
   }
 }

@@ -83,4 +83,50 @@ class Middleware
             }
         }
     }
+
+
+    /**
+     * Middleware
+     * 
+     * 
+     * @return 
+     */
+    public function sanitizeData($config): void
+    {
+
+        $client_data = $this->request->getDecodedBody();
+        $rules = $config['sanitize'];
+
+        // Recursive function to sanitize data depending on the rules set in config and the data type
+        // use keyword is used to inject parent scope variables into the function closure scope
+        // the "&" before $rules and $sanitize_recursively is used to pass the variables by reference ( avoid copying the variables )
+        $sanitize_recursively = function ($client_data) use (&$rules, &$sanitize_recursively) {
+
+
+            switch (gettype($client_data)) {
+                case 'array':
+                    return array_map($sanitize_recursively, $client_data);
+                    break;
+
+                case 'string':
+                    if (in_array('html', $rules))
+                        return trim(strip_tags($client_data));
+                    break;
+
+                case 'integer':
+                    if (in_array('integer', $rules))
+                        return filter_var($client_data, FILTER_SANITIZE_NUMBER_INT);
+                    break;
+
+                case 'double': // 'double' is the type returned for floats in PHP
+                    if (in_array('float', $rules))
+                        return filter_var($client_data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                    break;
+            }
+
+            return $client_data;
+        };
+
+        $this->request->setDecodedBody($sanitize_recursively($client_data));
+    }
 }

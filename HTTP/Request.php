@@ -111,6 +111,13 @@ class Request
         }
         return $this->client_decoded_data;
     }
+
+    public function setDecodedBody(array $data): self
+    {
+        $this->client_decoded_data = $data;
+        return $this;
+    }
+
     public function getIsValidJson(): bool
     {
         return $this->is_valid_json;

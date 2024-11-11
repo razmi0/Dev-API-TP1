@@ -1,5 +1,6 @@
 <?php
 
+namespace API\Endpoints;
 
 use Core\Endpoint;
 use HTTP\{Error, Request, Response};
@@ -73,6 +74,12 @@ final class ListManyEndpoint extends Endpoint
         // (name type, length, regex ; description type, length, regex ; ect...)
         $this->middleware->checkExpectedData($this->validator);                        // if error, return 400 Bad Request
 
+        // sanitize the data ( all types )
+        // get the decoded body from the request, sanitize it
+        // and set it back to the request object
+        $this->middleware->sanitizeData(                                  // // no error expected
+            ["sanitize" => ["html", "integer", "float"]]
+        );
     }
 
     /**
@@ -162,7 +169,7 @@ $validator = new Validator(
             "required" => false,
             "range" => [1, null],
             "regex" => Constant::ID_REGEX,
-            "nullable" => false
+            "nullable" => true
         ]
     ]
 );

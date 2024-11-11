@@ -4,10 +4,13 @@ namespace HTTP;
 
 require_once "../../vendor/autoload.php";
 
-use Exception;
 use HTTP\Payload;
 use Utils\Console;
 
+/**
+ * Class Response
+ * 
+ */
 
 class Response
 {

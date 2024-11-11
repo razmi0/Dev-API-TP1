@@ -1,9 +1,12 @@
 <?php
 
+namespace API\Endpoints;
+
 use Core\Endpoint;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao, Entity\Product};
+
 
 require_once "../../vendor/autoload.php";
 
@@ -16,7 +19,6 @@ require_once "../../vendor/autoload.php";
 //|          goal     :  create a product in database           |
 //|_____________________________________________________________|
 //
-
 
 
 /**
@@ -38,8 +40,11 @@ require_once "../../vendor/autoload.php";
  * @method handleResponse(mixed $data): void
  * 
  */
+
 final class CreateEndpoint extends Endpoint
 {
+
+
     // The only method allowed for this endpoint
     public const ENDPOINT_METHOD = "POST";
 
@@ -70,6 +75,12 @@ final class CreateEndpoint extends Endpoint
         // (name type, length, regex ; description type, length, regex ; ect...)
         $this->middleware->checkExpectedData($this->validator);                        // if error, return 400 Bad Request
 
+        // sanitize the data ( all types )
+        // get the decoded body from the request, sanitize it
+        // and set it back to the request object
+        $this->middleware->sanitizeData(                                  // // no error expected
+            ["sanitize" => ["html", "integer", "float"]]
+        );
     }
 
     /**

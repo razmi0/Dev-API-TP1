@@ -1,0 +1,1132 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Product API",
+    "description": "CRUD on a simple product entity",
+    "contact": {
+      "name": "Thomas Cuesta",
+      "url": "https://github.com/razmi0/Dev-API-TP1",
+      "email": "thomas.cuesta@my-digital-school.org"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/TP1/api/v1.0/produit/new": {
+      "post": {
+        "tags": ["Product", "CREATE"],
+        "summary": "Create a new product",
+        "description": "This endpoint allows you to create a new product in database. Send a JSON object with the name, description and price of the product",
+        "operationId": "createProduct",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["name", "description", "prix"],
+                "properties": {
+                  "name": {
+                    "description": "The name of the product",
+                    "type": "string",
+                    "example": "Product 1"
+                  },
+                  "description": {
+                    "description": "The description of the product",
+                    "type": "string",
+                    "example": "This is the first product"
+                  },
+                  "prix": {
+                    "description": "The price of the product",
+                    "type": "number",
+                    "format": "float",
+                    "example": 10.5
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ressource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SUCCESS_CREATED_RESPONSE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request : the request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BAD_REQUEST_RESPONSE_CREATED"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed : only POST method is allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error : an error occured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TP1/api/v1.0/produit/list": {
+      "get": {
+        "tags": ["Product", "READ"],
+        "summary": "Retrieve all products",
+        "description": "This endpoint allows you to retrieve all the products from the database. The parameter limit is optional and will limit the number of products returned. The parameter llit can be passed as a query parameter or in the request body",
+        "operationId": "findAllProducts",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of products to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "example": 2
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "limit": {
+                    "description": "The maximum number of products to retrieve",
+                    "type": "integer",
+                    "example": 2
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success : the products have been retrieved. The response contains a list of products in a JSON array format in the products key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SUCCESS_LIST_RESPONSE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request : the request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BAD_REQUEST_RESPONSE_LIST"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found : no products have been found in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NOT_FOUND_RESPONSE"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed : only GET method is allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error : an error occured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TP1/api/v1.0/produit/listone": {
+      "get": {
+        "tags": ["Product", "READ"],
+        "summary": "Retrieve a single product",
+        "description": "This endpoint allows you to retrieve a single product from the database. The parameter id is required and must be passed as a query parameter or in the request body",
+        "operationId": "findOneById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id of the product to retrieve",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 47
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "description": "The id of the product to retrieve",
+                    "type": "integer",
+                    "example": 47
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success : the product has been retrieved. The response contains the product in a JSON object format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SUCCESS_LISTONE_RESPONSE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request : the request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BAD_REQUEST_RESPONSE_LISTONE"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found : no products have been found in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NOT_FOUND_RESPONSE"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed : only GET method is allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error : an error occured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TP1/api/v1.0/produit/delete": {
+      "delete": {
+        "tags": ["Product", "DELETE"],
+        "summary": "Delete a product",
+        "description": "This endpoint allows you to delete a product from the database. The parameter id is required and must be passed in the request body",
+        "operationId": "deleteProduct",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["id"],
+                "properties": {
+                  "id": {
+                    "description": "The id of the product to delete",
+                    "type": "integer",
+                    "example": 47
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success : the product has been deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SUCCESS_DELETE_RESPONSE"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No content : the product has not been found in the database"
+          },
+          "400": {
+            "description": "Bad request : the request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BAD_REQUEST_RESPONSE_LISTONE"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed : only DELETE method is allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error : an error occured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TP1/api/v1.0/produit/update": {
+      "put": {
+        "tags": ["Product", "UPDATE"],
+        "summary": "Update a product",
+        "description": "This endpoint allows you to update a product in the database. The only required body json field is the id of the product to update. The other fields are optional and will update the product in the database",
+        "operationId": "updateProduct",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["id"],
+                "properties": {
+                  "id": {
+                    "description": "The id of the product to update",
+                    "type": "integer",
+                    "example": 47
+                  },
+                  "prix": {
+                    "description": "The new price of the product",
+                    "type": "number",
+                    "format": "float",
+                    "example": 10.5
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success : the product has been updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SUCCESS_UPDATE_RESPONSE"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No content : the product has not been found in the database"
+          },
+          "400": {
+            "description": "Bad request : the request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BAD_REQUEST_RESPONSE_UPDATE"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed : only PUT method is allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error : an error occured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/TP1/api/v1.0/produit/listmany/": {
+      "get": {
+        "tags": ["Product", "READ"],
+        "summary": "Retrieve many products",
+        "description": "This endpoint allows you to retrieve many products from the database. The parameter id[] is required and must be passed as a query parameter or in the request body",
+        "operationId": "findManyById",
+        "parameters": [
+          {
+            "name": "id[]",
+            "in": "query",
+            "description": "The ids of the products to retrieve",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "example": 47
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "id": {
+                    "description": "The ids of the products to retrieve",
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "example": [47, 48]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success : the products have been retrieved. The response contains a list of products in a JSON array format in the products key.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SUCCESS_LISTMANY_RESPONSE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request : the request body is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BAD_REQUEST_RESPONSE_LISTMANY"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found : no products have been found in the database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NOT_FOUND_RESPONSE"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed : only GET method is allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error : an error occured on the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "NOT_FOUND_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Ressource non trouvée"
+          },
+          "message": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Aucun produit trouvé"
+          },
+          "data": {
+            "description": "An empty array",
+            "type": "array",
+            "items": {
+              "type": "null"
+            },
+            "example": []
+          }
+        },
+        "type": "object"
+      },
+      "SUCCESS_LIST_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": ""
+          },
+          "message": {
+            "description": "The success message",
+            "type": "string",
+            "example": "Liste des produits récupérée avec succès"
+          },
+          "data": {
+            "description": "The product key is an array with all products",
+            "properties": {
+              "products": {
+                "description": "The list of products",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "id": {
+                      "description": "The id of the product",
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "name": {
+                      "description": "The name of the product",
+                      "type": "string",
+                      "example": "Product 1"
+                    },
+                    "description": {
+                      "description": "The description of the product",
+                      "type": "string",
+                      "example": "Description of product 1"
+                    },
+                    "prix": {
+                      "description": "The price of the product",
+                      "type": "number",
+                      "example": 10.9900000000000002131628207280300557613372802734375
+                    },
+                    "date_creation": {
+                      "description": "The creation date of the product",
+                      "type": "string",
+                      "example": "2021-09-01 12:00:00"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "type": "object",
+            "example": {
+              "products": [
+                {
+                  "id": 1,
+                  "name": "Product 1",
+                  "description": "Description of product 1",
+                  "prix": 10.9900000000000002131628207280300557613372802734375,
+                  "date_creation": "2021-09-01 12:00:00"
+                },
+                {
+                  "id": 2,
+                  "name": "Product 2",
+                  "description": "Description of product 2",
+                  "prix": 20.989999999999998436805981327779591083526611328125,
+                  "date_creation": "2021-09-01 12:00:00"
+                }
+              ]
+            }
+          }
+        },
+        "type": "object"
+      },
+      "SUCCESS_LISTONE_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": ""
+          },
+          "message": {
+            "description": "The success message",
+            "type": "string",
+            "example": "Produit récupéré avec succès"
+          },
+          "data": {
+            "description": "The product key is an array with a single product",
+            "properties": {
+              "product": {
+                "description": "The product",
+                "properties": {
+                  "id": {
+                    "description": "The id of the product",
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "name": {
+                    "description": "The name of the product",
+                    "type": "string",
+                    "example": "Product 1"
+                  },
+                  "description": {
+                    "description": "The description of the product",
+                    "type": "string",
+                    "example": "Description of product 1"
+                  },
+                  "prix": {
+                    "description": "The price of the product",
+                    "type": "number",
+                    "example": 10.9900000000000002131628207280300557613372802734375
+                  },
+                  "date_creation": {
+                    "description": "The creation date of the product",
+                    "type": "string",
+                    "example": "2021-09-01 12:00:00"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object",
+            "example": {
+              "product": {
+                "id": 1,
+                "name": "Product 1",
+                "description": "Description of product 1",
+                "prix": 10.9900000000000002131628207280300557613372802734375,
+                "date_creation": "2021-09-01 12:00:00"
+              }
+            }
+          }
+        },
+        "type": "object"
+      },
+      "SUCCESS_LISTMANY_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": ""
+          },
+          "message": {
+            "description": "The success message",
+            "type": "string",
+            "example": "Liste des produits récupérée avec succès"
+          },
+          "data": {
+            "description": "The product key is an array with all products",
+            "properties": {
+              "products": {
+                "description": "The list of products",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "id": {
+                      "description": "The id of the product",
+                      "type": "integer",
+                      "example": 47
+                    },
+                    "name": {
+                      "description": "The name of the product",
+                      "type": "string",
+                      "example": "Product 1"
+                    },
+                    "description": {
+                      "description": "The description of the product",
+                      "type": "string",
+                      "example": "Description of product 1"
+                    },
+                    "prix": {
+                      "description": "The price of the product",
+                      "type": "number",
+                      "example": 10.9900000000000002131628207280300557613372802734375
+                    },
+                    "date_creation": {
+                      "description": "The creation date of the product",
+                      "type": "string",
+                      "example": "2021-09-01 12:00:00"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "type": "object",
+            "example": {
+              "products": [
+                {
+                  "id": 47,
+                  "name": "Product 47",
+                  "description": "Description of product 47",
+                  "prix": 10.9900000000000002131628207280300557613372802734375,
+                  "date_creation": "2021-09-01 12:00:00"
+                },
+                {
+                  "id": 48,
+                  "name": "Product 48",
+                  "description": "Description of product 48",
+                  "prix": 20.989999999999998436805981327779591083526611328125,
+                  "date_creation": "2021-09-01 12:00:00"
+                }
+              ]
+            }
+          }
+        },
+        "type": "object"
+      },
+      "SUCCESS_DELETE_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": ""
+          },
+          "message": {
+            "description": "The success message",
+            "type": "string",
+            "example": "Produit supprimé avec succès"
+          },
+          "data": {
+            "description": "An empty array",
+            "type": "array",
+            "items": {
+              "type": "null"
+            },
+            "example": []
+          }
+        },
+        "type": "object"
+      },
+      "SUCCESS_UPDATE_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": ""
+          },
+          "message": {
+            "description": "The success message",
+            "type": "string",
+            "example": "Produit modifié avec succès"
+          },
+          "data": {
+            "description": "An empty array",
+            "type": "array",
+            "items": {
+              "type": "null"
+            },
+            "example": []
+          }
+        },
+        "type": "object"
+      },
+      "SUCCESS_CREATED_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": ""
+          },
+          "message": {
+            "description": "The success message",
+            "type": "string",
+            "example": "Produit créé avec succès"
+          },
+          "data": {
+            "description": "The id newly created product",
+            "type": "array",
+            "items": {
+              "properties": {
+                "id": {
+                  "description": "The id of the newly created product",
+                  "type": "integer",
+                  "example": 46
+                }
+              },
+              "type": "object"
+            },
+            "example": {
+              "id": 46
+            }
+          }
+        },
+        "type": "object"
+      },
+      "BASIC_ERROR_400_RESPONSE_BODY": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Invalid request"
+          },
+          "message": {
+            "description": "Will always be empty in an error response",
+            "type": "string",
+            "example": ""
+          }
+        },
+        "type": "object"
+      },
+      "BAD_REQUEST_RESPONSE_CREATED": {
+        "properties": {
+          "data": {
+            "description": "The list of errors",
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "description": "The field that caused the error, will be displayed like : invalid_<field>",
+                  "type": "string",
+                  "example": "invalid_type"
+                },
+                "expected": {
+                  "description": "The expected data of the field",
+                  "type": "string",
+                  "example": "string"
+                },
+                "received": {
+                  "description": "The received data of the field",
+                  "type": "string",
+                  "example": "integer"
+                },
+                "path": {
+                  "description": "The path of the field in the JSON object",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["name"]
+                },
+                "message": {
+                  "description": "A message explaining briefly the error",
+                  "type": "string",
+                  "example": "Value does not match the expected type"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BASIC_ERROR_400_RESPONSE_BODY"
+          }
+        ]
+      },
+      "BAD_REQUEST_RESPONSE_LIST": {
+        "properties": {
+          "data": {
+            "description": "The list of errors",
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "description": "The field that caused the error, will be displayed like : invalid_<field>",
+                  "type": "string",
+                  "example": "invalid_regex"
+                },
+                "expected": {
+                  "description": "The expected data of the field",
+                  "type": "string",
+                  "example": "/^[0-9]+$/"
+                },
+                "received": {
+                  "description": "The received data of the field",
+                  "type": "string",
+                  "example": "Hello world"
+                },
+                "path": {
+                  "description": "The path of the field in the JSON object",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["limit"]
+                },
+                "message": {
+                  "description": "A message explaining briefly the error",
+                  "type": "string",
+                  "example": "Value does not match the expected regex"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BASIC_ERROR_400_RESPONSE_BODY"
+          }
+        ]
+      },
+      "BAD_REQUEST_RESPONSE_UPDATE": {
+        "properties": {
+          "data": {
+            "description": "The list of errors",
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "description": "The field that caused the error, will be displayed like : invalid_<field>",
+                  "type": "string",
+                  "example": "invalid_type"
+                },
+                "expected": {
+                  "description": "The expected data of the field",
+                  "type": "number",
+                  "format": "float",
+                  "example": "float"
+                },
+                "received": {
+                  "description": "The received data of the field",
+                  "type": "integer",
+                  "example": "integer"
+                },
+                "path": {
+                  "description": "The path of the field in the JSON object",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["pruix"]
+                },
+                "message": {
+                  "description": "A message explaining briefly the error",
+                  "type": "string",
+                  "example": "Value does not match the expected type"
+                }
+              },
+              "type": "object"
+            }
+          }
+        },
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BASIC_ERROR_400_RESPONSE_BODY"
+          }
+        ]
+      },
+      "BAD_REQUEST_RESPONSE_LISTONE": {
+        "properties": {
+          "data": {
+            "description": "The list of errors",
+            "type": "array",
+            "items": {
+              "properties": {
+                "code": {
+                  "description": "The field that caused the error, will be displayed like : invalid_<field>",
+                  "type": "string",
+                  "example": "invalid_range"
+                },
+                "expected": {
+                  "description": "The expected data of the field",
+                  "type": "string",
+                  "example": "[1, + infinity]"
+                },
+                "received": {
+                  "description": "The received data of the field",
+                  "type": "string",
+                  "example": "0"
+                },
+                "path": {
+                  "description": "The path of the field in the JSON object",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["id"]
+                },
+                "message": {
+                  "description": "A message explaining briefly the error",
+                  "type": "string",
+                  "example": "Value is inferior to the minimum threshold"
+                }
+              },
+              "type": "object"
+            },
+            "example": [
+              {
+                "code": "invalid_range",
+                "expected": "[1, + infinity]",
+                "received": "0",
+                "path": ["id"],
+                "message": "Value is inferior to the minimum threshold"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BASIC_ERROR_400_RESPONSE_BODY"
+          }
+        ]
+      },
+      "BAD_REQUEST_RESPONSE_LISTMANY": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Invalid request"
+          },
+          "message": {
+            "description": "Some information there",
+            "type": "string",
+            "example": "Aucun ids de produits n'a été fourni dans la requête."
+          },
+          "data": {
+            "description": "an empty array",
+            "type": "array",
+            "items": {
+              "type": "null"
+            },
+            "example": []
+          }
+        },
+        "type": "object"
+      },
+      "METHOD_NOT_ALLOWED_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Méthode non autorisée"
+          },
+          "message": {
+            "description": "Will be empty",
+            "type": "string",
+            "example": ""
+          },
+          "data": {
+            "description": "An empty array",
+            "type": "array",
+            "items": {
+              "type": "null"
+            },
+            "example": []
+          }
+        },
+        "type": "object"
+      },
+      "INTERNAL_SERVER_ERROR_RESPONSE": {
+        "properties": {
+          "error": {
+            "description": "The error message",
+            "type": "string",
+            "example": "Erreur interne"
+          },
+          "message": {
+            "description": "Will be empty",
+            "type": "string",
+            "example": ""
+          },
+          "data": {
+            "description": "An empty array",
+            "type": "array",
+            "items": {
+              "type": "null"
+            },
+            "example": []
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Product",
+      "description": "Product"
+    },
+    {
+      "name": "CREATE",
+      "description": "CREATE"
+    },
+    {
+      "name": "READ",
+      "description": "READ"
+    },
+    {
+      "name": "DELETE",
+      "description": "DELETE"
+    },
+    {
+      "name": "UPDATE",
+      "description": "UPDATE"
+    }
+  ]
+}
