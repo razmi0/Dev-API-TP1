@@ -1,5 +1,11 @@
 # JS Front
 
+if your modifying the ts file, compile with :
+
+```bash
+tsc --watch
+```
+
 ## Todo
 
 - [ ] (1) Create endpoint runners
