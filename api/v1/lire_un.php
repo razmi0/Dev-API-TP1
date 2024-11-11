@@ -1,5 +1,6 @@
 <?php
 
+namespace API\Endpoints;
 
 
 use Core\Endpoint;

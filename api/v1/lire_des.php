@@ -1,5 +1,6 @@
 <?php
 
+namespace API\Endpoints;
 
 use Core\Endpoint;
 use HTTP\{Error, Request, Response};
