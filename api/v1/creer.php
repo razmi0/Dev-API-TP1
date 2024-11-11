@@ -1,11 +1,15 @@
 <?php
 
+namespace API\Endpoints;
+
 use Core\Endpoint;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao, Entity\Product};
+use OpenApi\Attributes as OA;
 
-require_once "../../vendor/autoload.php";
+
+require_once "vendor/autoload.php";
 
 // _____ _______ _______ _______ _______ _______ _______ _______
 //|                                                             |
@@ -16,7 +20,6 @@ require_once "../../vendor/autoload.php";
 //|          goal     :  create a product in database           |
 //|_____________________________________________________________|
 //
-
 
 
 /**
@@ -38,8 +41,11 @@ require_once "../../vendor/autoload.php";
  * @method handleResponse(mixed $data): void
  * 
  */
+
 final class CreateEndpoint extends Endpoint
 {
+
+
     // The only method allowed for this endpoint
     public const ENDPOINT_METHOD = "POST";
 

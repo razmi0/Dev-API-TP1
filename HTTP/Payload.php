@@ -2,7 +2,7 @@
 
 namespace HTTP;
 
-require_once "../../vendor/autoload.php";
+require_once "vendor/autoload.php";
 
 /**
  * Class Payload

@@ -3,7 +3,7 @@
 namespace Middleware;
 
 
-require_once '../../vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 use HTTP\Error;
 use HTTP\Request;

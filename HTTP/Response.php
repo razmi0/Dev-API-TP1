@@ -2,12 +2,16 @@
 
 namespace HTTP;
 
-require_once "../../vendor/autoload.php";
+require_once "vendor/autoload.php";
 
-use Exception;
 use HTTP\Payload;
 use Utils\Console;
+use OpenApi\Attributes as OA;
 
+/**
+ * Class Response
+ * 
+ */
 
 class Response
 {

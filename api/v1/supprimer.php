@@ -1,6 +1,6 @@
 <?php
 
-
+namespace API\Endpoints;
 
 use Core\Endpoint;
 use HTTP\{Request, Response};
