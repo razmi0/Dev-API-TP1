@@ -822,7 +822,7 @@ class Error
         $error = new Error();
         $error->setCode(404)
             ->setMessage($msg)
-            ->setError("Page non trouvée")
+            ->setError("Ressource non trouvée")
             ->setPayload($payload)
             ->sendAndDie();
     }
