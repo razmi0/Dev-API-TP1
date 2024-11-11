@@ -19,7 +19,7 @@
                 ],
                 "summary": "Create a new product",
                 "description": "This endpoint allows you to create a new product in database. Send a JSON object with the name, description and price of the product",
-                "operationId": "87226aa94a48fcb9689b6a6ff89a4013",
+                "operationId": "createProduct",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -104,7 +104,7 @@
                 ],
                 "summary": "Retrieve all products",
                 "description": "This endpoint allows you to retrieve all the products from the database. The parameter limit is optional and will limit the number of products returned. The parameter llit can be passed as a query parameter or in the request body",
-                "operationId": "f829bc97350d72a4cf179f1d931d471c",
+                "operationId": "findAllProducts",
                 "parameters": [
                     {
                         "name": "limit",
@@ -187,7 +187,7 @@
                 ],
                 "summary": "Retrieve a single product",
                 "description": "This endpoint allows you to retrieve a single product from the database. The parameter id is required and must be passed as a query parameter or in the request body",
-                "operationId": "8d2a3e6f5fdc0ae2b2d463e8393f8fd8",
+                "operationId": "findOneById",
                 "parameters": [
                     {
                         "name": "id",
@@ -269,7 +269,7 @@
                 ],
                 "summary": "Delete a product",
                 "description": "This endpoint allows you to delete a product from the database. The parameter id is required and must be passed in the request body",
-                "operationId": "d96cf60ee6d7237f68dc7c92575335d0",
+                "operationId": "deleteProduct",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -344,7 +344,7 @@
                 ],
                 "summary": "Update a product",
                 "description": "This endpoint allows you to update a product in the database. The only required body json field is the id of the product to update. The other fields are optional and will update the product in the database",
-                "operationId": "7364e07917e37b3cdab65d4fba1c9bb8",
+                "operationId": "updateProduct",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -425,7 +425,7 @@
                 ],
                 "summary": "Retrieve many products",
                 "description": "This endpoint allows you to retrieve many products from the database. The parameter id[] is required and must be passed as a query parameter or in the request body",
-                "operationId": "6d09f04d8a11dfd35b78c62eb88b9c5b",
+                "operationId": "findManyById",
                 "parameters": [
                     {
                         "name": "id[]",

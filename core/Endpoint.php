@@ -8,8 +8,28 @@ use Middleware\Middleware;
 use Exception;
 use Middleware\Validators\Validator;
 use OpenApi\Attributes as OA;
-use OpenApi\Attributes\Examples;
 
+
+
+/**
+ * 
+ * class Endpoint
+ * 
+ * This class is the base class for all the endpoints.
+ * It is a abstract class that will be extended by all the endpoints.
+ * Endpoint enforce the implementation of the following handlers and 
+ * provide the necessary properties to the child class.
+ * 
+ * 
+ * @property Response $response
+ * @property Request $request
+ * @property Validator $validator
+ * @property Middleware $middleware
+ * 
+ * @method handleMiddleware()
+ * @method handleRequest()
+ * @method handleResponse(mixed $payload)
+ */
 #[
     OA\Info(
         version: "1.0",
@@ -28,6 +48,7 @@ use OpenApi\Attributes\Examples;
 
     OA\Post(
         path: "/TP1/api/v1.0/produit/new",
+        operationId: "createProduct",
         tags: ["Product", "CREATE"],
         description: "This endpoint allows you to create a new product in database. Send a JSON object with the name, description and price of the product",
         summary: "Create a new product",
@@ -107,6 +128,7 @@ use OpenApi\Attributes\Examples;
 
     OA\GET(
         path: "/TP1/api/v1.0/produit/list",
+        operationId: "findAllProducts",
         tags: ["Product", "READ"],
         description: "This endpoint allows you to retrieve all the products from the database. The parameter limit is optional and will limit the number of products returned. The parameter llit can be passed as a query parameter or in the request body",
         summary: "Retrieve all products",
@@ -179,6 +201,7 @@ use OpenApi\Attributes\Examples;
 
     OA\GET(
         path: "/TP1/api/v1.0/produit/listone",
+        operationId: "findOneById",
         tags: ["Product", "READ"],
         description: "This endpoint allows you to retrieve a single product from the database. The parameter id is required and must be passed as a query parameter or in the request body",
         summary: "Retrieve a single product",
@@ -248,10 +271,9 @@ use OpenApi\Attributes\Examples;
     // --
 
 
-
-
     OA\DELETE(
         path: "/TP1/api/v1.0/produit/delete",
+        operationId: "deleteProduct",
         tags: ["Product", "DELETE"],
         description: "This endpoint allows you to delete a product from the database. The parameter id is required and must be passed in the request body",
         summary: "Delete a product",
@@ -307,17 +329,14 @@ use OpenApi\Attributes\Examples;
         ]
     ),
 
-
-
     // UpdateEndpoint
     // @see /api/v1/modifier.php
     // --
 
 
-
-
     OA\PUT(
         path: "/TP1/api/v1.0/produit/update",
+        operationId: "updateProduct",
         tags: ["Product", "UPDATE"],
         description: "This endpoint allows you to update a product in the database. The only required body json field is the id of the product to update. The other fields are optional and will update the product in the database",
         summary: "Update a product",
@@ -380,8 +399,6 @@ use OpenApi\Attributes\Examples;
     ),
 
 
-
-
     // ListManyEndpoint
     // @see /api/v1/lire_des.php
     // --
@@ -389,6 +406,7 @@ use OpenApi\Attributes\Examples;
 
     OA\GET(
         path: "/TP1/api/v1.0/produit/listmany/",
+        operationId: "findManyById",
         tags: ["Product", "READ"],
         description: "This endpoint allows you to retrieve many products from the database. The parameter id[] is required and must be passed as a query parameter or in the request body",
         summary: "Retrieve many products",
@@ -463,10 +481,11 @@ use OpenApi\Attributes\Examples;
 
     )
 
-
 ]
 abstract class Endpoint
 {
+
+
 
 
     protected Response $response;
@@ -507,24 +526,3 @@ abstract class Endpoint
      */
     abstract protected function handleResponse(mixed $data): void;
 }
-
-
-/**
- * 
- * class Endpoint
- * 
- * This class is the base class for all the endpoints.
- * It is a abstract class that will be extended by all the endpoints.
- * Endpoint enforce the implementation of the following handlers and 
- * provide the necessary properties to the child class.
- * 
- * 
- * @property Response $response
- * @property Request $request
- * @property Validator $validator
- * @property Middleware $middleware
- * 
- * @method handleMiddleware()
- * @method handleRequest()
- * @method handleResponse(mixed $payload)
- */
