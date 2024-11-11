@@ -30,7 +30,7 @@ class Connection
             $this->setPDOAttributes();
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            throw Error::HTTP500("Service non disponible", []);
+            throw Error::HTTP503("Service non disponible");
         }
     }
 
