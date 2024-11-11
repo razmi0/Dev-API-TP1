@@ -1,6 +1,6 @@
 # TP1 Basic CRUD API
 
-hi
+2.0 Release with all openapi documentation
 
 ## Installation
 
