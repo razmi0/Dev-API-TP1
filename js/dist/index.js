@@ -1,7 +1,5 @@
-import { fetchCreateOne, fetchDeleteOne, fetchReadAll, fetchReadOne } from "./APIFetch.js";
-import { dom, insertTable, insertText } from "./dom.js";
-import { save } from "./storage.js";
-import { setupSyncId } from "./syncId.js";
+import { dom, insertTable, insertText } from "./helpers/dom.js";
+import * as APIFetch from "./helpers/fetch_functions.js";
 import { themeLogic } from "./theme-toggle.js";
 console.log("Starting the app...");
 /**
@@ -14,13 +12,16 @@ const readAll = () => {
     const { btn, output } = dom.read;
     const handleMouseDown = async () => {
         console.log("Fetching data...");
-        const [json, response] = await fetchReadAll();
+        const [json, response] = await APIFetch.fetchReadAll();
         if (json.error)
             insertText({ ctn: output, text: json.error, code: response.status, error: true });
         if (json.message)
             insertText({ ctn: output, text: json.message, code: response.status });
-        if (json.data)
-            (output.innerHTML = ""), insertTable(output, json.data);
+        if (json.data) {
+            const { products } = json.data;
+            output.innerHTML = "";
+            insertTable(output, products);
+        }
     };
     btn.addEventListener("mousedown", handleMouseDown);
 };
@@ -40,14 +41,16 @@ const readOne = () => {
             insertText({ ctn: output, text: "L'id est obligatoire" });
             return;
         }
-        const [json, response] = await fetchReadOne({ id });
+        const [json, response] = await APIFetch.fetchReadOne({ id });
         if (json.error)
             insertText({ ctn: output, text: json.error, code: response.status, error: true });
         if (json.message)
             insertText({ ctn: output, text: json.message, code: response.status });
-        if (json.data)
-            insertTable(output, json.data);
-        save("selected-id", id);
+        if (json.data) {
+            const { product } = json.data;
+            // insertTable expects an array of products
+            insertTable(output, [product]);
+        }
     });
 };
 /**
@@ -67,7 +70,7 @@ const deleteOne = () => {
             return;
         }
         const clientData = { id };
-        const [json, response] = await fetchDeleteOne(clientData);
+        const [json, response] = await APIFetch.fetchDeleteOne(clientData);
         if (json.error)
             insertText({ ctn: output, text: json.error, code: response.status, error: true });
         if (json.message)
@@ -89,16 +92,17 @@ const createOne = () => {
         console.log("Creating data...");
         const clientData = inputs.reduce((acc, input) => {
             acc[input.name] = input.value;
+            if (input.name === "price")
+                acc[input.name] = parseFloat(input.value);
             return acc;
         }, {});
-        const [json, response] = await fetchCreateOne(clientData);
+        const [json, response] = await APIFetch.fetchCreateOne(clientData);
         if (json.error)
             insertText({ ctn: output, text: json.error, code: response.status, error: true });
         if (json.message)
             insertText({ ctn: output, text: json.message, code: response.status });
         if (json.data)
             output.innerHTML += `<p>Le produit a été créé avec l'id : ${json.data[0].id}</p>`;
-        save("selected-id", json.data[0].id);
     });
 };
 /**
@@ -112,6 +116,5 @@ const run = () => {
     readOne();
     deleteOne();
     createOne();
-    setupSyncId();
 };
 run();

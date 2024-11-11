@@ -3,7 +3,7 @@
 
 <head>
     <title>API Product Interface</title>
-    <script src="./js/dist/index.js" type="module"></script>
+    <script src="./js/dist/APIFetch.js" type="module"></script>
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">

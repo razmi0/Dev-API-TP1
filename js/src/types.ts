@@ -2,15 +2,22 @@
 // --
 
 type BasicAPIResponse = {
-  error: string | null;
-  message: string | null;
+  error: string | "";
+  message: string | "";
 };
 export type APIResponse = {
   CREATE: {
     data: Record<"id", string>[];
   } & BasicAPIResponse;
-  READ: {
-    data: Product[];
+  READ_ONE: {
+    data: {
+      product: Product;
+    };
+  } & BasicAPIResponse;
+  READ_ALL: {
+    data: {
+      products: Product[];
+    };
   } & BasicAPIResponse;
   DELETE: {
     data: never[];
@@ -24,7 +31,7 @@ export type ClientData = {
   CREATE: {
     name: string;
     description: string;
-    price: string;
+    price: number;
   };
   DELETE: {
     id: string;
@@ -40,7 +47,7 @@ export type Product = {
   id: string;
   name: string;
   description: string;
-  price: string;
+  price: number;
   date_creation: string;
 };
 
