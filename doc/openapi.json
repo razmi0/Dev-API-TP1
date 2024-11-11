@@ -27,7 +27,7 @@
                                 "required": [
                                     "name",
                                     "description",
-                                    "price"
+                                    "prix"
                                 ],
                                 "properties": {
                                     "name": {
@@ -40,7 +40,7 @@
                                         "type": "string",
                                         "example": "This is the first product"
                                     },
-                                    "price": {
+                                    "prix": {
                                         "description": "The price of the product",
                                         "type": "number",
                                         "format": "float",
@@ -358,7 +358,7 @@
                                         "type": "integer",
                                         "example": 47
                                     },
-                                    "price": {
+                                    "prix": {
                                         "description": "The new price of the product",
                                         "type": "number",
                                         "format": "float",
@@ -548,7 +548,7 @@
                                             "type": "string",
                                             "example": "Description of product 1"
                                         },
-                                        "price": {
+                                        "prix": {
                                             "description": "The price of the product",
                                             "type": "number",
                                             "example": 10.9900000000000002131628207280300557613372802734375
@@ -570,14 +570,14 @@
                                     "id": 1,
                                     "name": "Product 1",
                                     "description": "Description of product 1",
-                                    "price": 10.9900000000000002131628207280300557613372802734375,
+                                    "prix": 10.9900000000000002131628207280300557613372802734375,
                                     "date_creation": "2021-09-01 12:00:00"
                                 },
                                 {
                                     "id": 2,
                                     "name": "Product 2",
                                     "description": "Description of product 2",
-                                    "price": 20.989999999999998436805981327779591083526611328125,
+                                    "prix": 20.989999999999998436805981327779591083526611328125,
                                     "date_creation": "2021-09-01 12:00:00"
                                 }
                             ]
@@ -619,7 +619,7 @@
                                         "type": "string",
                                         "example": "Description of product 1"
                                     },
-                                    "price": {
+                                    "prix": {
                                         "description": "The price of the product",
                                         "type": "number",
                                         "example": 10.9900000000000002131628207280300557613372802734375
@@ -639,7 +639,7 @@
                                 "id": 1,
                                 "name": "Product 1",
                                 "description": "Description of product 1",
-                                "price": 10.9900000000000002131628207280300557613372802734375,
+                                "prix": 10.9900000000000002131628207280300557613372802734375,
                                 "date_creation": "2021-09-01 12:00:00"
                             }
                         }
@@ -682,7 +682,7 @@
                                             "type": "string",
                                             "example": "Description of product 1"
                                         },
-                                        "price": {
+                                        "prix": {
                                             "description": "The price of the product",
                                             "type": "number",
                                             "example": 10.9900000000000002131628207280300557613372802734375
@@ -704,14 +704,14 @@
                                     "id": 47,
                                     "name": "Product 47",
                                     "description": "Description of product 47",
-                                    "price": 10.9900000000000002131628207280300557613372802734375,
+                                    "prix": 10.9900000000000002131628207280300557613372802734375,
                                     "date_creation": "2021-09-01 12:00:00"
                                 },
                                 {
                                     "id": 48,
                                     "name": "Product 48",
                                     "description": "Description of product 48",
-                                    "price": 20.989999999999998436805981327779591083526611328125,
+                                    "prix": 20.989999999999998436805981327779591083526611328125,
                                     "date_creation": "2021-09-01 12:00:00"
                                 }
                             ]
@@ -941,7 +941,7 @@
                                         "type": "string"
                                     },
                                     "example": [
-                                        "price"
+                                        "pruix"
                                     ]
                                 },
                                 "message": {

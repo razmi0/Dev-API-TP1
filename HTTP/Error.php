@@ -10,13 +10,9 @@ use Utils\Console;
 /**
  * Class Error
  * 
- * 
  */
 #[OA\Components(
     [
-
-
-
 
         // Schema for the 200 response (list)
         new OA\Schema(
@@ -66,7 +62,7 @@ use Utils\Console;
                                         example: "Description of product 1"
                                     ),
                                     new OA\Property(
-                                        property: "price",
+                                        property: "prix",
                                         type: "number",
                                         description: "The price of the product",
                                         example: 10.99
@@ -87,14 +83,14 @@ use Utils\Console;
                                 "id" => 1,
                                 "name" => "Product 1",
                                 "description" => "Description of product 1",
-                                "price" => 10.99,
+                                "prix" => 10.99,
                                 "date_creation" => "2021-09-01 12:00:00"
                             ],
                             [
                                 "id" => 2,
                                 "name" => "Product 2",
                                 "description" => "Description of product 2",
-                                "price" => 20.99,
+                                "prix" => 20.99,
                                 "date_creation" => "2021-09-01 12:00:00"
                             ]
                         ]
@@ -154,7 +150,7 @@ use Utils\Console;
                                     example: "Description of product 1"
                                 ),
                                 new OA\Property(
-                                    property: "price",
+                                    property: "prix",
                                     type: "number",
                                     description: "The price of the product",
                                     example: 10.99
@@ -174,7 +170,7 @@ use Utils\Console;
                             "id" => 1,
                             "name" => "Product 1",
                             "description" => "Description of product 1",
-                            "price" => 10.99,
+                            "prix" => 10.99,
                             "date_creation" => "2021-09-01 12:00:00"
                         ]
                     ]
@@ -233,7 +229,7 @@ use Utils\Console;
                                         example: "Description of product 1"
                                     ),
                                     new OA\Property(
-                                        property: "price",
+                                        property: "prix",
                                         type: "number",
                                         description: "The price of the product",
                                         example: 10.99
@@ -254,14 +250,14 @@ use Utils\Console;
                                 "id" => 47,
                                 "name" => "Product 47",
                                 "description" => "Description of product 47",
-                                "price" => 10.99,
+                                "prix" => 10.99,
                                 "date_creation" => "2021-09-01 12:00:00"
                             ],
                             [
                                 "id" => 48,
                                 "name" => "Product 48",
                                 "description" => "Description of product 48",
-                                "price" => 20.99,
+                                "prix" => 20.99,
                                 "date_creation" => "2021-09-01 12:00:00"
                             ]
                         ]
@@ -579,7 +575,7 @@ use Utils\Console;
                                     type: "string"
                                 ),
                                 description: "The path of the field in the JSON object",
-                                example: ["price"]
+                                example: ["pruix"]
                             ),
                             new OA\Property(
                                 property: "message",

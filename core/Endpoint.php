@@ -105,14 +105,14 @@ use OpenApi\Attributes as OA;
                         example: "This is the first product"
                     ),
                     new OA\Property(
-                        property: "price",
+                        property: "prix",
                         type: "float",
                         description: "The price of the product",
                         example: 10.5
                     ),
 
                 ],
-                required: ["name", "description", "price"],
+                required: ["name", "description", "prix"],
 
             )
         ),
@@ -351,7 +351,7 @@ use OpenApi\Attributes as OA;
                         example: 47
                     ),
                     new OA\Property(
-                        property: "price",
+                        property: "prix",
                         type: "float",
                         description: "The new price of the product",
                         example: 10.5
