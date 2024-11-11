@@ -1,4 +1,4 @@
-import { dom, insertTable, insertText } from "./helpers/dom.js";
+import { dom, insertIdsUpdate, insertTable, insertText } from "./helpers/dom.js";
 import * as APIFetch from "./helpers/fetch_functions.js";
 import { themeLogic } from "./helpers/theme-toggle.js";
 import type { ClientData } from "./types.js";
@@ -123,6 +123,21 @@ const createOne = () => {
 
 /**
  *
+ * Setup the update logic
+ *
+ */
+const updateOne = async () => {
+  // we fetch all products and display them as buttons in the update section
+  const { idsCtn } = dom.update;
+
+  const [json, response] = await APIFetch.fetchReadAll();
+
+  const ids = json.data.products.map(({ id }) => id);
+  insertIdsUpdate(idsCtn, ids, () => {});
+};
+
+/**
+ *
  * Run the app
  *
  */
@@ -132,6 +147,7 @@ const run = () => {
   readOne();
   deleteOne();
   createOne();
+  updateOne();
 };
 
 run();

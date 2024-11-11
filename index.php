@@ -62,18 +62,16 @@
         #error,
         #message {
             position: absolute;
-            top: 0;
             right: 0;
-            margin-right: 0.4rem;
+            margin-right: 2rem;
         }
 
         #error {
-            margin-top: 0.8rem;
-
+            bottom: 25%;
         }
 
         #message {
-            margin-top: calc(0.8rem + 2ch);
+            bottom: 15%;
         }
 
         pre {
@@ -82,6 +80,35 @@
             overflow: auto;
             white-space: pre-wrap;
             word-wrap: break-word;
+        }
+
+        div[data-ids] {
+            margin-bottom: 1rem;
+            max-height: 20vh;
+
+            button[data-update-ids] {
+                width: fit-content;
+                height: fit-content;
+                padding: 2px 7px;
+                border-radius: 999px;
+                font-size: 0.6rem;
+                display: inline-flex;
+            }
+
+            button[data-update-ids]:has(~ button[data-update-ids]:hover),
+            button[data-update-ids]:hover~button[data-update-ids] {
+                filter: blur(1px) brightness(150%);
+                transition: filter ease-in-out 0.1s 0.1s;
+
+            }
+
+            button[data-update-ids]:hover {
+                transform: scale(2);
+                color: white;
+                border-color: white;
+                transition: transform ease-out;
+            }
+
         }
     </style>
     <header>
@@ -179,6 +206,10 @@
         <article>
             <section data-endpoint="update">
                 <h2>Update a product</h2>
+                <small>Choose an id :</small>
+                <div data-ids class="overflow-auto">
+
+                </div>
                 <form>
                     <fieldset class="grid">
                         <div>

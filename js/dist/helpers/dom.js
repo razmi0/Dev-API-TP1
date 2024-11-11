@@ -44,6 +44,7 @@ export const dom = {
         btn: updateSection.querySelector("button"),
         output: updateSection.nextElementSibling,
         inputs: Array.from(updateSection.querySelectorAll("input")),
+        idsCtn: updateSection.querySelector("[data-ids]"),
     },
     deleteOne: {
         section: deleteSection,
@@ -78,11 +79,11 @@ create.inputs.forEach((input) => {
 export const insertText = ({ ctn, text, code = null, error = false, classList = "" }) => {
     console.log(text, error);
     const prefix = error ? "[ERROR] : " : "";
-    const suffix = code ? `-- Code ${code}` : "";
+    const suffix = error && code ? `-- Code ${code}` : "";
     const className = error ? "pico-color-red-500" : "";
     ctn.innerHTML = `
           <div>
-              <p class="${className + " " + classList}">${prefix} ${text} ${suffix}</p>
+              <article class="${className + " " + classList}">${prefix} ${text} ${suffix}</article>
           </div>
       `;
 };
@@ -119,12 +120,14 @@ export const insertTable = (ctn, data) => {
     table.append(thead, tbody);
     ctn.append(table);
 };
-export const insertUpdateFields = (data) => {
-    dom.update.inputs.forEach((input) => {
-        const value = data[input.name];
-        input.value = `${value}`;
+export const insertIdsUpdate = (ctn, ids, callback) => {
+    const buttons = ids.map((id) => {
+        const button = document.createElement("button");
+        button.textContent = id;
+        button.dataset.updateIds = id;
+        button.classList.add("secondary", "outline");
+        button.addEventListener("mousedown", callback);
+        return button;
     });
-};
-export const insertReadOneFields = (data) => {
-    dom.readOne.input.value = data.id;
+    ctn.append(...buttons);
 };
