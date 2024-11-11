@@ -7,7 +7,7 @@
  * path : /api/v1.0/produit/list
  */
 
-require_once "../../vendor/autoload.php";
+require_once "vendor/autoload.php";
 
 use Curl\Session;
 use Curl\Test as Test;
