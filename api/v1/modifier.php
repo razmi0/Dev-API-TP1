@@ -71,6 +71,13 @@ final class UpdateEndpoint extends Endpoint
 
         // Check if the request body contains the expected data else throw an error ( 400 Bad Request )
         $this->middleware->checkExpectedData($this->validator);
+
+        // sanitize the data ( all types )
+        // get the decoded body from the request, sanitize it
+        // and set it back to the request object
+        $this->middleware->sanitizeData(                                  // // no error expected
+            ["sanitize" => ["html", "integer", "float"]]
+        );
     }
 
     /**
