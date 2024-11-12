@@ -36,7 +36,9 @@ export type ClientData = {
   DELETE: {
     id: number;
   };
-  UPDATE: Omit<Product, "date_creation">;
+  UPDATE: Omit<Product, "date_creation" | "id"> & {
+    id: number;
+  };
   READALL: never;
   READONE: {
     id: string;

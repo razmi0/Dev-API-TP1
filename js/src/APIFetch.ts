@@ -127,13 +127,61 @@ const createOne = () => {
  *
  */
 const updateOne = async () => {
-  // we fetch all products and display them as buttons in the update section
-  const { idsCtn } = dom.update;
+  // we fetch all products and display all ids as buttons in the update section to choose which one to update
+
+  const { idsCtn, inputs, btn: submitButton } = dom.update;
 
   const [json, response] = await APIFetch.fetchReadAll();
 
   const ids = json.data.products.map(({ id }) => id);
-  insertIdsUpdate(idsCtn, ids, () => {});
+  const buttons = insertIdsUpdate(idsCtn, ids);
+
+  // we add an event listener to each button to fetch the product data and fill the inputs
+  buttons.forEach((btn) => {
+    btn.addEventListener("mousedown", async () => {
+      const id = btn.dataset.updateIds;
+      const [json, response] = await APIFetch.fetchReadOne({ id });
+
+      if (json.data) {
+        const { product } = json.data;
+
+        // create an id input to store the current id
+        const idInput = document.createElement("input");
+        idInput.type = "hidden";
+        idInput.name = "id";
+        idInput.value = product.id;
+        inputs.push(idInput);
+        // append the id input to the form ( will be used to send the update request and is hidden )
+        dom.update.section.appendChild(idInput);
+
+        // fill the update section inputs with the product data
+        inputs.forEach((input) => {
+          input.value = product[input.name];
+        });
+      }
+    });
+  });
+
+  // we add an event listener to the submit button to send the update request
+  submitButton.addEventListener("mousedown", async (e) => {
+    e.preventDefault();
+    console.log("Updating data...");
+
+    const clientData = inputs.reduce((acc, input) => {
+      acc[input.name] = input.value;
+      if (input.name === "prix") acc[input.name] = parseFloat(input.value);
+      if (input.name === "id") acc[input.name] = parseInt(input.value);
+      return acc;
+    }, {} as ClientData["UPDATE"]);
+
+    const [json, response] = await APIFetch.fetchUpdateOne(clientData);
+
+    console.log(json);
+
+    if (json.error) insertText({ ctn: dom.update.output, text: json.error, code: response.status, error: true });
+    if (json.message) insertText({ ctn: dom.update.output, text: json.message, code: response.status });
+    if (json.data) dom.update.output.innerHTML += `<pre>${JSON.stringify(json.data, null, 2)}</pre>`;
+  });
 };
 
 /**

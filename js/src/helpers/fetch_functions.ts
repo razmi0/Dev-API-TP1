@@ -5,6 +5,7 @@ const API_READ_ALL_ENDPOINT = `${API_URL}/list` as const;
 const API_READ_ONE_ENDPOINT = `${API_URL}/listone` as const;
 const API_DELETE_ONE_ENDPOINT = `${API_URL}/delete` as const;
 const API_CREATE_ONE_ENDPOINT = `${API_URL}/new` as const;
+const API_UPDATE_ONE_ENDPOINT = `${API_URL}/update` as const;
 
 export const fetchReadOne = async (clientData: ClientData["READONE"]) => {
   const { id } = clientData;
@@ -49,5 +50,19 @@ export const fetchCreateOne = async (clientData: ClientData["CREATE"]) => {
   const json: APIResponse["CREATE"] = await response.json();
   console.log(json);
 
+  return [json, response] as const;
+};
+
+export const fetchUpdateOne = async (clientData: ClientData["UPDATE"]) => {
+  const fetchOptions = {
+    method: "PUT",
+    body: JSON.stringify(clientData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const response = await fetch(API_UPDATE_ONE_ENDPOINT, fetchOptions);
+  const json: APIResponse["UPDATE"] = await response.json();
   return [json, response] as const;
 };

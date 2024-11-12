@@ -132,7 +132,7 @@ final class ListManyEndpoint extends Endpoint
      */
     public function handleResponse(mixed $data): void
     {
-        // Send the response with a 200 status code and a success message
+        // Send the response with a 200 status code and a success message if all went well
         $this->response
             ->setPayload($data)
             ->sendAndDie();

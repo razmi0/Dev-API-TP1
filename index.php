@@ -224,6 +224,7 @@
                     <label for="stock">Description:</label>
                     <input type="text" id="description" name="description" placeholder="Enter description..." required>
                 </form>
+                <button id="submitUpdate" type="button">Update this one</button>
             </section>
             <section>
 

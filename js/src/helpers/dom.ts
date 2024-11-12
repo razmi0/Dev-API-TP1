@@ -52,7 +52,7 @@ export const dom = {
   },
   update: {
     section: updateSection,
-    btn: updateSection.querySelector("button"),
+    btn: updateSection.querySelector("button#submitUpdate") as HTMLButtonElement,
     output: updateSection.nextElementSibling as HTMLElement,
     inputs: Array.from(updateSection.querySelectorAll("input")) as HTMLInputElement[],
     idsCtn: updateSection.querySelector("[data-ids]") as HTMLElement,
@@ -140,15 +140,16 @@ export const insertTable = (ctn: HTMLElement, data: Product[]) => {
   ctn.append(table);
 };
 
-export const insertIdsUpdate = (ctn: HTMLElement, ids: string[], callback: () => void) => {
+export const insertIdsUpdate = (ctn: HTMLElement, ids: string[]): HTMLButtonElement[] => {
   const buttons = ids.map((id) => {
     const button = document.createElement("button");
     button.textContent = id;
     button.dataset.updateIds = id;
     button.classList.add("secondary", "outline");
-    button.addEventListener("mousedown", callback);
     return button;
   });
 
   ctn.append(...buttons);
+
+  return buttons;
 };

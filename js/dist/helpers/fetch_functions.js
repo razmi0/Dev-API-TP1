@@ -3,6 +3,7 @@ const API_READ_ALL_ENDPOINT = `${API_URL}/list`;
 const API_READ_ONE_ENDPOINT = `${API_URL}/listone`;
 const API_DELETE_ONE_ENDPOINT = `${API_URL}/delete`;
 const API_CREATE_ONE_ENDPOINT = `${API_URL}/new`;
+const API_UPDATE_ONE_ENDPOINT = `${API_URL}/update`;
 export const fetchReadOne = async (clientData) => {
     const { id } = clientData;
     const response = await fetch(`${API_READ_ONE_ENDPOINT}?id=${id}`);
@@ -39,5 +40,17 @@ export const fetchCreateOne = async (clientData) => {
     console.log(response);
     const json = await response.json();
     console.log(json);
+    return [json, response];
+};
+export const fetchUpdateOne = async (clientData) => {
+    const fetchOptions = {
+        method: "PUT",
+        body: JSON.stringify(clientData),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    };
+    const response = await fetch(API_UPDATE_ONE_ENDPOINT, fetchOptions);
+    const json = await response.json();
     return [json, response];
 };

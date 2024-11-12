@@ -41,7 +41,7 @@ export const dom = {
     },
     update: {
         section: updateSection,
-        btn: updateSection.querySelector("button"),
+        btn: updateSection.querySelector("button#submitUpdate"),
         output: updateSection.nextElementSibling,
         inputs: Array.from(updateSection.querySelectorAll("input")),
         idsCtn: updateSection.querySelector("[data-ids]"),
@@ -120,14 +120,14 @@ export const insertTable = (ctn, data) => {
     table.append(thead, tbody);
     ctn.append(table);
 };
-export const insertIdsUpdate = (ctn, ids, callback) => {
+export const insertIdsUpdate = (ctn, ids) => {
     const buttons = ids.map((id) => {
         const button = document.createElement("button");
         button.textContent = id;
         button.dataset.updateIds = id;
         button.classList.add("secondary", "outline");
-        button.addEventListener("mousedown", callback);
         return button;
     });
     ctn.append(...buttons);
+    return buttons;
 };
