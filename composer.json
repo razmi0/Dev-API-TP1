@@ -24,6 +24,6 @@
     "process-timeout": 0
   },
   "require": {
-    "zircote/swagger-php": "^4.11"
+    "zircote/swagger-php": "^3.0"
   }
 }

@@ -18,7 +18,7 @@
                     "READ"
                 ],
                 "summary": "Retrieve all products",
-                "description": "This endpoint allows you to retrieve all the products from the database. The parameter limit is optional and will limit the number of products returned. The parameter llit can be passed as a query parameter or in the request body",
+                "description": "This endpoint allows you to retrieve all the products from the database. The parameter limit is optional and will limit the number of products returned. The parameter limit can be passed as a query parameter or in the request body",
                 "operationId": "findAllProducts",
                 "parameters": [
                     {
@@ -295,8 +295,7 @@
                                     },
                                     "prix": {
                                         "description": "The new price of the product",
-                                        "type": "number",
-                                        "format": "float",
+                                        "type": "float",
                                         "example": 10.5
                                     }
                                 },
@@ -817,17 +816,17 @@
                                 "code": {
                                     "description": "The field that caused the error, will be displayed like : invalid_<field>",
                                     "type": "string",
-                                    "example": "invalid_regex"
+                                    "example": "invalid_type"
                                 },
                                 "expected": {
                                     "description": "The expected data of the field",
                                     "type": "string",
-                                    "example": "/^[0-9]+$/"
+                                    "example": "string"
                                 },
                                 "received": {
                                     "description": "The received data of the field",
                                     "type": "string",
-                                    "example": "Hello world"
+                                    "example": "integer"
                                 },
                                 "path": {
                                     "description": "The path of the field in the JSON object",
@@ -836,13 +835,13 @@
                                         "type": "string"
                                     },
                                     "example": [
-                                        "limit"
+                                        "name"
                                     ]
                                 },
                                 "message": {
                                     "description": "A message explaining briefly the error",
                                     "type": "string",
-                                    "example": "Value does not match the expected regex"
+                                    "example": "Value does not match the expected type"
                                 }
                             },
                             "type": "object"
@@ -893,8 +892,7 @@
                                 },
                                 "expected": {
                                     "description": "The expected data of the field",
-                                    "type": "number",
-                                    "format": "float",
+                                    "type": "float",
                                     "example": "float"
                                 },
                                 "received": {
@@ -1059,23 +1057,5 @@
                 "type": "object"
             }
         }
-    },
-    "tags": [
-        {
-            "name": "Product",
-            "description": "Product"
-        },
-        {
-            "name": "READ",
-            "description": "READ"
-        },
-        {
-            "name": "DELETE",
-            "description": "DELETE"
-        },
-        {
-            "name": "UPDATE",
-            "description": "UPDATE"
-        }
-    ]
+    }
 }
