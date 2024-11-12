@@ -6,8 +6,7 @@ use API\Endpoint;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao, Entity\Product};
-use OpenApi\Attributes as OA;
-
+use OpenApi\Annotations as OA;
 
 require_once "../../vendor/autoload.php";
 
@@ -21,112 +20,63 @@ require_once "../../vendor/autoload.php";
 //|_____________________________________________________________|
 //
 
-
-#[OA\Info(
-    title: "API TP1",
-    version: "1.0",
-    description: "This is a simple API for the TP1 of the PHP course",
-)]
-#[OA\Post(
-    path: "/TP1/api/v1.0/produit/new",
-    operationId: "createProduct",
-    tags: ["Product", "CREATE"],
-    description: "This endpoint allows you to create a new product in database. Send a JSON object with the name, description and price of the product",
-    summary: "Create a new product",
-    responses: [
-        new OA\Response(
-            response: 201,
-            description: "Ressource created",
-            content: new OA\JsonContent(
-                ref: "#/components/schemas/SUCCESS_CREATED_RESPONSE",
-            ),
-
-        ),
-
-        new OA\Response(
-            response: 400,
-            description: "Bad request : the request body is not valid",
-            content: new OA\JsonContent(
-                ref: "#/components/schemas/BAD_REQUEST_RESPONSE_CREATED",
-
-
-            ),
-
-        ),
-        new OA\Response(
-            response: 405,
-            description: "Method not allowed : only POST method is allowed",
-            content: new OA\JsonContent(
-                ref: "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
-            )
-        ),
-        new OA\Response(
-            response: 500,
-            description: "Internal server error : an error occured on the server",
-            content: new OA\JsonContent(
-                ref: "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
-            )
-        )
-    ],
-    requestBody: new OA\RequestBody(
-        content: new OA\JsonContent(
-            type: "object",
-            properties: [
-                new OA\Property(
-                    property: "name",
-                    type: "string",
-                    description: "The name of the product",
-                    example: "Product 1"
-
-                ),
-                new OA\Property(
-                    property: "description",
-                    type: "string",
-                    description: "The description of the product",
-                    example: "This is the first product"
-                ),
-                new OA\Property(
-                    property: "prix",
-                    type: "float",
-                    description: "The price of the product",
-                    example: 10.5
-                ),
-
-            ],
-            required: ["name", "description", "prix"],
-
-        )
-    ),
-
-
-)]
 /**
- * 
- * CreateEndpoint
- * 
- * This class extends the Endpoint class.
- * The parent Endpoint class is an abstract class that defines the basic structure of an endpoint and
- * the CreateEndpoint class is a concrete class that implements the logic of the create endpoint.
- * 
- * @property Request $request
- * @property Response $response
- * @property Middleware $middleware
- * @property Validator $validator
- * 
- * @method __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
- * @method handleMiddleware(): void
- * @method handleRequest(): array
- * @method handleResponse(mixed $data): void
- * 
+ * @OA\Post(
+ *     path="/TP1/api/v1.0/produit/new",
+ *     operationId="createProduct",
+ *     tags={"Product", "CREATE"},
+ *     description="This endpoint allows you to create a new product in database. Send a JSON object with the name, description and price of the product",
+ *     summary="Create a new product",
+ *     @OA\Response(
+ *         response=201,
+ *         description="Ressource created",
+ *         @OA\JsonContent(ref="#/components/schemas/SUCCESS_CREATED_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad request : the request body is not valid",
+ *         @OA\JsonContent(ref="#/components/schemas/BAD_REQUEST_RESPONSE_CREATED")
+ *     ),
+ *     @OA\Response(
+ *         response=405,
+ *         description="Method not allowed : only POST method is allowed",
+ *         @OA\JsonContent(ref="#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error : an error occured on the server",
+ *         @OA\JsonContent(ref="#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE")
+ *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="name",
+ *                 type="string",
+ *                 description="The name of the product",
+ *                 example="Product 1"
+ *             ),
+ *             @OA\Property(
+ *                 property="description",
+ *                 type="string",
+ *                 description="The description of the product",
+ *                 example="This is the first product"
+ *             ),
+ *             @OA\Property(
+ *                 property="prix",
+ *                 type="float",
+ *                 description="The price of the product",
+ *                 example=10.5
+ *             ),
+ *             required={"name", "description", "prix"}
+ *         )
+ *     )
+ * )
  */
-
 final class CreateEndpoint extends Endpoint
 {
-
-
     // The only method allowed for this endpoint
     public const ENDPOINT_METHOD = "POST";
-
 
     // dependency injection here
     public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
@@ -143,7 +93,6 @@ final class CreateEndpoint extends Endpoint
      */
     public function handleMiddleware(): void
     {
-
         // Check if the request method is allowed (POST only)
         $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);            // if error return 405 Method Not Allowed
 
@@ -195,23 +144,14 @@ final class CreateEndpoint extends Endpoint
     }
 }
 
-
 // ENDPOINT INSTRUCTIONS 👇
 // --
-
-
-
 
 /**
  * our request object with all incoming informations (headers, body, method, query string etc...)
  * @see http/Request.php
  */
 $request = new Request();
-
-
-
-
-
 
 // our template rules to validate the client data in the request body
 $validator = new Validator(
@@ -237,10 +177,6 @@ $validator = new Validator(
     ]
 );
 
-
-
-
-
 /**
  * Our middleware object that will handle all the checks to avoid a bad request and validate the incoming request
  * @see middleware/Middleware.php
@@ -249,11 +185,6 @@ $validator = new Validator(
  * @throws HTTP 400 Bad Request
  */
 $middleware = new Middleware($request);
-
-
-
-
-
 
 /**
  * Our basic configuration of the response object in case of success
@@ -267,17 +198,8 @@ $response = new Response([
     ]
 ]);
 
-
-
-
-
-
 // Create the endpoint object with above configuration
 $endpoint = new CreateEndpoint($request, $response, $middleware, $validator);
-
-
-
-
 
 // Run the endpoint as we configured it
 // --

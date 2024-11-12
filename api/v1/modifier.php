@@ -40,6 +40,58 @@ require_once "../../vendor/autoload.php";
  * @method handleResponse(mixed $data): void
  * 
  */
+
+/**
+ * @OA\Put(
+ *     path="/TP1/api/v1.0/produit/update",
+ *     operationId="updateProduct",
+ *     tags={"Product", "UPDATE"},
+ *     description="This endpoint allows you to update a product in the database. The only required body json field is the id of the product to update. The other fields are optional and will update the product in the database",
+ *     summary="Update a product",
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="id",
+ *                 type="integer",
+ *                 description="The id of the product to update",
+ *                 example=47
+ *             ),
+ *             @OA\Property(
+ *                 property="prix",
+ *                 type="float",
+ *                 description="The new price of the product",
+ *                 example=10.5
+ *             ),
+ *             required={"id"}
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success : the product has been updated",
+ *         @OA\JsonContent(ref="#/components/schemas/SUCCESS_UPDATE_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="No content : the product has been found but update didn't change anything"
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad request : the request body is not valid",
+ *         @OA\JsonContent(ref="#/components/schemas/BAD_REQUEST_RESPONSE_UPDATE")
+ *     ),
+ *     @OA\Response(
+ *         response=405,
+ *         description="Method not allowed : only PUT method is allowed",
+ *         @OA\JsonContent(ref="#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error : an error occured on the server",
+ *         @OA\JsonContent(ref="#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE")
+ *     )
+ * )
+ */
 final class UpdateEndpoint extends Endpoint
 {
 

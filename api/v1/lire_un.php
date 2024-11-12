@@ -41,6 +41,63 @@ require_once "../../vendor/autoload.php";
  * @method handleResponse(mixed $data): void
  * 
  */
+
+/**
+ * @OA\Get(
+ *     path="/TP1/api/v1.0/produit/listone",
+ *     operationId="findOneById",
+ *     tags={"Product", "READ"},
+ *     description="This endpoint allows you to retrieve a single product from the database. The parameter id is required and must be passed as a query parameter or in the request body",
+ *     summary="Retrieve a single product",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="query",
+ *         description="The id of the product to retrieve",
+ *         required=true,
+ *         @OA\Schema(
+ *             type="integer",
+ *             minimum=1,
+ *             example=47
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="id",
+ *                 type="integer",
+ *                 description="The id of the product to retrieve",
+ *                 example=47
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success : the product has been retrieved. The response contains the product in a JSON object format",
+ *         @OA\JsonContent(ref="#/components/schemas/SUCCESS_LISTONE_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad request : the request body is not valid",
+ *         @OA\JsonContent(ref="#/components/schemas/BAD_REQUEST_RESPONSE_LISTONE")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not found : no products have been found in the database",
+ *         @OA\JsonContent(ref="#/components/schemas/NOT_FOUND_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=405,
+ *         description="Method not allowed : only GET method is allowed",
+ *         @OA\JsonContent(ref="#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error : an error occured on the server",
+ *         @OA\JsonContent(ref="#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE")
+ *     )
+ * )
+ */
 final class ListOneEndpoint extends Endpoint
 {
 

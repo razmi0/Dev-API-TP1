@@ -8,10 +8,339 @@ use HTTP\Payload;
 use Utils\Console;
 
 /**
- * Class Response
- * 
+ * @OA\Components(
+ *     schemas={
+ *         @OA\Schema(
+ *             schema="SUCCESS_LIST_RESPONSE",
+ *             type="object",
+ *             properties={
+ *                 @OA\Property(
+ *                     property="error",
+ *                     type="string",
+ *                     description="The error message",
+ *                     example=""
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message",
+ *                     type="string",
+ *                     description="The success message",
+ *                     example="Liste des produits récupérée avec succès"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="data",
+ *                     type="object",
+ *                     description="The product key is an array with all products",
+ *                     properties={
+ *                         @OA\Property(
+ *                             property="products",
+ *                             type="array",
+ *                             description="The list of products",
+ *                             @OA\Items(
+ *                                 type="object",
+ *                                 properties={
+ *                                     @OA\Property(
+ *                                         property="id",
+ *                                         type="integer",
+ *                                         description="The id of the product",
+ *                                         example=1
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="name",
+ *                                         type="string",
+ *                                         description="The name of the product",
+ *                                         example="Product 1"
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="description",
+ *                                         type="string",
+ *                                         description="The description of the product",
+ *                                         example="Description of product 1"
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="prix",
+ *                                         type="number",
+ *                                         description="The price of the product",
+ *                                         example=10.99
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="date_creation",
+ *                                         type="string",
+ *                                         description="The creation date of the product",
+ *                                         example="2021-09-01 12:00:00"
+ *                                     )
+ *                                 }
+ *                             )
+ *                         )
+ *                     },
+ *                     example={
+ *                         "products"={
+ *                             {
+ *                                 "id"=1,
+ *                                 "name"="Product 1",
+ *                                 "description"="Description of product 1",
+ *                                 "prix"=10.99,
+ *                                 "date_creation"="2021-09-01 12:00:00"
+ *                             },
+ *                             {
+ *                                 "id"=2,
+ *                                 "name"="Product 2",
+ *                                 "description"="Description of product 2",
+ *                                 "prix"=20.99,
+ *                                 "date_creation"="2021-09-01 12:00:00"
+ *                             }
+ *                         }
+ *                     }
+ *                 )
+ *             }
+ *         ),
+ *         @OA\Schema(
+ *             schema="SUCCESS_LISTONE_RESPONSE",
+ *             type="object",
+ *             properties={
+ *                 @OA\Property(
+ *                     property="error",
+ *                     type="string",
+ *                     description="The error message",
+ *                     example=""
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message",
+ *                     type="string",
+ *                     description="The success message",
+ *                     example="Produit récupéré avec succès"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="data",
+ *                     type="object",
+ *                     description="The product key is an array with a single product",
+ *                     properties={
+ *                         @OA\Property(
+ *                             property="product",
+ *                             type="object",
+ *                             description="The product",
+ *                             properties={
+ *                                 @OA\Property(
+ *                                     property="id",
+ *                                     type="integer",
+ *                                     description="The id of the product",
+ *                                     example=1
+ *                                 ),
+ *                                 @OA\Property(
+ *                                     property="name",
+ *                                     type="string",
+ *                                     description="The name of the product",
+ *                                     example="Product 1"
+ *                                 ),
+ *                                 @OA\Property(
+ *                                     property="description",
+ *                                     type="string",
+ *                                     description="The description of the product",
+ *                                     example="Description of product 1"
+ *                                 ),
+ *                                 @OA\Property(
+ *                                     property="prix",
+ *                                     type="number",
+ *                                     description="The price of the product",
+ *                                     example=10.99
+ *                                 ),
+ *                                 @OA\Property(
+ *                                     property="date_creation",
+ *                                     type="string",
+ *                                     description="The creation date of the product",
+ *                                     example="2021-09-01 12:00:00"
+ *                                 )
+ *                             }
+ *                         )
+ *                     },
+ *                     example={
+ *                         "product"={
+ *                             "id"=1,
+ *                             "name"="Product 1",
+ *                             "description"="Description of product 1",
+ *                             "prix"=10.99,
+ *                             "date_creation"="2021-09-01 12:00:00"
+ *                         }
+ *                     }
+ *                 )
+ *             }
+ *         ),
+ *         @OA\Schema(
+ *             schema="SUCCESS_LISTMANY_RESPONSE",
+ *             type="object",
+ *             properties={
+ *                 @OA\Property(
+ *                     property="error",
+ *                     type="string",
+ *                     description="The error message",
+ *                     example=""
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message",
+ *                     type="string",
+ *                     description="The success message",
+ *                     example="Liste des produits récupérée avec succès"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="data",
+ *                     type="object",
+ *                     description="The product key is an array with all products",
+ *                     properties={
+ *                         @OA\Property(
+ *                             property="products",
+ *                             type="array",
+ *                             description="The list of products",
+ *                             @OA\Items(
+ *                                 type="object",
+ *                                 properties={
+ *                                     @OA\Property(
+ *                                         property="id",
+ *                                         type="integer",
+ *                                         description="The id of the product",
+ *                                         example=47
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="name",
+ *                                         type="string",
+ *                                         description="The name of the product",
+ *                                         example="Product 1"
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="description",
+ *                                         type="string",
+ *                                         description="The description of the product",
+ *                                         example="Description of product 1"
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="prix",
+ *                                         type="number",
+ *                                         description="The price of the product",
+ *                                         example=10.99
+ *                                     ),
+ *                                     @OA\Property(
+ *                                         property="date_creation",
+ *                                         type="string",
+ *                                         description="The creation date of the product",
+ *                                         example="2021-09-01 12:00:00"
+ *                                     )
+ *                                 }
+ *                             )
+ *                         )
+ *                     },
+ *                     example={
+ *                         "products"={
+ *                             {
+ *                                 "id"=47,
+ *                                 "name"="Product 47",
+ *                                 "description"="Description of product 47",
+ *                                 "prix"=10.99,
+ *                                 "date_creation"="2021-09-01 12:00:00"
+ *                             },
+ *                             {
+ *                                 "id"=48,
+ *                                 "name"="Product 48",
+ *                                 "description"="Description of product 48",
+ *                                 "prix"=20.99,
+ *                                 "date_creation"="2021-09-01 12:00:00"
+ *                             }
+ *                         }
+ *                     }
+ *                 )
+ *             }
+ *         ),
+ *         @OA\Schema(
+ *             schema="SUCCESS_DELETE_RESPONSE",
+ *             type="object",
+ *             properties={
+ *                 @OA\Property(
+ *                     property="error",
+ *                     type="string",
+ *                     description="The error message",
+ *                     example=""
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message",
+ *                     type="string",
+ *                     description="The success message",
+ *                     example="Produit supprimé avec succès"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="data",
+ *                     type="array",
+ *                     description="An empty array",
+ *                     @OA\Items(
+ *                         type="null"
+ *                     ),
+ *                     example={}
+ *                 )
+ *             }
+ *         ),
+ *         @OA\Schema(
+ *             schema="SUCCESS_UPDATE_RESPONSE",
+ *             type="object",
+ *             properties={
+ *                 @OA\Property(
+ *                     property="error",
+ *                     type="string",
+ *                     description="The error message",
+ *                     example=""
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message",
+ *                     type="string",
+ *                     description="The success message",
+ *                     example="Produit modifié avec succès"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="data",
+ *                     type="array",
+ *                     description="An empty array",
+ *                     @OA\Items(
+ *                         type="null"
+ *                     ),
+ *                     example={}
+ *                 )
+ *             }
+ *         ),
+ *         @OA\Schema(
+ *             schema="SUCCESS_CREATED_RESPONSE",
+ *             type="object",
+ *             properties={
+ *                 @OA\Property(
+ *                     property="error",
+ *                     type="string",
+ *                     description="The error message",
+ *                     example=""
+ *                 ),
+ *                 @OA\Property(
+ *                     property="message",
+ *                     type="string",
+ *                     description="The success message",
+ *                     example="Produit créé avec succès"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="data",
+ *                     type="array",
+ *                     description="The id newly created product",
+ *                     @OA\Items(
+ *                         type="object",
+ *                         properties={
+ *                             @OA\Property(
+ *                                 property="id",
+ *                                 type="integer",
+ *                                 description="The id of the newly created product",
+ *                                 example=46
+ *                             )
+ *                         }
+ *                     ),
+ *                     example={
+ *                         "id"=46
+ *                     }
+ *                 )
+ *             }
+ *         )
+ *       }
+ * )
  */
-
 class Response
 {
     private ?int $code = null;

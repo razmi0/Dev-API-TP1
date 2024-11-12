@@ -39,6 +39,63 @@ require_once "../../vendor/autoload.php";
  * @method handleResponse(mixed $data): void
  * 
  */
+/**
+ * @OA\Get(
+ *     path="/TP1/api/v1.0/produit/list",
+ *     operationId="findAllProducts",
+ *     tags={"Product", "READ"},
+ *     description="This endpoint allows you to retrieve all the products from the database. The parameter limit is optional and will limit the number of products returned. The parameter limit can be passed as a query parameter or in the request body",
+ *     summary="Retrieve all products",
+ *     @OA\Parameter(
+ *         name="limit",
+ *         in="query",
+ *         description="The maximum number of products to retrieve",
+ *         required=false,
+ *         @OA\Schema(
+ *             type="integer",
+ *             minimum=1,
+ *             maximum=100,
+ *             example=2
+ *         )
+ *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="limit",
+ *                 type="integer",
+ *                 description="The maximum number of products to retrieve",
+ *                 example=2
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success : the products have been retrieved. The response contains a list of products in a JSON array format in the products key.",
+ *         @OA\JsonContent(ref="#/components/schemas/SUCCESS_LIST_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad request : the request body is not valid",
+ *         @OA\JsonContent(ref="#/components/schemas/BAD_REQUEST_RESPONSE_LIST")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Not found : no products have been found in the database",
+ *         @OA\JsonContent(ref="#/components/schemas/NOT_FOUND_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=405,
+ *         description="Method not allowed : only GET method is allowed",
+ *         @OA\JsonContent(ref="#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error : an error occured on the server",
+ *         @OA\JsonContent(ref="#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE")
+ *     )
+ * )
+ */
 final class ListEndpoint extends Endpoint
 {
 

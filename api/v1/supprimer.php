@@ -39,6 +39,53 @@ require_once "../../vendor/autoload.php";
  * @method handleRequest(): array
  * @method handleResponse(mixed $data): void
  */
+
+/**
+ * @OA\Delete(
+ *     path="/TP1/api/v1.0/produit/delete",
+ *     operationId="deleteProduct",
+ *     tags={"Product", "DELETE"},
+ *     description="This endpoint allows you to delete a product from the database. The parameter id is required and must be passed in the request body",
+ *     summary="Delete a product",
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="id",
+ *                 type="integer",
+ *                 description="The id of the product to delete",
+ *                 example=47
+ *             ),
+ *             required={"id"}
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success : the product has been deleted",
+ *         @OA\JsonContent(ref="#/components/schemas/SUCCESS_DELETE_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="No content : the product has not been found in the database"
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad request : the request body is not valid",
+ *         @OA\JsonContent(ref="#/components/schemas/BAD_REQUEST_RESPONSE_LISTONE")
+ *     ),
+ *     @OA\Response(
+ *         response=405,
+ *         description="Method not allowed : only DELETE method is allowed",
+ *         @OA\JsonContent(ref="#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE")
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal server error : an error occured on the server",
+ *         @OA\JsonContent(ref="#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE")
+ *     )
+ * )
+ */
+
 final class DeleteEndpoint extends Endpoint
 {
 
