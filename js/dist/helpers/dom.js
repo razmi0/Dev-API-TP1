@@ -76,10 +76,10 @@ create.inputs.forEach((input) => {
 /**
  * it is a vanilla and simple <FormControl> React like component
  * **/
-export const insertText = ({ ctn, text, code = null, error = false, classList = "" }) => {
+export const displayMessage = ({ ctn, text, code = null, error = false, classList = "" }) => {
     console.log(text, error);
     const prefix = error ? "[ERROR] : " : "";
-    const suffix = error && code ? `-- Code ${code}` : "";
+    const suffix = code ? `-- Code ${code}` : "";
     const className = error ? "pico-color-red-500" : "";
     ctn.innerHTML = `
           <div>
@@ -88,14 +88,18 @@ export const insertText = ({ ctn, text, code = null, error = false, classList = 
       `;
 };
 /**
- *,insert a table to display the products given data and a container
+ *insert a table to display the products given data and a container
  *
  * @param ctn The container where the data will be inserted
  * @param data The data to insert
  *
  */
-export const insertTable = (ctn, data) => {
+export const displayProduits = (ctn, data) => {
     console.log("Inserting data...");
+    if (data.length === 0 || !data || data[0] === null) {
+        displayMessage({ ctn, text: "Aucun produit trouvé" });
+        return;
+    }
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     const tbody = document.createElement("tbody");

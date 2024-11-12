@@ -1,26 +1,32 @@
-import { dom, insertIdsUpdate, insertTable, insertText } from "./helpers/dom.js";
+import { displayMessage, displayProduits, dom, insertIdsUpdate } from "./helpers/dom.js";
 import * as APIFetch from "./helpers/fetch_functions.js";
-import { themeLogic } from "./helpers/theme-toggle.js";
+import { themeSetup } from "./helpers/theme-toggle.js";
 console.log("Starting the app...");
+// Je n'ai pas créé de fonction displayProduit car displayProduits est capable de gérer un seul produit à afficher.
 /**
  *
  * Setup the read all logic
  *
+ * Fetch all products
+ * Display them in a table (displayProduits)
+ * Display an error message if there is an error
+ * Display a success message if the fetch is successful
+ *
  */
-const readAll = () => {
+const getProduits = () => {
     console.log("Setting up read all logic...");
     const { btn, output } = dom.read;
     const handleMouseDown = async () => {
         console.log("Fetching data...");
         const [json, response] = await APIFetch.fetchReadAll();
         if (json.error)
-            insertText({ ctn: output, text: json.error, code: response.status, error: true });
+            displayMessage({ ctn: output, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText({ ctn: output, text: json.message, code: response.status });
+            displayMessage({ ctn: output, text: json.message, code: response.status });
         if (json.data) {
             const { products } = json.data;
             output.innerHTML = "";
-            insertTable(output, products);
+            displayProduits(output, products);
         }
     };
     btn.addEventListener("mousedown", handleMouseDown);
@@ -29,8 +35,14 @@ const readAll = () => {
  *
  * Setup the read one logic
  *
+ * Fetch one product by id
+ * Display it in a table (displayProduits)
+ * Display an error message if there is an error
+ * Display a success message if the fetch is successful
+ * Display a message if the id is missing
+ *
  */
-const readOne = () => {
+const getProduit = () => {
     console.log("Setting up read one logic...");
     const { btn, input, output, section } = dom.readOne;
     btn.addEventListener("mousedown", async (e) => {
@@ -38,18 +50,19 @@ const readOne = () => {
         console.log("Fetching data...");
         const id = input.value;
         if (!id) {
-            insertText({ ctn: output, text: "L'id est obligatoire" });
+            displayMessage({ ctn: output, text: "L'id est obligatoire" });
             return;
         }
         const [json, response] = await APIFetch.fetchReadOne({ id });
+        console.log(response.status, json);
         if (json.error)
-            insertText({ ctn: output, text: json.error, code: response.status, error: true });
+            displayMessage({ ctn: output, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText({ ctn: output, text: json.message, code: response.status });
+            displayMessage({ ctn: output, text: json.message, code: response.status });
         if (json.data) {
             const { product } = json.data;
-            // insertTable expects an array of products
-            insertTable(output, [product]);
+            // displayProduits expects an array of products
+            displayProduits(output, [product]);
         }
     });
 };
@@ -57,8 +70,12 @@ const readOne = () => {
  *
  * Setup the delete logic
  *
+ * Delete one product by id
+ * Display an error message if there is an error
+ * Display a success message if the fetch is successful
+ * Display the error data if there is an error
  */
-const deleteOne = () => {
+const deleteProduit = () => {
     console.log("Setting up delete logic...");
     const { btn, input, outputError, outputData, outputMessage } = dom.deleteOne;
     btn.addEventListener("mousedown", async (e) => {
@@ -70,9 +87,9 @@ const deleteOne = () => {
         console.log(json);
         console.log(response);
         if (json.error)
-            insertText({ ctn: outputError, text: json.error, code: response.status, error: true });
+            displayMessage({ ctn: outputError, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText({ ctn: outputMessage, text: json.message, code: response.status });
+            displayMessage({ ctn: outputMessage, text: json.message, code: response.status });
         if (json.data)
             outputData.innerHTML += `<pre>${JSON.stringify(json.data, null, 2)}</pre>`;
     });
@@ -81,8 +98,13 @@ const deleteOne = () => {
  *
  * Setup the create logic
  *
+ * Create one product
+ * Display an error message if there is an error
+ * Display a success message if the fetch is successful
+ * Display the error data if there is an error
+ * Display the created id if the fetch is successful
  */
-const createOne = () => {
+const createProduit = () => {
     console.log("Setting up create logic...");
     const { btn, inputs, output, outputData, outputError, outputMessage } = dom.create;
     btn.addEventListener("mousedown", async (e) => {
@@ -97,9 +119,9 @@ const createOne = () => {
         const [json, response] = await APIFetch.fetchCreateOne(clientData);
         console.log(json.data);
         if (json.error)
-            insertText({ ctn: outputError, text: json.error, code: response.status, error: true });
+            displayMessage({ ctn: outputError, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText({ ctn: outputMessage, text: json.message, code: response.status });
+            displayMessage({ ctn: outputMessage, text: json.message, code: response.status });
         if (json.data)
             outputData.innerHTML += `<pre>${JSON.stringify(json.data, null, 2)}</pre>`;
     });
@@ -108,8 +130,17 @@ const createOne = () => {
  *
  * Setup the update logic
  *
+ * Fetch all products
+ * Display all ids as buttons in the update section to choose which one to update
+ * Create an id input to store the current id
+ * Fill the update section inputs with the product data
+ * Send the update request
+ * Display an error message if there is an error
+ * Display a success message if the fetch is successful
+ * Display the error data if the fetch is successful
+ *
  */
-const updateOne = async () => {
+const updateProduit = async () => {
     // we fetch all products and display all ids as buttons in the update section to choose which one to update
     const { idsCtn, inputs, btn: submitButton } = dom.update;
     const [json, response] = await APIFetch.fetchReadAll();
@@ -152,9 +183,9 @@ const updateOne = async () => {
         const [json, response] = await APIFetch.fetchUpdateOne(clientData);
         console.log(json);
         if (json.error)
-            insertText({ ctn: dom.update.output, text: json.error, code: response.status, error: true });
+            displayMessage({ ctn: dom.update.output, text: json.error, code: response.status, error: true });
         if (json.message)
-            insertText({ ctn: dom.update.output, text: json.message, code: response.status });
+            displayMessage({ ctn: dom.update.output, text: json.message, code: response.status });
         if (json.data)
             dom.update.output.innerHTML += `<pre>${JSON.stringify(json.data, null, 2)}</pre>`;
     });
@@ -165,11 +196,11 @@ const updateOne = async () => {
  *
  */
 const run = () => {
-    themeLogic();
-    readAll();
-    readOne();
-    deleteOne();
-    createOne();
-    updateOne();
+    themeSetup();
+    getProduits();
+    getProduit();
+    deleteProduit();
+    createProduit();
+    updateProduit();
 };
 run();
