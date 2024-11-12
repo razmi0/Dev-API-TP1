@@ -1,7 +1,7 @@
 /**
  * Theme Toggle
  */
-export const themeLogic = () => {
+export const themeSetup = () => {
     const themeToggleButton = document.querySelector("button[data-theme]");
     if (themeToggleButton) {
         themeToggleButton.addEventListener("mousedown", () => {
