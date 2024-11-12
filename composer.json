@@ -8,9 +8,9 @@
   },
   "autoload": {
     "psr-4": {
+      "API\\": "api/",
       "API\\Endpoints\\": "api/v1/",
       "HTTP\\": "http/",
-      "Core\\": "core/",
       "Model\\": "model/",
       "Model\\DAO\\": "model/dao/",
       "Model\\Entity\\": "model/entity/",

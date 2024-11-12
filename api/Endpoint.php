@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Core;
+namespace API;
 
 use HTTP\{Request, Response};
 use Middleware\Middleware;
@@ -46,79 +46,7 @@ use OpenApi\Attributes as OA;
     // @see /api/v1/creer.php
     // --
 
-    OA\Post(
-        path: "/TP1/api/v1.0/produit/new",
-        operationId: "createProduct",
-        tags: ["Product", "CREATE"],
-        description: "This endpoint allows you to create a new product in database. Send a JSON object with the name, description and price of the product",
-        summary: "Create a new product",
-        responses: [
-            new OA\Response(
-                response: 201,
-                description: "Ressource created",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/SUCCESS_CREATED_RESPONSE",
-                ),
 
-            ),
-
-            new OA\Response(
-                response: 400,
-                description: "Bad request : the request body is not valid",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/BAD_REQUEST_RESPONSE_CREATED",
-
-
-                ),
-
-            ),
-            new OA\Response(
-                response: 405,
-                description: "Method not allowed : only POST method is allowed",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/METHOD_NOT_ALLOWED_RESPONSE"
-                )
-            ),
-            new OA\Response(
-                response: 500,
-                description: "Internal server error : an error occured on the server",
-                content: new OA\JsonContent(
-                    ref: "#/components/schemas/INTERNAL_SERVER_ERROR_RESPONSE"
-                )
-            )
-        ],
-        requestBody: new OA\RequestBody(
-            content: new OA\JsonContent(
-                type: "object",
-                properties: [
-                    new OA\Property(
-                        property: "name",
-                        type: "string",
-                        description: "The name of the product",
-                        example: "Product 1"
-
-                    ),
-                    new OA\Property(
-                        property: "description",
-                        type: "string",
-                        description: "The description of the product",
-                        example: "This is the first product"
-                    ),
-                    new OA\Property(
-                        property: "prix",
-                        type: "float",
-                        description: "The price of the product",
-                        example: 10.5
-                    ),
-
-                ],
-                required: ["name", "description", "prix"],
-
-            )
-        ),
-
-
-    ),
 
 
     // ListEndpoint
