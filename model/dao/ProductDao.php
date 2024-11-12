@@ -2,6 +2,7 @@
 
 namespace Model\Dao;
 
+use Exception;
 use Model\{Entity\Product, Dao\Connection};
 use HTTP\Error as Error;
 use PDO;
@@ -37,7 +38,7 @@ class ProductDao
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Bind the parameters
@@ -67,7 +68,7 @@ class ProductDao
             // Verify the execution of the query
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // If all went good, we will return the id of the last inserted product in db to the controller
@@ -100,7 +101,7 @@ class ProductDao
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Bind the parameters
@@ -111,13 +112,13 @@ class ProductDao
             // Verify the execution of the query
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
             $products_from_db = $prepared->fetchAll();
 
             // If no product was found, we send a response with a 404 status code and an error message
             if (count($products_from_db) == 0) {
-                throw Error::HTTP404("Aucun produit trouvé");
+                Error::HTTP404("Aucun produit trouvé");
             }
 
             // We map the products from the database to a new array of products entities and return it to the controller
@@ -147,7 +148,7 @@ class ProductDao
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Bind the parameters
@@ -156,7 +157,7 @@ class ProductDao
             // Verify the execution of the query
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Fetch the result
@@ -164,7 +165,7 @@ class ProductDao
 
             // If no product was found, we send a response with a 404 status code and an error message
             if (!$result) {
-                throw Error::HTTP404("Aucun produit trouvé", ["id" => $id]);
+                Error::HTTP404("Aucun produit trouvé", ["id" => $id]);
             }
 
             // Create a new product object and return it to the controller
@@ -193,7 +194,7 @@ class ProductDao
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Bind the parameters
@@ -202,7 +203,7 @@ class ProductDao
             // Verify the execution of the query
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Affected rows in the database
@@ -254,7 +255,7 @@ class ProductDao
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw Error::HTTP500("Erreur interne", ["id" => $id]);
+                Error::HTTP500("Erreur interne", ["id" => $id]);
             }
 
             // Bind the parameters
@@ -272,7 +273,7 @@ class ProductDao
             // Verify the execution of the query
             $stmt = $prepared->execute();
             if (!$stmt) {
-                throw Error::HTTP500("Erreur interne", ["id" => $id]);
+                Error::HTTP500("Erreur interne", ["id" => $id]);
             }
 
             $affectedRows = $prepared->rowCount();
@@ -307,13 +308,13 @@ class ProductDao
             // Verify the preparation of the query
             $prepared = $this->pdo->prepare($query);
             if (!$prepared) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Verify the execution of the query
             $stmt = $prepared->execute($ids);
             if (!$stmt) {
-                throw Error::HTTP500("Erreur interne");
+                Error::HTTP500("Erreur interne");
             }
 
             // Fetch the result
@@ -321,14 +322,14 @@ class ProductDao
 
             // If no product was found, we send a response with a 404 status code and an error message
             if (!$result) {
-                throw Error::HTTP404("Aucun produit trouvé", ["ids" => $ids]);
+                Error::HTTP404("Aucun produit trouvé", ["ids" => $ids]);
             }
 
             // We map the products from the database to a new array of products entities and return it to the controller
             return Product::makeBulk($result);
-        } catch (Error $e) {
-            // If an error was catch, we send a response with a 500 status code and an error message
-            throw $e;
+        } catch (Exception $e) {
+            // If a not handled error was catch, we send a response with a 500 status code and an error message
+            throw $e->getMessage();
         }
         $this->connection->closeConnection();
     }
