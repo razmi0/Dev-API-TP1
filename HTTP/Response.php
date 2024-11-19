@@ -373,6 +373,10 @@ class Response
             "Access-Control-Age: " => $config["header"]["age"] ?? 3600, // default 3600
             "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With" => ""
         ];
+
+        if (isset($config["header"]["Location"])) {
+            $this->header = [...$this->header, "Location: " => $config["header"]["Location"]];
+        }
     }
 
     private static function methodsToString(array $methods): string
