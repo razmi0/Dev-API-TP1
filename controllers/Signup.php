@@ -32,7 +32,10 @@ final class Signup extends Endpoint
     public function handleRequest(): array
     {
 
-        print_r($this->request->getFormData());
+        print_r($this->request->getDecodedData());
+
+        // user dao
+
 
 
         return [];
