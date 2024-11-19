@@ -47,6 +47,9 @@ class Request
     private bool $is_valid_json = true;
     private string $json_error_msg = "";
 
+    private bool $has_form_data = false;
+    private array $form_data = [];
+
     // Query related properties
 
     private bool $has_query = false;
@@ -68,6 +71,13 @@ class Request
 
             // Get the client payload from body and store it for easy access
             $this->client_raw_json = file_get_contents("php://input") ?? "";
+
+            // utility property to check if the request has data in form 
+            if ($this->getRequestMethod() === "POST" && !empty($_POST)) {
+                $this->has_form_data = true;
+                $this->form_data = $_POST;
+            }
+
 
             // utility property to check if the request has data in body
             if (!empty($this->client_raw_json)) {
@@ -116,6 +126,19 @@ class Request
     {
         $this->client_decoded_data = $data;
         return $this;
+    }
+
+    public function getFormData(string $key = null): mixed
+    {
+        if ($key) {
+            return $this->form_data[$key] ?? null;
+        }
+        return $this->form_data;
+    }
+
+    public function getHasFormData(): bool
+    {
+        return $this->has_form_data;
     }
 
     public function getIsValidJson(): bool
