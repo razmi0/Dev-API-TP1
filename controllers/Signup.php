@@ -239,7 +239,7 @@ $response = new Response([
     "message" => "Utilisateur et token enregistrés",
     "header" => [
         "methods" => [Signup::ENDPOINT_METHOD],
-        "Location" => "/views/login.php"
+        "location" => "/views/login.php"
     ]
 ]);
 

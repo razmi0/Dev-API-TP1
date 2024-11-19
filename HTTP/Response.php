@@ -374,7 +374,7 @@ class Response
             "Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With" => ""
         ];
 
-        if (isset($config["header"]["Location"])) {
+        if (isset($config["header"]["location"])) {
             $this->header = [...$this->header, "Location: " => $config["header"]["Location"]];
         }
     }
