@@ -1,51 +1,48 @@
 <?php
 
-
-
 namespace Model\Entity;
 
 /**
- * Class Token
- * @property string $token_id
- * @property string $token
- * @property string $token_hash
- * @property string $user_id
+ * Class User
+ * @property int $user_id
+ * @property string $username
+ * @property string $email
+ * @property string $password_hash
  * @property string $created_at
  * @property string $updated_at
  * 
- * @method string getTokenId()
- * @method string getToken()
- * @method string getTokenHash()
- * @method string getUserId()
+ * @method int getUserId()
+ * @method string getUsername()
+ * @method string getEmail()
+ * @method string getPasswordHash()
  * @method string getCreatedAt()
  * @method string getUpdatedAt()
- * @method setTokenId(string $token_id)
- * @method setToken(string $token)
- * @method setTokenHash(string $token_hash)
- * @method setUserId(string $user_id)
+ * @method setUserId(int $user_id)
+ * @method setUsername(string $username)
+ * @method setEmail(string $email)
+ * @method setPasswordHash(string $password_hash)
  * @method setCreatedAt(string $created_at)
  * @method setUpdatedAt(string $updated_at)
  * @method toArray()
  */
-class Token
+class User
 {
     public function __construct(
-        private ?string $token_id = null,
-        private ?string $token = null,
-        private ?string $token_hash = null,
-        private ?string $user_id = null,
+        private ?int $user_id = null,
+        private ?string $username = null,
+        private ?string $email = null,
+        private ?string $password_hash = null,
         private ?string $created_at = null,
         private ?string $updated_at = null
     ) {}
 
-
     public static function make(array $data)
     {
-        return new Token(
-            $data["token_id"] ?? null,
-            $data["token"] ?? null,
-            $data["token_hash"] ?? null,
+        return new User(
             $data["user_id"] ?? null,
+            $data["username"] ?? null,
+            $data["email"] ?? null,
+            $data["password_hash"] ?? null,
             $data["created_at"] ?? null,
             $data["updated_at"] ?? null
         );
@@ -54,24 +51,24 @@ class Token
     /**
      * Getters
      */
-    public function getTokenId(): ?string
-    {
-        return $this->token_id;
-    }
-
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    public function getTokenHash(): ?string
-    {
-        return $this->token_hash;
-    }
-
-    public function getUserId(): ?string
+    public function getUserId(): ?int
     {
         return $this->user_id;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function getPasswordHash(): ?string
+    {
+        return $this->password_hash;
     }
 
     public function getCreatedAt(): ?string
@@ -87,28 +84,27 @@ class Token
     /**
      * Setters
      */
-
-    public function setTokenId(string $token_id): self
-    {
-        $this->token_id = $token_id;
-        return $this;
-    }
-
-    public function setToken(string $token): self
-    {
-        $this->token = $token;
-        return $this;
-    }
-
-    public function setTokenHash(string $token_hash): self
-    {
-        $this->token_hash = $token_hash;
-        return $this;
-    }
-
-    public function setUserId(string $user_id): self
+    public function setUserId(int $user_id): self
     {
         $this->user_id = $user_id;
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function setPasswordHash(string $password_hash): self
+    {
+        $this->password_hash = $password_hash;
         return $this;
     }
 
@@ -124,15 +120,15 @@ class Token
         return $this;
     }
 
-    public static function toArray(Token $token): array
+    public static function toArray(User $user): array
     {
         return [
-            'token_id' => $token->getTokenId(),
-            'token' => $token->getToken(),
-            'token_hash' => $token->getTokenHash(),
-            'user_id' => $token->getUserId(),
-            'created_at' => $token->getCreatedAt(),
-            'updated_at' => $token->getUpdatedAt()
+            'user_id' => $user->getUserId(),
+            'username' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'password_hash' => $user->getPasswordHash(),
+            'created_at' => $user->getCreatedAt(),
+            'updated_at' => $user->getUpdatedAt()
         ];
     }
 }
