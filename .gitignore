@@ -3,3 +3,4 @@ data.json
 vendor/
 utils/migrations/
 bin/
+.env.local
