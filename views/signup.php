@@ -15,7 +15,7 @@
 <body>
     <h1>Sign up</h1>
     <article>
-        <form action="controllers/Signup.php" method="post">
+        <form action="../controllers/Signup.php" method="post">
             <!-- username -->
             <input type="text" name="username" placeholder="Username">
             <!-- email -->

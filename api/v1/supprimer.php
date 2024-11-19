@@ -135,7 +135,7 @@ final class DeleteEndpoint extends Endpoint
          * Get the id from the body
          * @var int $id
          */
-        $id = (int)$this->request->getDecodedBody("id");
+        $id = (int)$this->request->getDecodedData("id");
 
 
         // Start the DAO

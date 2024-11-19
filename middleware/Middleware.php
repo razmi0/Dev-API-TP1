@@ -76,7 +76,7 @@ class Middleware
         // If a schema is defined, we parse the client data with the schema
         // If the client data is invalid against the schema, we throw an error and send it to the client
         if ($validator) {
-            $client_data = $this->request->getDecodedBody();
+            $client_data = $this->request->getDecodedData();
             $data_parsed = $validator->safeParse($client_data);
             if ($data_parsed->getIsValid() === false) {
                 Error::HTTP400("Données invalides", $data_parsed->getErrors());
@@ -94,7 +94,7 @@ class Middleware
     public function sanitizeData($config): void
     {
 
-        $client_data = $this->request->getDecodedBody();
+        $client_data = $this->request->getDecodedData();
         $rules = $config['sanitize'];
 
         // Recursive function to sanitize data depending on the rules set in config and the data type

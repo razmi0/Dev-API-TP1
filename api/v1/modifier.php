@@ -142,7 +142,7 @@ final class UpdateEndpoint extends Endpoint
         /**
          * @var array Partial Product data
          */
-        $client_data = $this->request->getDecodedBody();
+        $client_data = $this->request->getDecodedData();
 
         // Create a new product
         $product = Product::make($client_data);

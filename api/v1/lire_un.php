@@ -137,7 +137,7 @@ final class ListOneEndpoint extends Endpoint
          */
         $id = $isIdInQuery
             ? (int)$this->request->getQueryParam("id")
-            : $this->request->getDecodedBody("id");
+            : $this->request->getDecodedData("id");
 
         // Start the DAO
         $dao = new ProductDao();

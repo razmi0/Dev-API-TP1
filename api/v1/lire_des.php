@@ -173,7 +173,7 @@ final class ListManyEndpoint extends Endpoint
         if ($isIdsInQuery)
             $ids = array_map(fn($id) => (int)$id, $this->request->getQueryParam("id"));
         else
-            $ids = $this->request->getDecodedBody("id");
+            $ids = $this->request->getDecodedData("id");
 
 
         // Start the DAO

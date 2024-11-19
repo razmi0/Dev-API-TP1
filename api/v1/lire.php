@@ -156,7 +156,7 @@ final class ListEndpoint extends Endpoint
         if ($isLimitInQuery)
             $limit = (int)$this->request->getQueryParam("limit");
         else if ($isLimitInBody)
-            $limit = (int)$this->request->getDecodedBody("limit");
+            $limit = (int)$this->request->getDecodedData("limit");
         // else is not necessary here, limit is null
 
 

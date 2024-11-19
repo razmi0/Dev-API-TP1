@@ -118,7 +118,7 @@ final class CreateEndpoint extends Endpoint
     public function handleRequest(): array
     {
         // Decoded body from the request
-        $client_data = $this->request->getDecodedBody();
+        $client_data = $this->request->getDecodedData();
 
         // Create a new product
         $newProduct = Product::make($client_data);

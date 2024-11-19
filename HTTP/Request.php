@@ -25,7 +25,7 @@ use HTTP\Error;
  * @property array $query_params The query parameters
  * 
  * @method getRequestMethod()
- * @method getDecodedBody()
+ * @method getDecodedData()
  * @method getIsValidJson()
  * @method getJsonErrorMsg()
  * @method getHasData()
@@ -48,7 +48,6 @@ class Request
     private string $json_error_msg = "";
 
     private bool $has_form_data = false;
-    private array $form_data = [];
 
     // Query related properties
 
@@ -72,10 +71,22 @@ class Request
             // Get the client payload from body and store it for easy access
             $this->client_raw_json = file_get_contents("php://input") ?? "";
 
-            // utility property to check if the request has data in form 
+            // if the client send a form data ( of course using post method )
             if ($this->getRequestMethod() === "POST" && !empty($_POST)) {
+
+                // utility property to check if the request has data in form 
                 $this->has_form_data = true;
-                $this->form_data = $_POST;
+
+                // store the form data in a property
+                $form_data = $_POST;
+
+                // cast form_data in client_raw_json
+                $this->client_raw_json = json_encode($form_data);
+
+                // clone and store the form data in a property
+                $this->client_decoded_data = [...$form_data];
+
+                // now data from form or data from body can be accessed with the same method (getDecodedData)
             }
 
 
@@ -114,7 +125,7 @@ class Request
         return [$decoded, !empty($decoded), $error];
     }
 
-    public function getDecodedBody(string $key = null): mixed
+    public function getDecodedData(string $key = null): mixed
     {
         if ($key) {
             return $this->client_decoded_data[$key] ?? null;
@@ -126,14 +137,6 @@ class Request
     {
         $this->client_decoded_data = $data;
         return $this;
-    }
-
-    public function getFormData(string $key = null): mixed
-    {
-        if ($key) {
-            return $this->form_data[$key] ?? null;
-        }
-        return $this->form_data;
     }
 
     public function getHasFormData(): bool
