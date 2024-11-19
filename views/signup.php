@@ -12,7 +12,7 @@
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=512w&id=13910&format=png">
 </head>
 
-<body>
+<body style="padding: 3rem;">
     <h1>Sign up</h1>
     <article>
         <form action="../controllers/Signup.php" method="post">
