@@ -17,7 +17,8 @@
       "Curl\\": "curl/",
       "Middleware\\": "middleware/",
       "Middleware\\Validators\\": "middleware/validator/",
-      "Utils\\": "utils/"
+      "Utils\\": "utils/",
+      "API\\Controllers\\": "controllers/"
     }
   },
   "config": {
