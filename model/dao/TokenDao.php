@@ -7,7 +7,7 @@ use Model\{Entity\Token, Dao\Connection};
 use HTTP\Error as Error;
 use PDO;
 
-// T_TOKEN columns : token_id, token, token_hash, user_id, created_at, updated_at
+// T_TOKEN columns : token_id, token_hash, user_id, created_at, updated_at
 
 class TokenDao
 {
@@ -32,14 +32,13 @@ class TokenDao
 
             // sql query
             // in the table T_TOKEN, we insert the token, token_hash and user_id (foreign key)
-            $sql = "INSERT INTO T_TOKEN (token, token_hash, user_id) VALUES (:token, :token_hash, :user_id)";
+            $sql = "INSERT INTO T_TOKEN (token_hash, user_id) VALUES (:token_hash, :user_id)";
 
             // Prepare statement
             $stmt = $this->pdo->prepare($sql);
 
             // bind values
             // --
-            $stmt->bindParam(":token", $token->getToken());
 
             $stmt->bindParam(":token_hash", $token->getTokenHash());
 
