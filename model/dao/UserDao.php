@@ -22,6 +22,8 @@ class UserDao
     }
 
     /**
+     * Create a user
+     * 
      * @param User $user
      * @throws Error 
      * @return int $insertedId
@@ -69,7 +71,10 @@ class UserDao
     }
 
     /**
-     * @param string $id
+     * Find a user by a field
+     * 
+     * @param string $field
+     * @param string $value
      * @throws Error 
      * @return User $user
      */
