@@ -2,11 +2,23 @@
 
 namespace API;
 
+use Dotenv\Dotenv;
 use HTTP\{Request, Response};
 use Middleware\Middleware;
 use Exception;
 use Middleware\Validators\Validator;
 use OpenApi\Annotations as OA;
+
+const PROJECT_ROOT = __DIR__ . "/../";
+
+require_once PROJECT_ROOT . "vendor/autoload.php";
+
+// Load the environment variables
+
+
+$dotenv = Dotenv::createImmutable(PROJECT_ROOT, '.env.local');
+
+$dotenv->load();
 
 /**
  * 
