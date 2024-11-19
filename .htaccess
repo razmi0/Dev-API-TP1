@@ -8,6 +8,12 @@ RewriteEngine On
 # -- Redirection vers la page d'accueil -- #
 RewriteRule ^/?$ index.php
 
+# -- Redirection vers la page de connexion -- #
+RewriteRule ^/login?$ views/login.php
+
+# -- Redirection vers la page d'inscription -- #
+RewriteRule ^/signup?$ views/signup.php
+
 
 # --Liste de tous les produits-- #
 RewriteRule ^api/v1.0/produit/list/?$ api/v1/lire.php
