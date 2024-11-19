@@ -23,8 +23,11 @@ class Connection
     private $table_name = "T_PRODUIT";
 
 
-    public function __construct()
+    public function __construct(string $table_name = null)
     {
+        if ($table_name) {
+            $this->table_name = $table_name;
+        }
         try {
             $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db_name", $this->username, $this->password);
             $this->setPDOAttributes();
