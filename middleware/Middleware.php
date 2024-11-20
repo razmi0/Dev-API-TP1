@@ -103,26 +103,17 @@ class Middleware
         $sanitize_recursively = function ($client_data) use (&$rules, &$sanitize_recursively) {
 
 
-            switch (gettype($client_data)) {
-                case 'array':
-                    return array_map($sanitize_recursively, $client_data);
-                    break;
+            return match (gettype($client_data)) {
+                'array' => array_map($sanitize_recursively, $client_data),
 
-                case 'string':
-                    if (in_array('html', $rules))
-                        return trim(strip_tags($client_data));
-                    break;
+                'string' => in_array('html', $rules) ? trim(strip_tags($client_data)) : $client_data,
 
-                case 'integer':
-                    if (in_array('integer', $rules))
-                        return filter_var($client_data, FILTER_SANITIZE_NUMBER_INT);
-                    break;
+                'integer' => in_array('integer', $rules) ? filter_var($client_data, FILTER_SANITIZE_NUMBER_INT) : $client_data,
 
-                case 'double': // 'double' is the type returned for floats in PHP
-                    if (in_array('float', $rules))
-                        return filter_var($client_data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-                    break;
-            }
+                'double' => in_array('float', $rules) ? filter_var($client_data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : $client_data,
+
+                default => $client_data,
+            };
 
             return $client_data;
         };
