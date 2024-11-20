@@ -1,5 +1,3 @@
-// Login page
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +12,7 @@
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=512w&id=13910&format=png">
 </head>
 
-<body>
+<body style="padding: 2rem">
     <h1>Login</h1>
     <article>
         <form action="/controllers/Login.php" method="post">
