@@ -375,7 +375,7 @@ class Response
         ];
 
         if (isset($config["header"]["location"])) {
-            $this->header = [...$this->header, "Location: " => $config["header"]["Location"]];
+            $this->header = [...$this->header, "Location: " => $config["header"]["location"]];
         }
     }
 
