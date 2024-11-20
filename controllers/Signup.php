@@ -77,16 +77,16 @@ final class Signup extends Endpoint
         ];
 
         // create an access token                   $_ENV FROM .env.local
-        $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_SECRET_KEY"], "HS256");
+        $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GEN_KEY"], "HS256");
 
         // generate an encryption key for the token key
-        $encryption_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_SECRET_ENCRYPTION_KEY"]);
+        $encryption_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
 
         // encrypt the token
         $token_encrypted = Crypto::encrypt($signed_token, $encryption_key);
 
         // hashing the encrypted token
-        $token_hash = hash_hmac("sha256", $token_encrypted, $_ENV["TOKEN_SECRET_HASH_KEY"]);
+        $token_hash = hash_hmac("sha256", $token_encrypted, $_ENV["TOKEN_HASH_KEY"]);
 
         // store it with the user_id for db storage
         $token_data = [
@@ -239,7 +239,7 @@ $response = new Response([
     "message" => "Utilisateur et token enregistrés",
     "header" => [
         "methods" => [Signup::ENDPOINT_METHOD],
-        "location" => "/views/login.php"
+        // "location" => "http://localhost/TP1/views/login.php"
     ]
 ]);
 
