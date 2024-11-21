@@ -76,7 +76,7 @@ class UserDao
      * @param string $field
      * @param string $value
      * @throws Error 
-     * @return User $user
+     * @return User| false $user
      */
     public function find(string $field, string $value): User
     {
@@ -93,7 +93,7 @@ class UserDao
 
             if (!$data) {
 
-                Error::HTTP404("User non trouvé", ["token" => $value]);
+                return false;
             }
 
             return User::make($data);
