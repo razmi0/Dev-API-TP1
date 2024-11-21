@@ -24,7 +24,7 @@ class TokenDao
     /**
      * @param Token $token
      * @throws Error 
-     * @return int $insertedId
+     * @return int | false $insertedId
      */
     public function create(Token $token): int | false
     {
