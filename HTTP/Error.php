@@ -463,6 +463,37 @@ class Error
     }
 
     /**
+     * HTTP401
+     * 
+     * 401 Unauthorized error
+     */
+    public static function HTTP401(string $msg, array $payload = [])
+    {
+        $error = new Error();
+        $error->setCode(401)
+            ->setMessage($msg)
+            ->setError("Non autorisé")
+            ->setPayload($payload)
+            ->sendAndDie();
+    }
+
+    /**
+     * 
+     * HTTP415
+     * 
+     * 415 Unsupported Media Type error
+     */
+    public static function HTTP415(string $msg, array $payload = [])
+    {
+        $error = new Error();
+        $error->setCode(415)
+            ->setMessage($msg)
+            ->setError("Type de média non supporté")
+            ->setPayload($payload)
+            ->sendAndDie();
+    }
+
+    /**
      * HTTP500
      * 
      * 500 Internal server error
