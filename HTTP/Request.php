@@ -77,22 +77,32 @@ class Request
             // Query utility property for easy uses
             $this->has_query = !empty($this->query_params);
 
-            // Decode the client data and store the result in properties
-            [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
 
-            if (isset($_SERVER["CONTENT_TYPE"]) && $this->is_valid_json) {
+            if (isset($_SERVER["CONTENT_TYPE"])) {
 
-                // match syntax ( like a switch statement )
-                match ($this->headers["Content-Type"]) {
-                    //data come from a form
-                    "application/x-www-form-urlencoded" => $this->has_form_data = true,
+                // switch case syntax
+                switch ($this->headers["Content-Type"]) {
+                    case "application/x-www-form-urlencoded":
+                        // data come from a form
+                        parse_str($this->client_raw_json, $this->client_decoded_data);
 
-                    //data come from the body of the request
-                    "application/json" => $this->has_body_data = true,
+                        //                          not empty
+                        $this->has_form_data = !empty($this->client_decoded_data);
+                        break;
 
+                    case "application/json":
+                        // data come from the body of the request
+                        [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
+
+                        //                              valid json and not empty
+                        $this->has_body_data = $this->is_valid_json && !empty($this->client_decoded_data);
+                        break;
+
+                    default:
                         // unsupported media type
-                    default => Error::HTTP415("Unsupported Media Type : " . $this->headers["Content-Type"]),
-                };
+                        Error::HTTP415("Unsupported Media Type : " . $this->headers["Content-Type"]);
+                        break;
+                }
             }
         } catch (Error) {
             Error::HTTP500(`Une erreur interne s'est produite`, []);
