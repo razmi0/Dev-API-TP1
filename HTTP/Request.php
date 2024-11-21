@@ -30,37 +30,46 @@ use HTTP\Error;
  * @method getJsonErrorMsg()
  * @method getHasData()
  * @method getQueryParam()
- * 
+ * @method getHeader()
  */
 class Request
 {
 
-    // Request related properties
+    public function __construct(
+        // Request related properties
+        private string $request_method = "",
+        private array $headers = [],
+        private array $cookies = [],
+        private array $query_params = [],
 
-    private string $request_method = "";
+        // Body request data related properties
+        private string $client_raw_json = "",
+        private array $client_decoded_data = [],
+        private string $json_error_msg = "",
 
-    // Body request data related properties
-
-    private string $client_raw_json = "";
-    private array $client_decoded_data = [];
-    private bool $has_data = false;
-    private bool $is_valid_json = true;
-    private string $json_error_msg = "";
-
-    private bool $has_form_data = false;
-
-    // Query related properties
-
-    private bool $has_query = false;
-    private array $query_params = [];
-
-
-    public function __construct()
-    {
+        // flags
+        private bool $has_data = false,
+        private bool $is_valid_json = false,
+        private bool $has_form_data = false,
+        private bool $has_body_data = false,
+        private bool $has_query = false,
+    ) {
         try {
-
             // Set the request method from server global variable
             $this->request_method = $_SERVER["REQUEST_METHOD"] ?? "";
+
+            // Set the headers from the server global variable
+            $this->headers = getallheaders();
+
+            // Set the cookies from the server global variable
+            $this->cookies = $_COOKIE;
+
+            // Get the client json from body and store it for easy access
+            // POST, PUT, PATCH, DELETE, GET ect.. raw data are stored here by PHP
+            $this->client_raw_json = file_get_contents("php://input") ?? "";
+
+            // Utility property to check if the request has data
+            $this->has_data = !empty($this->client_raw_json);
 
             // Set the query parameters from the server global variable
             parse_str($_SERVER["QUERY_STRING"], $this->query_params);
@@ -68,46 +77,34 @@ class Request
             // Query utility property for easy uses
             $this->has_query = !empty($this->query_params);
 
-            // Get the client payload from body and store it for easy access
-            $this->client_raw_json = file_get_contents("php://input") ?? "";
+            // Decode the client data and store the result in properties
+            [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
 
-            // if the client send a form data ( of course using post method )
-            if ($this->getRequestMethod() === "POST" && !empty($_POST)) {
+            if (isset($_SERVER["CONTENT_TYPE"]) && $this->is_valid_json) {
 
-                // utility property to check if the request has data in form 
-                $this->has_form_data = true;
+                // match syntax ( like a switch statement )
+                match ($this->headers["Content-Type"]) {
+                    //data come from a form
+                    "application/x-www-form-urlencoded" => $this->has_form_data = true,
 
-                // store the form data in a property
-                $form_data = $_POST;
+                    //data come from the body of the request
+                    "application/json" => $this->has_body_data = true,
 
-                // cast form_data in client_raw_json
-                $this->client_raw_json = json_encode($form_data);
-
-                // clone and store the form data in a property
-                $this->client_decoded_data = [...$form_data];
-
-                // now data from form or data from body can be accessed with the same method (getDecodedData)
+                        // unsupported media type
+                    default => Error::HTTP415("Unsupported Media Type : " . $this->headers["Content-Type"]),
+                };
             }
-
-
-            // utility property to check if the request has data in body
-            if (!empty($this->client_raw_json)) {
-                $this->has_data = true;
-            }
-
-            // Decode the client data here with a pure function and destructuring the return 
-            // safeDecode is safe and doesn't throw an error ( check is in middleware )
-            if ($this->has_data)
-                [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
         } catch (Error) {
             Error::HTTP500(`Une erreur interne s'est produite`, []);
         }
     }
 
     /**
-     * decode the client data and return an array with the decoded data, a boolean if the json is valid and the error message
+     * decode the client data and return an array with the decoded data,
+     * a boolean if the json is valid and the error message
+     * does not throw an exception (safe)
      */
-    public static function safeDecode(string $json): array
+    private static function safeDecode(string $json): array
     {
         $error = "";
 
@@ -122,7 +119,12 @@ class Request
         }
 
         //      [data,       isValid,       error]
-        return [$decoded, !empty($decoded), $error];
+        return [$decoded, $decoded !== NULL, $error];
+    }
+
+    public function getHeader(string $key): string | false
+    {
+        return $this->headers[$key] ?? false;
     }
 
     public function getDecodedData(string $key = null): mixed
