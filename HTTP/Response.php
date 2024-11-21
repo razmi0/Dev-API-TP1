@@ -2,7 +2,7 @@
 
 namespace HTTP;
 
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use HTTP\Payload;
 use Utils\Console;
@@ -350,15 +350,20 @@ class Response
     // Default payload
     private ?Payload $payload = null;
 
+    // Cookies
+    private array $cookies = [];
+
     // The constructor sets a default configuration for the response
     // Code and methods are required
     public function __construct($config)
     {
-
+        // we assume the config is always valid
 
         // valid config now
         $this->code = $config["code"];
 
+
+        // set the payload
         $this->payload = new Payload([
             "message" => $config["message"] ?? "",
             "data" =>  $config["data"] ?? [],
@@ -387,6 +392,17 @@ class Response
     public function setCode($code): self
     {
         $this->code = $code;
+        return $this;
+    }
+
+    /**
+     * Set the cookies
+     * 
+     * @param array<string, string, array> $cookies
+     */
+    public function addCookies(array $cookies): self
+    {
+        $this->cookies[] = $cookies;
         return $this;
     }
 
@@ -434,6 +450,12 @@ class Response
 
     public function sendAndDie()
     {
+        //set the cookies
+        foreach ($this->cookies as $cookie) {
+            [$name, $value, $options] = $cookie;
+            setcookie($name, $value, $options);
+        }
+
 
         // set the headers
         foreach ($this->header as $key => $value) {
