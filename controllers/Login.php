@@ -9,7 +9,6 @@ use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator};
 use Model\{
     Dao\UserDao,
-    Entity\User,
     Entity\Token,
     Dao\Connection,
     Dao\TokenDao
