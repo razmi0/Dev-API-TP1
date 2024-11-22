@@ -89,7 +89,7 @@ class Middleware
      * Middleware
      * 
      * 
-     * @return 
+     * @return void
      */
     public function sanitizeData($config): void
     {
@@ -119,5 +119,22 @@ class Middleware
         };
 
         $this->request->setDecodedBody($sanitize_recursively($client_data));
+    }
+
+    /**
+     * Middleware
+     * 
+     * @return void
+     * 
+     * */
+    public function checkAuthorization(): void
+    {
+        // We check if the client has an authorization header
+        // If the client does not have an authorization header, we throw an error and send it to the client
+        if (!$this->request->getHeader('Authorization')) {
+            Error::HTTP400("Aucun header Authorization n'a été trouvé");
+        }
+
+        var_dump($this->request->getHeader('Authorization'));
     }
 }
