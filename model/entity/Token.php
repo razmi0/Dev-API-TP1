@@ -7,18 +7,18 @@ namespace Model\Entity;
 /**
  * Class Token
  * @property string $token_id
- * @property string $token_hash
+ * @property string $token_encrypted
  * @property string $user_id
  * @property string $created_at
  * @property string $updated_at
  * 
  * @method string getTokenId()
- * @method string getTokenHash()
+ * @method string getTokenEncrypted()
  * @method string getUserId()
  * @method string getCreatedAt()
  * @method string getUpdatedAt()
  * @method setTokenId(string $token_id)
- * @method setTokenHash(string $token_hash)
+ * @method setTokenEncrypted(string $token_encrypted)
  * @method setUserId(string $user_id)
  * @method setCreatedAt(string $created_at)
  * @method setUpdatedAt(string $updated_at)
@@ -28,7 +28,7 @@ class Token
 {
     public function __construct(
         private ?string $token_id = null,
-        private ?string $token_hash = null,
+        private ?string $token_encrypted = null,
         private ?string $user_id = null,
         private ?string $created_at = null,
         private ?string $updated_at = null
@@ -39,7 +39,7 @@ class Token
     {
         return new Token(
             $data["token_id"] ?? null,
-            $data["token_hash"] ?? null,
+            $data["token_encrypted"] ?? null,
             $data["user_id"] ?? null,
             $data["created_at"] ?? null,
             $data["updated_at"] ?? null
@@ -54,9 +54,9 @@ class Token
         return $this->token_id;
     }
 
-    public function getTokenHash(): ?string
+    public function getTokenEncrypted(): ?string
     {
-        return $this->token_hash;
+        return $this->token_encrypted;
     }
 
     public function getUserId(): ?string
@@ -85,9 +85,9 @@ class Token
     }
 
 
-    public function setTokenHash(string $token_hash): self
+    public function setTokenEncrypted(string $token_encrypted): self
     {
-        $this->token_hash = $token_hash;
+        $this->token_encrypted = $token_encrypted;
         return $this;
     }
 
@@ -113,7 +113,7 @@ class Token
     {
         return [
             'token_id' => $token->getTokenId(),
-            'token_hash' => $token->getTokenHash(),
+            'token_encrypted' => $token->getTokenEncrypted(),
             'user_id' => $token->getUserId(),
             'created_at' => $token->getCreatedAt(),
             'updated_at' => $token->getUpdatedAt()
