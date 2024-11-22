@@ -2,7 +2,7 @@
 
 namespace API\Endpoints;
 
-use API\Controllers\ControllerEndpoint;
+use API\Controllers\BaseEndpoint;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao, Entity\Product};
@@ -96,7 +96,7 @@ require_once "../../vendor/autoload.php";
  *     )
  * )
  */
-final class ListEndpoint extends ControllerEndpoint
+final class ListEndpoint extends BaseEndpoint
 {
 
     // The only method allowed for this endpoint

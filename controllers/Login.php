@@ -3,9 +3,7 @@
 namespace API\Controllers;
 
 
-use API\Controllers\ControllerEndpoint;
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
+use API\Controllers\BaseEndpoint;
 use Firebase\JWT\JWT;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator};
@@ -21,7 +19,7 @@ use Model\{
 require_once "../vendor/autoload.php";
 
 
-final class Login extends ControllerEndpoint
+final class Login extends BaseEndpoint
 {
 
     // The only method allowed for this endpoint
@@ -84,23 +82,15 @@ final class Login extends ControllerEndpoint
             "exp" => time() + self::EXPIRATION_TOKEN
         ];
 
-        // create an access token                   $_ENV FROM .env.local
+        // Create and sign the JWT token
         $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GEN_KEY"], "HS256");
 
-        // defuse generate a random 32 bytes encrytion key
-        $encryption_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
+        // Hash the signed token for storage
+        $token_hash = hash_hmac("sha256", $signed_token, $_ENV["TOKEN_HASH_KEY"]);
 
-        // encrypt the token with the encryption key
-        $token_encrypted = Crypto::encrypt($signed_token, $encryption_key);
-
-        // hashing the encrypted token
-        $token_hash = hash_hmac("sha256", $token_encrypted, $_ENV["TOKEN_HASH_KEY"]);
-
-        // store it with the user_id (foreign key) for db storage
+        // Store the hash and user ID
         $token_data = [
-
             "token_hash" => $token_hash,
-
             "user_id" => $user->getUserId()
         ];
 
