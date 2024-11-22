@@ -101,7 +101,7 @@ class UserDao
 
             error_log($e->getMessage());
 
-            throw Error::HTTP500("Erreur interne");
+            Error::HTTP500("Erreur interne");
         } finally {
 
             $this->connection->closeConnection();
