@@ -78,11 +78,12 @@ class Request
             $this->has_query = !empty($this->query_params);
 
 
+            // here we check if the request has a content type and we parse the data accordingly
             if (isset($_SERVER["CONTENT_TYPE"])) {
 
-                // switch case syntax
                 switch ($this->headers["Content-Type"]) {
                     case "application/x-www-form-urlencoded":
+
                         // data come from a form
                         parse_str($this->client_raw_json, $this->client_decoded_data);
 
@@ -91,6 +92,7 @@ class Request
                         break;
 
                     case "application/json":
+
                         // data come from the body of the request
                         [$this->client_decoded_data, $this->is_valid_json, $this->json_error_msg] = self::safeDecode($this->client_raw_json);
 
@@ -99,6 +101,7 @@ class Request
                         break;
 
                     default:
+
                         // unsupported media type
                         Error::HTTP415("Unsupported Media Type : " . $this->headers["Content-Type"]);
                         break;
