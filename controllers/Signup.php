@@ -3,18 +3,13 @@
 namespace API\Controllers;
 
 
-use API\Endpoint;
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Firebase\JWT\JWT;
+use API\Controllers\Endpoint;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator};
 use Model\{
     Dao\UserDao,
     Entity\User,
-    Entity\Token,
     Dao\Connection,
-    Dao\TokenDao
 };
 
 
@@ -57,86 +52,24 @@ final class Signup extends Endpoint
         // create a user : username, email, password_hash
         $user = User::make($client_data);
 
-        // start a user dao
+        // start user dao
         $user_dao = new UserDao(new Connection("T_USER"));
 
         // create a user in database 
         $user_id = $user_dao->create($user);
 
-        $user->setUserId($user_id);
-
-        // build jwt payload
-        $jwt_payload = [
-            "user_id" => $user->getUserId(),
-            "username" => $user->getUsername(),
-            "email" => $user->getEmail(),
-            // iat = issued at, 
-            "iat" => time(),
-            // exp = expiration
-            "exp" => time() + self::EXPIRATION_TOKEN // 1 hour
-        ];
-
-        // create an access token                   $_ENV FROM .env.local
-        $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GEN_KEY"], "HS256");
-
-        // generate an encryption key for the token key
-        $encryption_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
-
-        // encrypt the token
-        $token_encrypted = Crypto::encrypt($signed_token, $encryption_key);
-
-        // hashing the encrypted token
-        $token_hash = hash_hmac("sha256", $token_encrypted, $_ENV["TOKEN_HASH_KEY"]);
-
-        // store it with the user_id for db storage
-        $token_data = [
-
-            "token_hash" => $token_hash,
-
-            "user_id" => $user->getUserId()
-        ];
-
-        // create a token entity
-        $token = Token::make($token_data);
-
-        //start the token dao
-        $token_dao = new TokenDao(new Connection("T_TOKEN"));
-
-        // create a token in database
-        $token_id = $token_dao->create($token);
-
-        // if the token is not created, we throw an error
-        if (!$token_id) {
-
-            throw Error::HTTP500("Erreur interne", ["message" => "Le token n'a pas pu être créé"]);
+        if (!$user_id) {
+            Error::HTTP500("Erreur lors de la création de l'utilisateur");
         }
 
-        // build an options array for the cookie
-        $cookie_options = [
-            "expires" => time() + self::EXPIRATION_TOKEN,
-            "path" => "/",
-            "domain" => "",
-            "secure" => true,
-            "httponly" => true,
-            "samesite" => "Strict"
-        ];
-
-        // building a secure cookie for the client with the token
-        setcookie("auth_token", $signed_token, $cookie_options);
-
-        // $api_key = Crypto::decrypt($user->getApiKey(), $encryption_key);
-        // $encryption_key = Key::loadFromAsciiSafeString($_ENV["API_ENCRYPTION_KEY"]);
-
+        // we return debugging information to the client
         return [
             "user" => [
-                "user_id" => $user->getUserId(),
+                "user_id" => $user_id,
                 "username" => $user->getUsername(),
                 "email" => $user->getEmail()
             ],
-            "token" => [
-                "token_id" => $token_id,
-                "token" => $signed_token
-            ]
+
         ];
     }
 
@@ -180,75 +113,58 @@ final class Signup extends Endpoint
 // --
 
 
-
-
 /**
- * our request object with all incoming informations (headers, body, method, query string etc...)
  * @see http/Request.php
  */
 $request = new Request();
 
-
-
-
-
-/**
- * our template rules to validate the client data in the request body
- * @see model/schema/Schema.php
- */
-$validator = new Validator([
-    "username" => [
-        "type" => "string",
-        "min" => 3,
-        "max" => 50,
-        "regex" => "/^[a-zA-Z0-9]+$/"
-    ],
-    "email" => [
-        "type" => "string",
-    ],
-    "password" => [
-        "type" => "string",
-        "min" => 8,
-        "max" => 50,
-        "regex" => "/^[a-zA-Z0-9]+$/"
-    ]
-]);
-
-
-
-
-/**
- * our middleware object with all the necessary methods to check the incoming request
- * @see middleware/Middleware.php
- * 
- * @throws Error 405 Method Not Allowed
- * @throws Error 400 Bad Request
- * 
- */
-$middleware = new Middleware($request);
-
-
-
-
-/**
- * our response object with all the necessary methods to send a response to the client
- * @see http/Response.php
- */
-$response = new Response([
-    "code" => 200,
-    "message" => "Utilisateur et token enregistrés",
-    "header" => [
-        "methods" => [Signup::ENDPOINT_METHOD],
-        // "location" => "http://localhost/TP1/views/login.php"
-    ]
-]);
-
-
-
-
-
 // Create the endpoint with above configuration
-$endpoint = new Signup($request, $response, $middleware, $validator);
+$endpoint = new Signup(
+    $request,
+
+
+    /**
+     * @see http/Response.php
+     */
+    new Response(
+        [
+            "code" => 200,
+            "message" => "Utilisateur et token enregistrés",
+            "header" => [
+                "methods" => [Signup::ENDPOINT_METHOD],
+                // "location" => "http://localhost/TP1/views/login.php"
+            ]
+        ]
+    ),
+
+    /**
+     * @see Middleware/Middleware.php
+     */
+    new Middleware($request),
+
+    /**
+     * @see Middleware/Validators/Validator.php
+     */
+    new Validator(
+        [
+            "username" => [
+                "type" => "string",
+                "min" => 3,
+                "max" => 50,
+                "regex" => "/^[a-zA-Z0-9]+$/"
+            ],
+            "email" => [
+                "type" => "string",
+            ],
+            "password" => [
+                "type" => "string",
+                "min" => 8,
+                "max" => 50,
+                "regex" => "/^[a-zA-Z0-9]+$/"
+            ]
+        ]
+    )
+);
 
 
 
