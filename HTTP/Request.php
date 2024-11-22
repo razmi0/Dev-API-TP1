@@ -41,6 +41,7 @@ class Request
         private array $headers = [],
         private array $cookies = [],
         private array $query_params = [],
+        private string $domain = "",
 
         // Body request data related properties
         private string $client_raw_json = "",
@@ -57,6 +58,9 @@ class Request
         try {
             // Set the request method from server global variable
             $this->request_method = $_SERVER["REQUEST_METHOD"] ?? "";
+
+            // Set the domain from the server global variable
+            $this->domain = $_SERVER["HTTP_HOST"] ?? "";
 
             // Set the headers from the server global variable
             $this->headers = getallheaders();
