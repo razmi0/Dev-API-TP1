@@ -42,6 +42,7 @@ class Request
         private array $cookies = [],
         private array $query_params = [],
         private string $domain = "",
+        private array $attributes = [],
 
         // Body request data related properties
         private string $client_raw_json = "",
@@ -139,6 +140,17 @@ class Request
         return [$decoded, $decoded !== NULL, $error];
     }
 
+    public function addAttribute(string $key, mixed $value): self
+    {
+        $this->attributes[$key] = $value;
+        return $this;
+    }
+
+    public function getAttribute(string $key): mixed
+    {
+        return $this->attributes[$key] ?? null;
+    }
+
     public function getHeader(string $key): string | false
     {
         return $this->headers[$key] ?? false;
@@ -147,6 +159,11 @@ class Request
     public function getDomain(): string
     {
         return $this->domain;
+    }
+
+    public function getCookie(string $key): string | false
+    {
+        return $this->cookies[$key] ?? false;
     }
 
     public function getDecodedData(string $key = null): mixed
