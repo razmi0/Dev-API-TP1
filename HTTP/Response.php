@@ -2,7 +2,9 @@
 
 namespace HTTP;
 
-require_once "../vendor/autoload.php";
+const PROJECT_ROOT = __DIR__ . "/../";
+
+require_once PROJECT_ROOT . 'vendor/autoload.php';
 
 use HTTP\Payload;
 use Utils\Console;
