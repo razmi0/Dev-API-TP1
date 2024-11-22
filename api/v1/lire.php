@@ -121,11 +121,16 @@ final class ListEndpoint extends BaseEndpoint
         // Check if the request method is allowed (GET only)
         $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);      // if error return 405 Method Not Allowed
 
+        // Check if the request come from a user with a valid token
+        $this->middleware->checkAuthorization();                      // if error return 401 Unauthorized
+
         // Check if the request body is a valid JSON
         $this->middleware->checkValidJson();                // if error return 400 Bad Request
 
         // Check if the request body contains the expected data
         $this->middleware->checkExpectedData($this->validator); // if error return 400 Bad Request
+
+
 
         // sanitize the data ( all types )
         // get the decoded body from the request, sanitize it
