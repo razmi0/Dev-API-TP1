@@ -1,6 +1,6 @@
 <?php
 
-namespace API;
+namespace API\Controllers;
 
 use Dotenv\Dotenv;
 use HTTP\{Request, Response};
@@ -13,16 +13,15 @@ const PROJECT_ROOT = __DIR__ . "/../";
 
 require_once PROJECT_ROOT . "vendor/autoload.php";
 
+
 // Load the environment variables
-
-
 $dotenv = Dotenv::createImmutable(PROJECT_ROOT, '.env.local');
 
 $dotenv->load();
 
 /**
  * 
- * class Endpoint
+ * class Endpoint (can be called Controller)
  * 
  * This class is the base class for all the endpoints.
  * It is a abstract class that will be extended by all the endpoints.
@@ -48,7 +47,7 @@ $dotenv->load();
  *     @OA\Contact(
  *         name="Thomas Cuesta",
  *         email="thomas.cuesta@my-digital-school.org",
- *         url="https://github.com/razmi0/Dev-API-TP1"
+ *         url="https://github.com/razmi0/Dev-API-TP1/tree/release/version-final"
  *     )
  * )
  */
