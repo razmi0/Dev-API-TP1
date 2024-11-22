@@ -3,7 +3,7 @@
 namespace API\Controllers;
 
 
-use API\Controllers\Endpoint;
+use API\Controllers\ControllerEndpoint;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Firebase\JWT\JWT;
@@ -21,7 +21,7 @@ use Model\{
 require_once "../vendor/autoload.php";
 
 
-final class Login extends Endpoint
+final class Login extends ControllerEndpoint
 {
 
     // The only method allowed for this endpoint
@@ -69,7 +69,9 @@ final class Login extends Endpoint
             Error::HTTP401("Identifiants invalides");
         }
 
+        // --
         // user is authentificted, we can create a crypted token for him ( in db and in a secure cookie)
+        // --
 
         // build jwt payload
         $jwt_payload = [

@@ -3,7 +3,7 @@
 namespace API\Controllers;
 
 
-use API\Controllers\Endpoint;
+use API\Controllers\ControllerEndpoint;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator};
 use Model\{
@@ -16,7 +16,7 @@ use Model\{
 require_once "../vendor/autoload.php";
 
 
-final class Signup extends Endpoint
+final class Signup extends ControllerEndpoint
 {
 
     // The only method allowed for this endpoint

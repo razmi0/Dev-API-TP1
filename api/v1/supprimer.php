@@ -2,7 +2,7 @@
 
 namespace API\Endpoints;
 
-use API\Controllers\Endpoint;
+use API\Controllers\ControllerEndpoint;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\Dao\ProductDao;
@@ -86,7 +86,7 @@ require_once "../../vendor/autoload.php";
  * )
  */
 
-final class DeleteEndpoint extends Endpoint
+final class DeleteEndpoint extends ControllerEndpoint
 {
 
     // The only method allowed for this endpoint

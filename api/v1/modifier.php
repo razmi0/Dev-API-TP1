@@ -2,7 +2,7 @@
 
 namespace API\Endpoints;
 
-use API\Controllers\Endpoint;
+use API\Controllers\ControllerEndpoint;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao, Entity\Product};
@@ -92,7 +92,7 @@ require_once "../../vendor/autoload.php";
  *     )
  * )
  */
-final class UpdateEndpoint extends Endpoint
+final class UpdateEndpoint extends ControllerEndpoint
 {
 
 

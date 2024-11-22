@@ -21,7 +21,7 @@ $dotenv->load();
 
 /**
  * 
- * class Endpoint (can be called Controller)
+ * class ControllerEndpoint
  * 
  * This class is the base class for all the endpoints.
  * It is a abstract class that will be extended by all the endpoints.
@@ -51,7 +51,7 @@ $dotenv->load();
  *     )
  * )
  */
-abstract class Endpoint
+abstract class ControllerEndpoint
 {
     protected Response $response;
     protected Request $request;
