@@ -7,7 +7,7 @@ use Model\{Entity\Token, Dao\Connection};
 use HTTP\Error as Error;
 use PDO;
 
-// T_TOKEN columns : token_id, token_hash, user_id, created_at, updated_at
+// T_TOKEN columns : token_id, token_encrypted, user_id, created_at, updated_at
 
 class TokenDao
 {
@@ -31,8 +31,8 @@ class TokenDao
         try {
 
             // sql query
-            // in the table T_TOKEN, we insert the token, token_hash and user_id (foreign key)
-            $sql = "INSERT INTO T_TOKEN (token_hash, user_id) VALUES (:token_hash, :user_id)";
+            // in the table T_TOKEN, we insert the token, token_encrypted and user_id (foreign key)
+            $sql = "INSERT INTO T_TOKEN (token_encrypted, user_id) VALUES (:token_encrypted, :user_id)";
 
             // Prepare statement
             $stmt = $this->pdo->prepare($sql);
@@ -40,7 +40,7 @@ class TokenDao
             // bind values
             // --
 
-            $stmt->bindParam(":token_hash", $token->getTokenHash());
+            $stmt->bindParam(":token_encrypted", $token->getTokenEncrypted());
 
             $stmt->bindParam(":user_id", $token->getUserId(), PDO::PARAM_INT);
 
@@ -48,7 +48,7 @@ class TokenDao
 
             $insertedId = $this->pdo->lastInsertId();
 
-            // if the id is not set, (no token created)we return false
+            // if the id is not set, (no token created) we return false
             if (!$insertedId) {
 
                 return false;
