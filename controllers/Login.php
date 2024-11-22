@@ -86,10 +86,10 @@ final class Login extends BaseEndpoint
         $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GEN_KEY"], "HS256");
 
         // generate a 32 bytes key from the env variable ( .env.local )
-        $encrytion_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
+        $encryption_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
 
         // encrypt the signed token with the encryption key
-        $encrypted_token = Crypto::encrypt($signed_token, $encrytion_key);
+        $encrypted_token = Crypto::encrypt($signed_token, $encryption_key);
 
         // create a token entity with the encrypted token and the user id prop
         $token = Token::make(
