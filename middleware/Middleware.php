@@ -3,7 +3,9 @@
 namespace Middleware;
 
 
-require_once '../vendor/autoload.php';
+const PROJECT_ROOT = __DIR__ . "/../";
+
+require_once PROJECT_ROOT . 'vendor/autoload.php';
 
 use HTTP\Error;
 use HTTP\Request;
@@ -129,12 +131,18 @@ class Middleware
      * */
     public function checkAuthorization(): void
     {
+        $auth_header_value = $this->request->getHeader('Authorization');
         // We check if the client has an authorization header
         // If the client does not have an authorization header, we throw an error and send it to the client
-        if (!$this->request->getHeader('Authorization')) {
+        if (!$auth_header_value) {
             Error::HTTP400("Aucun header Authorization n'a été trouvé");
         }
 
-        var_dump($this->request->getHeader('Authorization'));
+        // we store the token hash value in a variable and remove the "Bearer " string from the token
+        $token = str_replace("Bearer ", "", $auth_header_value);
+
+        // We check if the token is valid
+
+
     }
 }
