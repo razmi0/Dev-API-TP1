@@ -2,8 +2,9 @@
 
 namespace API\Controllers;
 
-
+use Defuse\Crypto\Crypto;
 use API\Controllers\BaseEndpoint;
+use Defuse\Crypto\Key;
 use Firebase\JWT\JWT;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator};
@@ -84,17 +85,19 @@ final class Login extends BaseEndpoint
         // Create and sign the JWT token
         $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GEN_KEY"], "HS256");
 
-        // Hash the signed token for storage
-        $token_hash = hash_hmac("sha256", $signed_token, $_ENV["TOKEN_HASH_KEY"]);
+        // generate a 32 bytes key from the env variable ( .env.local )
+        $encrytion_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
 
-        // Store the hash and user ID
-        $token_data = [
-            "token_hash" => $token_hash,
-            "user_id" => $user->getUserId()
-        ];
+        // encrypt the signed token with the encryption key
+        $encrypted_token = Crypto::encrypt($signed_token, $encrytion_key);
 
-        // create a token entity
-        $token = Token::make($token_data);
+        // create a token entity with the encrypted token and the user id prop
+        $token = Token::make(
+            [
+                "token_hash" => $encrypted_token,
+                "user_id" => $user->getUserId()
+            ]
+        );
 
         //start the token dao
         $token_dao = new TokenDao(new Connection("T_TOKEN"));
@@ -114,8 +117,8 @@ final class Login extends BaseEndpoint
             // cookie name
             "auth_token",
 
-            // cookie value (token hash)
-            $token_hash,
+            // cookie value (Bearer prefix + the encrypted token)
+            "Bearer " . $encrypted_token,
 
             // cookie options
             [
