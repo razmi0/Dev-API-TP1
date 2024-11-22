@@ -15,7 +15,7 @@
 <body style="padding: 2rem">
     <h1>Login</h1>
     <article>
-        <form action="/controllers/Login.php" method="post">
+        <form action="../controllers/Login.php" method="post">
             <!-- username -->
             <input type="text" name="username" placeholder="Username">
             <!-- email -->
