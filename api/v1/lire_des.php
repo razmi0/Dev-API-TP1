@@ -2,7 +2,7 @@
 
 namespace API\Endpoints;
 
-use API\Endpoint;
+use API\Controllers\Endpoint;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao, Entity\Product};
