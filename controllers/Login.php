@@ -30,7 +30,7 @@ final class Login extends BaseEndpoint
     public const AUTH_COOKIE_SECURE = true;
     public const AUTH_COOKIE_HTTPONLY = true;
     public const AUTH_COOKIE_SAMESITE = "Strict";
-    public const EXPIRATION_TOKEN = 120; // 2 minutes
+    public const EXPIRATION_TOKEN = 60 * 5; // 5 minutes
 
     // dependency injection here
     public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
