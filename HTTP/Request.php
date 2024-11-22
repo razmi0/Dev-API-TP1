@@ -144,6 +144,11 @@ class Request
         return $this->headers[$key] ?? false;
     }
 
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
     public function getDecodedData(string $key = null): mixed
     {
         if ($key) {
