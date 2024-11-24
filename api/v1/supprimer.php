@@ -2,7 +2,7 @@
 
 namespace API\Endpoints;
 
-use API\Controllers\BaseEndpoint;
+use API\Controllers\AbstractController;
 use HTTP\{Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\Dao\ProductDao;
@@ -17,7 +17,7 @@ require_once "../../vendor/autoload.php";
  *     goal="delete one product from db"
  * )
  */
-final class DeleteEndpoint extends BaseEndpoint
+final class DeleteEndpoint extends AbstractController
 {
     public const ENDPOINT_METHOD = "DELETE";
 

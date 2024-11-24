@@ -2,14 +2,14 @@
 
 namespace API\Endpoints;
 
-use API\Controllers\BaseEndpoint;
+use API\Controllers\AbstractController;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\ProductDao};
 
 require_once "../../vendor/autoload.php";
 
-final class ListManyEndpoint extends BaseEndpoint
+final class ListManyEndpoint extends AbstractController
 {
     public const ENDPOINT_METHOD = "GET";
 

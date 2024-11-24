@@ -2,17 +2,10 @@
 
 namespace HTTP;
 
-
 const PROJECT_ROOT = __DIR__ . "/../";
 
 require_once PROJECT_ROOT . 'vendor/autoload.php';
 
-/**
- * Class Payload
- * 
- * Used to create a payload object (message, data, error)
- * All API responses and Errors send this payload in the response body
- */
 class Payload
 {
     private string $message = "";
@@ -26,40 +19,40 @@ class Payload
         $this->error = $config["error"] ?? "";
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    public function getError()
+    public function getError(): string
     {
         return $this->error;
     }
 
-    public function setMessage($message)
+    public function setMessage(string $message): self
     {
         $this->message = $message;
         return $this;
     }
 
-    public function setData($data)
+    public function setData(array $data): self
     {
         $this->data = $data;
         return $this;
     }
 
-    public function setError($error)
+    public function setError(string $error): self
     {
         $this->error = $error;
         return $this;
     }
 
-    public function toJson()
+    public function toJson(): string
     {
         return json_encode([
             "message" => $this->message,
@@ -68,7 +61,7 @@ class Payload
         ]);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             "message" => $this->message,
