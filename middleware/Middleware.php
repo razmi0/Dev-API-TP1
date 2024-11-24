@@ -7,39 +7,30 @@ const PROJECT_ROOT = __DIR__ . "/../";
 
 require_once PROJECT_ROOT . 'vendor/autoload.php';
 
-use HTTP\Error;
-use HTTP\Request;
+use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key as JWTKey;
+use HTTP\{Error, Request};
 use Middleware\Validators\Validator;
 
 /**
  * 
  * class Middleware
  * 
- * This class has all the middleware used in the API.
- * You call use<name> and pass the parameters to add a middleware to the middleware stack.
- * You call runMiddleware to run all the middleware in the stack.
+ * This class has all the middleware used in the API : 
+ * 
+ * - **checkAllowedMethods** : check if the method is allowed
+ * - **checkValidJson** : check if the client data is a valid JSON
+ * - **checkExpectedData** : check if the client data is valid against a schema
+ * - **sanitizeData** : sanitize the client data
+ * - **checkAuthorization** : check if the client is authorized
  * 
  */
 class Middleware
 {
 
-    private ?Request $request = null;
+    public function __construct(private Request $request) {}
 
-
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
-
-
-
-    /**
-     * 
-     * Middleware
-     * 
-     * @return void
-     * 
-     * */
     public function checkAllowedMethods(array $allowedMethods): void
     {
         // We check if the method is authorized
@@ -50,12 +41,6 @@ class Middleware
         }
     }
 
-    /**
-     * Middleware
-     * 
-     * @return void
-     * 
-     * */
     public function checkValidJson(): void
     {
         // We check if the client data is a valid JSON
@@ -66,12 +51,6 @@ class Middleware
         }
     }
 
-    /**
-     * Middleware
-     * 
-     * @return void
-     * 
-     * */
     public function checkExpectedData(Validator $validator): void
     {
         // We check if a schema is defined
@@ -86,13 +65,6 @@ class Middleware
         }
     }
 
-
-    /**
-     * Middleware
-     * 
-     * 
-     * @return void
-     */
     public function sanitizeData($config): void
     {
 
@@ -120,29 +92,61 @@ class Middleware
             return $client_data;
         };
 
+        // We sanitize and set the data back to the request object
         $this->request->setDecodedBody($sanitize_recursively($client_data));
     }
 
     /**
-     * Middleware
-     * 
-     * @return void
-     * 
+     * The token is stored in the Authorization header (if the client is a web client) 
+     * or in the "auth_token" cookie (if the client browser)
      * */
     public function checkAuthorization(): void
     {
+        // We store the value of the authorization header in a variable
         $auth_header_value = $this->request->getHeader('Authorization');
-        // We check if the client has an authorization header
-        // If the client does not have an authorization header, we throw an error and send it to the client
-        if (!$auth_header_value) {
-            Error::HTTP400("Aucun header Authorization n'a été trouvé");
+
+        // We store the value of the "auth_token" cookie in a variable
+        $auth_cookie_value = $this->request->getCookie('auth_token');
+
+        if (!$auth_header_value && !$auth_cookie_value) {
+
+            Error::HTTP400("Aucun header Authorization ou cookie auth_token n'a été trouvé");
         }
 
-        // we store the token hash value in a variable and remove the "Bearer " string from the token
-        $token = str_replace("Bearer ", "", $auth_header_value);
 
-        // We check if the token is valid
+        // by default we use the value of the Authorization header ( REST API )
+        $token_value = $auth_header_value ?? $auth_cookie_value;
 
+        // we remove the "Bearer " prefix if it exists
+        $jwt = str_replace("Bearer ", "", $token_value);
 
+        /**
+         * JWT lib need a key to decode the token with the secret and the algorithm
+         * 
+         * @see https://github.com/firebase/php-jwt?tab=readme-ov-file#readme
+         */
+        $jwt_key = new JWTKey($_ENV["TOKEN_GENERATION_KEY"], "HS256");
+
+        try {
+            // we decode the token with JWT and cast it to an associative array
+            $decoded_token = (array)JWT::decode($jwt, $jwt_key);
+
+            // we store each key of the payload in the request object for further use
+            foreach ($decoded_token as $key => $value) {
+
+                // user_id, username, email
+
+                $this->request->addAttribute($key, $value);
+            }
+        }
+        // catch any exception thrown by the JWT library
+        catch (Exception $e) {
+            // we get the name of the exception
+            $exception_path = explode("\\", get_class($e));
+            $exception_name = end($exception_path);
+
+            // we send the error to the client
+            Error::HTTP401($e->getMessage(), ["exception" => $exception_name]);
+        }
     }
 }
