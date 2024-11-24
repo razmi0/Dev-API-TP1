@@ -78,7 +78,7 @@ class UserDao
      * @throws Error 
      * @return User| false $user
      */
-    public function find(string $field, string $value): User
+    public function find(string $field, string $value): User | false
     {
         try {
             $sql = "SELECT * FROM T_USER WHERE $field = :value";
