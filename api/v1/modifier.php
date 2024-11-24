@@ -115,19 +115,15 @@ final class UpdateEndpoint extends BaseEndpoint
      */
     public function handleMiddleware(): void
     {
-        // Check if the request method is allowed else throw an error ( 405 Method Not Allowed )
-        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);
+        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);    // if error return 405 Method Not Allowed
 
-        // Check if the request body is a valid JSON else throw an error ( 400 Bad Request )
-        $this->middleware->checkValidJson();
+        $this->middleware->checkAuthorization();                            // if error return 401 Unauthorized
 
-        // Check if the request body contains the expected data else throw an error ( 400 Bad Request )
-        $this->middleware->checkExpectedData($this->validator);
+        $this->middleware->checkValidJson();                                // if error return 400 Bad Request
 
-        // sanitize the data ( all types )
-        // get the decoded body from the request, sanitize it
-        // and set it back to the request object
-        $this->middleware->sanitizeData(                                  // // no error expected
+        $this->middleware->checkExpectedData($this->validator);             // if error return 400 Bad Request
+
+        $this->middleware->sanitizeData(
             ["sanitize" => ["html", "integer", "float"]]
         );
     }
