@@ -2,9 +2,7 @@
 
 namespace API\Controllers;
 
-use Defuse\Crypto\Crypto;
 use API\Controllers\BaseEndpoint;
-use Defuse\Crypto\Key;
 use Firebase\JWT\JWT;
 use HTTP\{Error, Request, Response};
 use Middleware\{Middleware, Validators\Validator};
@@ -22,16 +20,19 @@ require_once "../vendor/autoload.php";
 final class Login extends BaseEndpoint
 {
 
-    // The only method allowed for this endpoint
     public const ENDPOINT_METHOD = "POST";
 
-    // cookie token options
     public const AUTH_COOKIE_PATH = "/";
+
     public const AUTH_COOKIE_DOMAIN = "localhost";
+
     public const AUTH_COOKIE_SECURE = true;
+
     public const AUTH_COOKIE_HTTPONLY = true;
+
     public const AUTH_COOKIE_SAMESITE = "Strict";
-    public const EXPIRATION_TOKEN = 60 * 5; // 5 minutes
+
+    public const EXPIRATION_TOKEN = 60 * 1 - 55; // 5 seconds
 
     // dependency injection here
     public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
@@ -56,6 +57,7 @@ final class Login extends BaseEndpoint
 
         // if the user is not found by email, return a 401 error
         if (!$user) {
+
             Error::HTTP401("Identifiants invalides");
         }
 
@@ -64,6 +66,7 @@ final class Login extends BaseEndpoint
 
         // if the password is not valid, return a 401 error ( unauthorized )
         if (!$isValidPassword) {
+
             Error::HTTP401("Identifiants invalides");
         }
 
@@ -72,29 +75,31 @@ final class Login extends BaseEndpoint
         // --
 
         // build jwt payload
+        $time = time();
+
         $jwt_payload = [
+
             "user_id" => $user->getUserId(),
+
             "username" => $user->getUsername(),
+
             "email" => $user->getEmail(),
+
             // iat = issued at, 
-            "iat" => time(),
+            "iat" => $time,
+
             // exp = expiration
-            "exp" => time() + self::EXPIRATION_TOKEN
+            "exp" => $time + self::EXPIRATION_TOKEN
         ];
 
         // Create and sign the JWT token
-        $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GEN_KEY"], "HS256");
-
-        // generate a 32 bytes key from the env variable ( .env.local )
-        $encryption_key = Key::loadFromAsciiSafeString($_ENV["TOKEN_ENCRYPTION_KEY"]);
-
-        // encrypt the signed token with the encryption key
-        $encrypted_token = Crypto::encrypt($signed_token, $encryption_key);
+        $signed_token = JWT::encode($jwt_payload, $_ENV["TOKEN_GENERATION_KEY"], "HS256");
 
         // create a token entity with the encrypted token and the user id prop
         $token = Token::make(
             [
-                "token_hash" => $encrypted_token,
+                "jwt_value" => $signed_token,
+
                 "user_id" => $user->getUserId()
             ]
         );
@@ -118,7 +123,7 @@ final class Login extends BaseEndpoint
             "auth_token",
 
             // cookie value (Bearer prefix + the encrypted token)
-            "Bearer " . $encrypted_token,
+            "Bearer " . $signed_token,
 
             // cookie options
             [
@@ -136,9 +141,13 @@ final class Login extends BaseEndpoint
 
         // return debugging info to the client
         return [
+
             "user_id" => $user->getUserId(),
+
             "username" => $user->getUsername(),
+
             "email" => $user->getEmail(),
+
             "token_id" => $token_id
         ];
     }
@@ -150,18 +159,25 @@ final class Login extends BaseEndpoint
     public function handleMiddleware(): void
     {
 
-        // Check if the request method is allowed (POST only)
-        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);            // if error return 405 Method Not Allowed
+        // if error return 405 Method Not Allowed
+        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);
 
-        // Check if the request body contains the expected data 
-        // (name type, length, regex ; description type, length, regex ; ect...)
-        $this->middleware->checkExpectedData($this->validator);                        // if error, return 400 Bad Request
+        // if error, return 400 Bad Request
+        $this->middleware->checkExpectedData($this->validator);
 
-        // sanitize the data ( all types )
-        // get the decoded body from the request, sanitize it
-        // and set it back to the request object
-        $this->middleware->sanitizeData(                                  // // no error expected
-            ["sanitize" => ["html", "integer", "float"]]
+        // sanitize the data
+        $this->middleware->sanitizeData(
+            [
+                "sanitize" =>
+                [
+                    // strip html tags
+                    "html",
+                    // cast to integer
+                    "integer",
+                    // cast to float
+                    "float"
+                ]
+            ]
         );
     }
 
