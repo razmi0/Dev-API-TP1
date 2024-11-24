@@ -7,7 +7,7 @@ use Model\{Entity\Token, Dao\Connection};
 use HTTP\Error as Error;
 use PDO;
 
-// T_TOKEN columns : token_id, token_encrypted, user_id, created_at, updated_at
+// T_TOKEN columns : token_id, jwt_value, user_id, created_at, updated_at
 
 class TokenDao
 {
@@ -22,6 +22,8 @@ class TokenDao
     }
 
     /**
+     * Replace the token in the database if it already exists or create a new one if not
+     * 
      * @param Token $token
      * @throws Error 
      * @return int | false $insertedId
@@ -30,9 +32,8 @@ class TokenDao
     {
         try {
 
-            // sql query
-            // in the table T_TOKEN, we insert the token, token_encrypted and user_id (foreign key)
-            $sql = "INSERT INTO T_TOKEN (token_encrypted, user_id) VALUES (:token_encrypted, :user_id)";
+            // in the table T_TOKEN, we insert the token, jwt_value and user_id (foreign key)
+            $sql = "INSERT INTO T_TOKEN (jwt_value, user_id) VALUES (:jwt_value, :user_id) ON DUPLICATE KEY UPDATE jwt_value = :updated_jwt_value";
 
             // Prepare statement
             $stmt = $this->pdo->prepare($sql);
@@ -40,9 +41,13 @@ class TokenDao
             // bind values
             // --
 
-            $stmt->bindParam(":token_encrypted", $token->getTokenEncrypted());
+            $token_value = $token->getTokenValue();
+
+            $stmt->bindParam(":jwt_value", $token_value);
 
             $stmt->bindParam(":user_id", $token->getUserId(), PDO::PARAM_INT);
+
+            $stmt->bindParam(":updated_jwt_value", $token_value);
 
             $stmt->execute();
 
