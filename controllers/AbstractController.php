@@ -22,10 +22,10 @@ $dotenv->load();
  * 
  * This class is the base class for all the endpoints.
  * It is an abstract class that will be extended by all the endpoints and controllers.
- * Endpoint enforce the implementation of the following handlers and 
+ * AbstractController enforce the implementation of the following handlers and 
  * provide the necessary properties to the child class.
  * 
- * * @param Request $request
+ * @param Request $request
  * @param Response $response
  * @param Middleware $middleware
  * @param Validator $validator
