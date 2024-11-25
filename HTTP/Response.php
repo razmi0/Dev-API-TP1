@@ -120,31 +120,31 @@ class Response extends SingletonAbstract implements IResponse
 
     public function setContentType(string $content_type): self
     {
-        $this->header = [...$this->header, "content_type" => $content_type];
+        $this->header["Content-Type: "] = $content_type;
         return $this;
     }
 
     public function setOrigin(string $origin): self
     {
-        $this->header = [...$this->header, "origin" => $origin];
+        $this->header["Access-Control-Allow-Origin: "] = $origin;
         return $this;
     }
 
     public function setMethods(array $methods): self
     {
-        $this->header = [...$this->header, "methods" => self::methodsToString($methods)];
+        $this->header["Access-Control-Allow-Methods: "] = self::methodsToString($methods);
         return $this;
     }
 
     public function setAge($age): self
     {
-        $this->header = [...$this->header, "age" => $age];
+        $this->header["Access-Control-Age: "] = $age;
         return $this;
     }
 
     public function setLocation(string $location): self
     {
-        $this->header = [...$this->header, "location" => $location];
+        $this->header["Location: "] = $location;
         return $this;
     }
 

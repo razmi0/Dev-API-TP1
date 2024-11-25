@@ -35,9 +35,13 @@ class UserDao extends AbstractDao
             $sql = "INSERT INTO " . self::TABLE_NAME . " (username, email, password_hash) VALUES (:username, :email, :password_hash)";
             $stmt = $this->pdo->prepare($sql);
 
-            $stmt->bindParam(":username", $user->getUsername());
-            $stmt->bindParam(":email", $user->getEmail());
-            $stmt->bindParam(":password_hash", $user->getPasswordHash());
+            $username = $user->getUsername();
+            $email = $user->getEmail();
+            $hash = $user->getPasswordHash();
+
+            $stmt->bindParam(":username", $username);
+            $stmt->bindParam(":email", $email);
+            $stmt->bindParam(":password_hash", $hash);
 
             $stmt->execute();
             $insertedId = $this->pdo->lastInsertId();

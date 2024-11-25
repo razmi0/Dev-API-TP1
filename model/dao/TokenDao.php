@@ -2,6 +2,7 @@
 
 namespace Model\Dao;
 
+use Curl\Test;
 use Exception;
 use Model\{Entity\Token, Dao\Connection, Dao\AbstractDao};
 use HTTP\Error as Error;
@@ -36,6 +37,7 @@ class TokenDao extends AbstractDao
             $sql = "INSERT INTO T_TOKEN (jwt_value, user_id) 
                     VALUES (:jwt_value, :user_id) 
                     ON DUPLICATE KEY UPDATE jwt_value = :updated_jwt_value";
+
 
             $stmt = $this->pdo->prepare($sql);
 

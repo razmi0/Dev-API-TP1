@@ -55,6 +55,10 @@ pre {
   word-wrap: break-word;
 }
 
+button {
+  filter: drop-shadow(0 0 0.5rem var(--pico-background-color));
+}
+
 div[data-ids] {
   margin-bottom: 1rem;
   max-height: 20vh;
@@ -70,8 +74,7 @@ div[data-ids] {
 
   button[data-update-ids]:has(~ button[data-update-ids]:hover),
   button[data-update-ids]:hover ~ button[data-update-ids] {
-    filter: blur(1px) brightness(150%);
-    transition: filter ease-in-out 0.1s 0.1s;
+    rotate: 180deg;
   }
 
   button[data-update-ids]:hover {
@@ -80,4 +83,53 @@ div[data-ids] {
     border-color: white;
     transition: transform ease-out;
   }
+}
+
+.yes,
+.yes2,
+.yes3 {
+  position: fixed;
+  rotate: 270deg;
+  text-orientation: sideways-right;
+  background-color: greenyellow;
+  filter: drop-shadow(0 0 0.5rem greenyellow);
+  width: 1000px;
+  margin: 0;
+  padding: 0;
+}
+
+.yes {
+  translate: 0px 500px;
+  height: 300px;
+}
+
+.yes2,
+.yes3 {
+  height: 100px;
+}
+
+.yes2 {
+  translate: -350px 500px;
+}
+
+.yes3 {
+  translate: 350px 500px;
+}
+
+.form-container {
+  width: auto;
+}
+.signup-form {
+  display: flex;
+  flex-grow: 1;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.input-field {
+  margin: 0;
+  width: auto;
+  flex-grow: 1;
+}
+.submit-button {
+  margin: 0;
 }

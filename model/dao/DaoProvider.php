@@ -2,11 +2,12 @@
 
 namespace Model\Dao;
 
+use Curl\Test;
 use Model\Dao\{Connection, ProductDao, TokenDao, UserDao};
 use Utils\Patterns\ISingleton;
 use Utils\Patterns\SingletonAbstract;
 
-interface IDaoProvider extends ISingleton
+interface IDaoProvider
 {
     public static function getConnection(): Connection;
     public static function getProductDao(): ProductDao;
@@ -27,27 +28,14 @@ interface IDaoProvider extends ISingleton
 final class DaoProvider extends SingletonAbstract implements IDaoProvider
 {
 
-    private static ?DaoProvider $instance = null;
-    private static ?Connection $connection = null;
     private static ?ProductDao $productDao = null;
     private static ?TokenDao $tokenDao = null;
     private static ?UserDao $userDao = null;
 
-    public static function getInstance(): self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
 
     public static function getConnection(): Connection
     {
-        if (self::$connection === null) {
-            self::$connection = new Connection();
-        }
-
-        return self::$connection;
+        return new Connection();
     }
 
     public static function getProductDao(): ProductDao

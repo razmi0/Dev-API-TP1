@@ -131,8 +131,15 @@ const createProduit = () => {
  */
 const updateProduit = async () => {
   // we fetch all products and display all ids as buttons in the update section to choose which one to update
-  const { idsCtn, inputs, btn: submitButton } = dom.update;
-  const [json] = await APIFetch.fetchReadAll();
+  const { idsCtn, inputs, btn: submitButton, outputError, outputMessage } = dom.update;
+  console.log(outputError, outputMessage);
+  const [json, response] = await APIFetch.fetchReadAll();
+  if (response.ok === false) {
+    displayMessage({ ctn: outputError, text: json.error, code: response.status, error: true });
+    displayMessage({ ctn: outputMessage, text: json.message, code: response.status });
+    return;
+  }
+
   const ids = json.data.products.map(({ id }) => id);
   const buttons = insertIdsUpdate(idsCtn, ids);
   // we add an event listener to each button to fetch the product data and fill the inputs

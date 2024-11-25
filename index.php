@@ -18,25 +18,17 @@
 
 <body>
 
+    <?php include("views/header.php"); ?>
+
     <!--     -->
     <!-- NAV -->
     <!--     -->
 
-    <header>
-        <nav class="container">
-            <ul>
-                <h1>API Product Interface</h1>
-            </ul>
-            <ul>
-                <li>
-                    <button data-theme class="outline" data-tooltip="Toggle theme" data-placement="left">
-                        <?php include("images/theme-icon.svg"); ?>
-                    </button>
-                </li>
-            </ul>
-        </nav>
-    </header>
+
     <main class="container-fluid">
+        <article class="yes"></article>
+        <article class="yes2"></article>
+        <article class="yes3"></article>
 
         <!--        -->
         <!-- CREATE -->
@@ -137,8 +129,9 @@
                 </form>
                 <button id="submitUpdate" type="button">Update this one</button>
             </section>
-            <section>
-
+            <section data-output="update">
+                <div id='update_error'></div>
+                <div id='update_message'></div>
             </section>
         </article>
 

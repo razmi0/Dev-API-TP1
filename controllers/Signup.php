@@ -57,10 +57,10 @@ final class Signup implements IController
 $request = Request::getInstance();
 $response = Response::getInstance(
     new ResponseConfig(
-        code: 303,
+        code: 201,
         message: "Utilisateur inscrit avec succès",
         methods: [Signup::ENDPOINT_METHOD],
-        location: "/views/login.php"                        // redirect to login page if successful
+        location: "TP1/views/login.php"                        // redirect to login page if successful
     )
 );
 $endpoint = new Signup(

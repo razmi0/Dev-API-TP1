@@ -10,23 +10,26 @@
         href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.fuchsia.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=512w&id=13910&format=png">
+    <link rel="stylesheet" href="../styles/index.css">
+
 </head>
 
 <body style="padding: 3rem;">
+    <?php include("header.php"); ?>
     <h1>Sign up</h1>
-    <article>
-        <form action="../controllers/Signup.php" method="post">
+    <article style="width : auto;">
+        <form action="../controllers/Signup.php" method="post" style="display: flex; flex-grow : 1; gap : 1rem; flex-wrap : wrap;">
             <!-- username -->
-            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="username" placeholder="Username" style="margin: 0; width : auto; flex-grow : 1;">
             <!-- email -->
-            <input type="email" name="email" placeholder="Email">
+            <input style="margin: 0; width : auto; flex-grow : 1;" type="email" name="email" placeholder="Email">
             <!-- password -->
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit">Signup</button>
+            <input style="margin: 0; width : auto; flex-grow : 1;" type="password" name="password" placeholder="Password">
+            <button style="margin: 0;" type="submit">Signup</button>
 
         </form>
     </article>
-    <a href="/login">Register</a>
+    <a href="../views/login.php">Login</a>
 
 </body>
 
