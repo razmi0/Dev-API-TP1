@@ -2,17 +2,40 @@
 
 namespace HTTP;
 
-
 const PROJECT_ROOT = __DIR__ . "/../";
 
 require_once PROJECT_ROOT . 'vendor/autoload.php';
 
-use OpenApi\Annotations as OA;
+use HTTP\Config\PayloadConfig;
 use Utils\Console;
 use HTTP\Payload;
 
+interface IError
+{
+    public static function HTTP404(string $msg, array $payload); // 404 Not found
+    public static function HTTP405(string $msg, array $payload); // 405 Method not allowed
+    public static function HTTP400(string $msg, array $payload); // 400 Bad request
+    public static function HTTP401(string $msg, array $payload); // 401 Unauthorized
+    public static function HTTP415(string $msg, array $payload); // 415 Unsupported Media Type
+    public static function HTTP500(string $msg, array $payload); // 500 Internal server error
+    public static function HTTP204(string $msg, array $payload); // 204 No content
+    public static function HTTP503(string $msg, array $payload); // 503 Service unavailable
+}
 
-class Error
+/**
+ * Error class
+ * 
+ * Send an error response to the client
+ * @static **HTTP404**: Not found
+ * @static **HTTP405**: Method not allowed
+ * @static **HTTP400**: Bad request
+ * @static **HTTP401**: Unauthorized
+ * @static **HTTP415**: Unsupported Media Type
+ * @static **HTTP500**: Internal server error
+ * @static **HTTP204**: No content
+ * @static **HTTP503**: Service unavailable
+ */
+class Error implements IError
 {
     private $code = 0;
     private $message = null;
@@ -43,145 +66,93 @@ class Error
         return $this;
     }
 
-    private function sendAndDie()
+    private function send()
     {
         Console::log($this->message, $this->error, $this->data, $this->code);
         header("Content-Type: application/json; charset=UTF-8");
 
-        $payload = new Payload([
-            "message" => $this->message ?? "",
-            "data" => $this->data ?? [],
-            "error" => $this->error ?? "",
-        ]);
+        $payloadConfig = new PayloadConfig(
+            $this->message ?? "",
+            $this->data ?? [],
+            $this->error ?? "",
+        );
+
+        $payload = new Payload($payloadConfig);
 
         http_response_code($this->code);
         echo $payload->toJson();
         die();
     }
-    /**
-     * HTTP404
-     * 
-     * 404 Not found error 
-     * 
-     */
+
     public static function HTTP404(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(404)
+        (new self())->setCode(404)
             ->setMessage($msg)
             ->setError("Ressource non trouvée")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * HTTP405
-     * 
-     * 405 Method not allowed error
-     * 
-     */
     public static function HTTP405(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(405)
+        (new self())->setCode(405)
             ->setMessage($msg)
             ->setError("Méthode non autorisée")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * HTTP400
-     * 
-     * 400 Bad request error
-     * 
-     */
     public static function HTTP400(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(400)
+        (new self())->setCode(400)
             ->setMessage($msg)
             ->setError("Requête invalide")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * HTTP401
-     * 
-     * 401 Unauthorized error
-     */
     public static function HTTP401(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(401)
+        (new self())->setCode(401)
             ->setMessage($msg)
             ->setError("Non autorisé")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * 
-     * HTTP415
-     * 
-     * 415 Unsupported Media Type error
-     */
     public static function HTTP415(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(415)
+        (new self())->setCode(415)
             ->setMessage($msg)
             ->setError("Type de média non supporté")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * HTTP500
-     * 
-     * 500 Internal server error
-     * 
-     */
     public static function HTTP500(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(500)
+        (new self())->setCode(500)
             ->setMessage($msg)
             ->setError("Erreur interne")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * HTTP204
-     * 
-     * 204 No content error (no data to return)
-     * 
-     */
     public static function HTTP204(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(204)
+        (new self())->setCode(204)
             ->setMessage($msg)
             ->setError("Aucun contenu")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 
-    /**
-     * HTTP503
-     * 
-     * 503 Service unavailable error
-     * 
-     */
     public static function HTTP503(string $msg, array $payload = [])
     {
-        $error = new Error();
-        $error->setCode(503)
+        (new self())->setCode(503)
             ->setMessage($msg)
             ->setError("Service non disponible")
             ->setPayload($payload)
-            ->sendAndDie();
+            ->send();
     }
 }
