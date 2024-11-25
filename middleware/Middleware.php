@@ -11,6 +11,19 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key as JWTKey;
 use HTTP\{Error, Request};
 use Middleware\Validators\Validator;
+use Utils\Patterns\SingletonAbstract;
+
+interface IMiddleware
+{
+    public function checkAllowedMethods(array $allowedMethods): self;
+    public function checkAuthorization(): self;
+    public function checkValidJson(): self;
+    public function checkExpectedData(Validator $validator): self;
+    public function sanitizeData(array $config): self;
+    public static function getInstance(Request $request): self;
+}
+
+
 
 /**
  * Middleware class
@@ -23,20 +36,31 @@ use Middleware\Validators\Validator;
  * - **sanitizeData**: Sanitize the client data
  * - **checkAuthorization**: Check if the client is authorized
  */
-class Middleware
+class Middleware extends SingletonAbstract implements IMiddleware
 {
-    public function __construct(private Request $request) {}
+    private static ?Middleware $instance = null;
+
+    private function __construct(private Request $request) {}
+
+    public static function getInstance(Request $request): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new Middleware($request);
+        }
+        return self::$instance;
+    }
+
 
     public function checkAuthorization(): self
     {
         $auth_header_value = $this->request->getHeader('Authorization');                        // Get Authorization header
         $auth_cookie_value = $this->request->getCookie('auth_token');                           // Get auth_token cookie
+        $token_value = $auth_header_value ?? $auth_cookie_value ?? false;                       // Get token value
 
-        if (!$auth_header_value && !$auth_cookie_value) {                                       // Check if both are missing
+        if (!$token_value)                                                                      // Check if both are missing
             Error::HTTP400("Aucun header Authorization ou cookie auth_token n'a été trouvé");   // Return 400 error
-        }
 
-        $token_value = $auth_header_value ?? $auth_cookie_value;                                // Use header or cookie value
+
         $jwt = str_replace("Bearer ", "", $token_value);                                        // Remove "Bearer " prefix
         $jwt_key = new JWTKey($_ENV["TOKEN_GENERATION_KEY"], "HS256");                          // Create JWT key
 
@@ -53,6 +77,8 @@ class Middleware
         return $this;                                                                           // Return self
     }
 
+
+
     public function checkAllowedMethods(array $allowedMethods): self
     {
         if (!in_array($this->request->getRequestMethod(), $allowedMethods)) {
@@ -62,6 +88,8 @@ class Middleware
         return $this;
     }
 
+
+
     public function checkValidJson(): self
     {
         if (!$this->request->getIsValidJson()) {
@@ -70,6 +98,8 @@ class Middleware
         }
         return $this;
     }
+
+
 
     public function checkExpectedData(Validator $validator): self
     {
@@ -82,6 +112,8 @@ class Middleware
         }
         return $this;
     }
+
+
 
     public function sanitizeData($config): self
     {
