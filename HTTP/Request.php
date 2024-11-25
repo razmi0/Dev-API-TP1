@@ -178,7 +178,7 @@ class Request extends SingletonAbstract implements IRequest
 
     public function getQueryParam($key): string|null|array
     {
-        return $this->query_params[$key] ?? "";
+        return $this->query_params[$key] ?? null;
     }
 
     public function getRequestMethod(): string
