@@ -3,70 +3,51 @@
 namespace Model\Dao;
 
 use Exception;
-use Model\{Entity\User, Dao\Connection};
+use Model\{Entity\User, Dao\Connection, Dao\AbstractDao};
 use HTTP\Error as Error;
-use PDO;
 
-// T_USER columns : user_id, username, email, password_hash, created_at, updated_at
-
-class UserDao
+/**
+ * Class UserDao
+ * 
+ * This class is a DAO for the user entity
+ * - **create** : create a user
+ * - **find** : find a user by a field
+ */
+class UserDao extends AbstractDao
 {
-    private ?PDO $pdo = null;
-    private ?Connection $connection = null;
+    public const TABLE_NAME = "T_USER";
 
-    public function __construct(Connection $connection)
+    public function __construct(private Connection $connection)
     {
-
-        $this->connection = $connection;
-        $this->pdo = $this->connection->getPDO();
+        parent::__construct($connection);
     }
 
     /**
      * Create a user
      * 
      * @param User $user
-     * @throws Error 
-     * @return int $insertedId
+     * @throws Exception
+     * @return int|false $insertedId
      */
-    public function create(User $user): int | false
+    public function create(User $user): int|false
     {
         try {
-
-            // sql query
-            // in the table T_TOKEN, we insert the token, token_hash and user_id (foreign key)
-            $sql = "INSERT INTO T_USER (username, email, password_hash) VALUES (:username, :email, :password_hash)";
-
-            // Prepare statement
+            $sql = "INSERT INTO " . self::TABLE_NAME . " (username, email, password_hash) VALUES (:username, :email, :password_hash)";
             $stmt = $this->pdo->prepare($sql);
 
-            // bind values
-            // --
             $stmt->bindParam(":username", $user->getUsername());
-
             $stmt->bindParam(":email", $user->getEmail());
-
             $stmt->bindParam(":password_hash", $user->getPasswordHash());
 
             $stmt->execute();
-
             $insertedId = $this->pdo->lastInsertId();
 
-            // if the id is not set, (no user created) we return false
-            if (!$insertedId) {
-
-                return false;
-            }
-
-            // return the id of the inserted token
-            return (int)$insertedId;
+            return $insertedId ? (int)$insertedId : false;
         } catch (Exception $e) {
-
             error_log($e->getMessage());
-
             Error::HTTP500("Erreur interne");
         } finally {
-
-            $this->connection->closeConnection();
+            $this->closeConnection();
         }
     }
 
@@ -75,36 +56,26 @@ class UserDao
      * 
      * @param string $field
      * @param string $value
-     * @throws Error 
-     * @return User| false $user
+     * @throws Exception 
+     * @return User|false $user
      */
-    public function find(string $field, string $value): User | false
+    public function find(string $field, string $value): User|false
     {
         try {
-            $sql = "SELECT * FROM T_USER WHERE $field = :value";
-
+            $sql = "SELECT * FROM " . self::TABLE_NAME . " WHERE $field = :value";
             $stmt = $this->pdo->prepare($sql);
 
             $stmt->bindParam(":value", $value);
-
             $stmt->execute();
 
             $data = $stmt->fetch();
 
-            if (!$data) {
-
-                return false;
-            }
-
-            return User::make($data);
+            return $data ? User::make($data) : false;
         } catch (Exception $e) {
-
             error_log($e->getMessage());
-
             Error::HTTP500("Erreur interne");
         } finally {
-
-            $this->connection->closeConnection();
+            $this->closeConnection();
         }
     }
 }
