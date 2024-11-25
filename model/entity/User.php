@@ -11,19 +11,19 @@ namespace Model\Entity;
  * @property string $created_at
  * @property string $updated_at
  * 
- * @method int getUserId()
- * @method string getUsername()
- * @method string getEmail()
- * @method string getPasswordHash()
- * @method string getCreatedAt()
- * @method string getUpdatedAt()
- * @method setUserId(int $user_id)
- * @method setUsername(string $username)
- * @method setEmail(string $email)
- * @method setPasswordHash(string $password_hash)
- * @method setCreatedAt(string $created_at)
- * @method setUpdatedAt(string $updated_at)
- * @method toArray()
+ * - **getUserId**
+ * - **getUsername**
+ * - **getEmail**
+ * - **getPasswordHash**
+ * - **getCreatedAt**
+ * - **getUpdatedAt**
+ * - **setUserId**
+ * - **setUsername**
+ * - **setEmail**
+ * - **setPasswordHash**
+ * - **setCreatedAt**
+ * - **setUpdatedAt**
+ * - **toArray** : convert the object to an array
  */
 class User
 {

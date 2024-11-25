@@ -12,17 +12,17 @@ namespace Model\Entity;
  * @property string $created_at
  * @property string $updated_at
  * 
- * @method string getTokenId()
- * @method string getTokenValue()
- * @method string getUserId()
- * @method string getCreatedAt()
- * @method string getUpdatedAt()
- * @method setTokenId(string $token_id)
- * @method setTokenValue(string $jwt_value)
- * @method setUserId(string $user_id)
- * @method setCreatedAt(string $created_at)
- * @method setUpdatedAt(string $updated_at)
- * @method toArray()
+ * - **getTokenId**
+ * - **getTokenValue**
+ * - **getUserId**
+ * - **getCreatedAt**
+ * - **getUpdatedAt**
+ * - **setTokenId**
+ * - **setTokenValue**
+ * - **setUserId**
+ * - **setCreatedAt**
+ * - **setUpdatedAt**
+ * - **toArray** : convert the object to an array
  */
 class Token
 {

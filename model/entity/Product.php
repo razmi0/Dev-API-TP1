@@ -10,34 +10,28 @@ namespace Model\Entity;
  * @property string $prix
  * @property string $date_creation
  * 
- * @method string getId()
- * @method string getName()
- * @method string getDescription()
- * @method string getPrix()
- * @method string getDateCreation()
- * @method setId(string $id)
- * @method setName(string $name)
- * @method setDescription(string $description)
- * @method setPrix(string $prix)
- * @method setDateCreation(string $date_creation)
- * @method toArray()
+ * - **getId**
+ * - **getName**
+ * - **getDescription**
+ * - **getPrix**
+ * - **getDateCreation**
+ * - **setId**
+ * - **setName**
+ * - **setDescription**
+ * - **setPrix**
+ * - **setDateCreation**
+ * - **toArray** : convert the object to an array
  */
 class Product
 {
-    private $id = null;
-    private $name = null;
-    private $description = null;
-    private $prix = null;
-    private $date_creation = null;
 
-    public function __construct($id = null, $name = null, $description = null, $prix = null, $date_creation = null)
-    {
-        $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
-        $this->prix = $prix;
-        $this->date_creation = $date_creation;
-    }
+    public function __construct(
+        private $id = null,
+        private  $name = null,
+        private  $description = null,
+        private  $prix = null,
+        private  $date_creation = null
+    ) {}
 
     public static function make(array $data): Product
     {
