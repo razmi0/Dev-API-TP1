@@ -2,71 +2,71 @@
 
 namespace API\Controllers;
 
-use API\Controllers\AbstractController;
+use API\Controllers\IController;
 use HTTP\{Error, Request, Response};
+use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator};
-use Model\{Dao\UserDao, Entity\User, Dao\Connection};
+use Model\{Entity\User};
+use Model\Dao\DaoProvider;
 
 require_once "../vendor/autoload.php";
 
-final class Signup extends AbstractController
+final class Signup implements IController
 {
     public const ENDPOINT_METHOD = "POST";
 
-    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
-    {
-        parent::__construct($request, $response, $middleware, $validator);
-    }
+    public function __construct(
+        private Request $request,
+        private Response $response,
+        private Middleware $middleware,
+        private Validator $validator
+    ) {}
 
-    public function handleRequest(): array
+    public function handle(): void
     {
+        $this->middleware
+            ->checkAllowedMethods([self::ENDPOINT_METHOD])
+            ->checkExpectedData($this->validator)
+            ->sanitizeData(["sanitize" => ["html", "integer", "float"]]);
+
         $client_data = $this->request->getDecodedData();
         $client_data["password_hash"] = password_hash($client_data["password"], PASSWORD_DEFAULT);
 
         $user = User::make($client_data);
-        $user_dao = new UserDao(new Connection("T_USER"));
+        $user_dao = DaoProvider::getUserDao();
         $user_id = $user_dao->create($user);
 
-        if (!$user_id) {
+        if (!$user_id)
             Error::HTTP500("Erreur lors de la création de l'utilisateur");
-        }
 
-        return [
+
+        $payload =  [
             "user" => [
                 "user_id" => $user_id,
                 "username" => $user->getUsername(),
                 "email" => $user->getEmail()
             ],
         ];
-    }
 
-    public function handleMiddleware(): void
-    {
-        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);
-        $this->middleware->checkExpectedData($this->validator);
-        $this->middleware->sanitizeData(["sanitize" => ["html", "integer", "float"]]);
-    }
-
-    public function handleResponse(mixed $data): void
-    {
         $this->response
-            ->setPayload($data)
-            ->sendAndDie();
+            ->setPayload($payload)
+            ->send();
     }
 }
 
-$request = new Request();
-
+$request = Request::getInstance();
+$response = Response::getInstance(
+    new ResponseConfig(
+        code: 303,
+        message: "Utilisateur inscrit avec succès",
+        methods: [Signup::ENDPOINT_METHOD],
+        location: "/views/login.php"                        // redirect to login page if successful
+    )
+);
 $endpoint = new Signup(
     $request,
-    new Response([
-        "code" => 200,
-        "message" => "Utilisateur et token enregistrés",
-        "header" => [
-            "methods" => [Signup::ENDPOINT_METHOD],
-        ]
-    ]),
-    new Middleware($request),
+    $response,
+    Middleware::getInstance($request),
     new Validator([
         "username" => [
             "type" => "string",

@@ -1,101 +1,124 @@
 <?php
 
+
 namespace API\Controllers;
 
-use API\Controllers\AbstractController;
+use API\Controllers\IController;
 use Firebase\JWT\JWT;
 use HTTP\{Error, Request, Response};
+use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator};
 use Model\{
-    Dao\UserDao,
     Entity\Token,
-    Dao\Connection,
+    Dao\DaoProvider,
     Dao\TokenDao
 };
+use Model\Entity\User;
 
 require_once "../vendor/autoload.php";
 
-final class Login extends AbstractController
+final class Login implements IController
 {
-    public const EXPIRATION_TOKEN = 60 * 1 - 55; // 5 seconds
-
     public const ENDPOINT_METHOD = "POST";
-    public const AUTH_COOKIE_PATH = "/";
-    public const AUTH_COOKIE_DOMAIN = "localhost";
-    public const AUTH_COOKIE_SECURE = true;
-    public const AUTH_COOKIE_HTTPONLY = true;
-    public const AUTH_COOKIE_SAMESITE = "Strict";
 
-    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
-    {
-        parent::__construct($request, $response, $middleware, $validator);
-    }
+    public const EXPIRATION_TOKEN = 60 * 60 * 24 * 7;  // 1 week
 
-    public function handleRequest(): array
+    public const AUTH_COOKIE_NAME = "auth_token";
+    public const AUTH_COOKIE = [
+        "path" => "/",
+        "domain" => "localhost",
+        "secure" => true,
+        "httponly" => true,
+        "samesite" => "Strict"
+    ];
+
+    public function __construct(
+        private Request $request,
+        private Response $response,
+        private Middleware $middleware,
+        private Validator $validator
+    ) {}
+
+    public function handle(): void
     {
+        $this->middleware
+            ->checkAllowedMethods([self::ENDPOINT_METHOD])
+            ->checkExpectedData($this->validator)
+            ->sanitizeData([
+                "sanitize" => [
+                    "html",
+                    "integer",
+                    "float"
+                ]
+            ]);
+
         $client_data = $this->request->getDecodedData();                                    // Get client data
-        $user = self::getUser($client_data["email"]);                                       // Fetch user with dao
+        $user_dao = DaoProvider::getUserDao();
 
-        self::validatePassword($client_data["password"], $user->getPasswordHash());         // Validate password
+        $user = $user_dao->find("email", $client_data["email"]);                            // Fetch user with dao
+        $password_hash = $user->getPasswordHash();
 
-        $signed_token = self::createToken($user);                                           // Create token
-        $token_id = self::storeTokenInDatabase($signed_token, $user->getUserId());          // Store token
+        if (!$user || !password_verify($client_data["password"], $password_hash))           // if user not found or password invalid
+            Error::HTTP401("Identifiants invalides");
 
-        $this->setAuthCookie($signed_token);                                                // Set auth cookie in response
+        // Start token service
 
-        return [                                                                            // Return user data
+        $timestamp = time();                                                                // Get current timestamp
+        $signed_token = self::createToken($user, $timestamp);                               // Create token
+        $dao = DaoProvider::getTokenDao();                                          // Get token dao
+        $token_id = self::storeTokenInDatabase($dao, $signed_token);                        // Store token in database
+
+        // End token service
+
+        $signed_token->setTokenId($token_id);                                               // Set token id in token object
+
+        $auth_cookie =                                                                      // Create auth cookie
+            [
+                self::AUTH_COOKIE_NAME,
+                "Bearer " . $signed_token->getTokenValue(),
+                [
+                    ...self::AUTH_COOKIE,
+                    "expires" => $timestamp + self::EXPIRATION_TOKEN
+                ]
+            ];
+
+        $payload = [                                                                        // Create payload for response
             "user" => [
-
                 "user_id" => $user->getUserId(),
                 "username" => $user->getUsername(),
                 "email" => $user->getEmail(),
-                "token_id" => $token_id
+                "token_id" => $signed_token->getTokenId()
             ]
         ];
+
+        $this->response                                                                      // Set auth cookie in response
+            ->addCookies($auth_cookie)
+            ->setPayload($payload)                                                           // Set payload in response
+            ->send();                                                                        // Send response
     }
 
-    private static function getUser(string $email)
+    private static function createToken(User $user, int $timestamp): Token
     {
-        $user_dao = new UserDao(new Connection("T_USER"));
-        $user = $user_dao->find("email", $email);
-
-        if (!$user) {
-            Error::HTTP401("Identifiants invalides");
-        }
-
-        return $user;
-    }
-
-    private static function validatePassword(string $password, string $passwordHash): void
-    {
-        if (!password_verify($password, $passwordHash)) {
-            Error::HTTP401("Identifiants invalides");
-        }
-    }
-
-    private static function createToken($user): string
-    {
-        $time = time();
         $jwt_payload = [
             "user_id" => $user->getUserId(),
             "username" => $user->getUsername(),
             "email" => $user->getEmail(),
-            "iat" => $time,
-            "exp" => $time + self::EXPIRATION_TOKEN
+            "iat" => $timestamp,
+            "exp" => $timestamp + self::EXPIRATION_TOKEN
         ];
 
-        return JWT::encode($jwt_payload, $_ENV["TOKEN_GENERATION_KEY"], "HS256");
+        $signed_jwt = JWT::encode($jwt_payload, $_ENV["TOKEN_GENERATION_KEY"], "HS256");
+
+        return Token::make([
+            "jwt_value" => $signed_jwt,
+            "user_id" => $user->getUserId()
+        ]);
     }
 
-    private static function storeTokenInDatabase(string $signed_token, int $user_id): int
+    private static function storeTokenInDatabase(TokenDao $token_dao, Token $jwt): int
     {
-        $token = Token::make([
-            "jwt_value" => $signed_token,
-            "user_id" => $user_id
-        ]);
 
-        $token_dao = new TokenDao(new Connection("T_TOKEN"));
-        $token_id = $token_dao->create($token);
+        $token_id = $token_dao->create($jwt);
 
         if (!$token_id) {
             Error::HTTP500("Le token n'a pas pu être créé en base de donnée");
@@ -103,58 +126,20 @@ final class Login extends AbstractController
 
         return $token_id;
     }
-
-    private function setAuthCookie(string $signed_token): void
-    {
-        $auth_cookie = [
-            "auth_token",
-            "Bearer " . $signed_token,
-            [
-                "expires" => time() + self::EXPIRATION_TOKEN,
-                "path" => self::AUTH_COOKIE_PATH,
-                "domain" => self::AUTH_COOKIE_DOMAIN,
-                "secure" => self::AUTH_COOKIE_SECURE,
-                "httponly" => self::AUTH_COOKIE_HTTPONLY,
-                "samesite" => self::AUTH_COOKIE_SAMESITE
-            ]
-        ];
-
-        $this->response->addCookies($auth_cookie);
-    }
-
-
-    public function handleMiddleware(): void
-    {
-        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);
-        $this->middleware->checkExpectedData($this->validator);
-        $this->middleware->sanitizeData([
-            "sanitize" => [
-                "html",
-                "integer",
-                "float"
-            ]
-        ]);
-    }
-
-    public function handleResponse(mixed $data): void
-    {
-        $this->response
-            ->setPayload($data)
-            ->sendAndDie();
-    }
 }
 
-$request = new Request();
+$request = Request::getInstance();
+$response = Response::getInstance(
+    new ResponseConfig(
+        code: 200,
+        message: "Utilisateur authentifié et token envoyé",
+        methods: [Login::ENDPOINT_METHOD]
+    )
+);
 $endpoint = new Login(
     $request,
-    new Response([
-        "code" => 200,
-        "message" => "Utilisateur authentifié et token envoyé",
-        "header" => [
-            "methods" => [Login::ENDPOINT_METHOD],
-        ]
-    ]),
-    new Middleware($request),
+    $response,
+    Middleware::getInstance($request),
     new Validator([
         "username" => [
             "type" => "string",

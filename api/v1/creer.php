@@ -2,60 +2,59 @@
 
 namespace API\Endpoints;
 
-use API\Controllers\AbstractController;
+use API\Controllers\IController;
 use HTTP\{Request, Response};
+use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
-use Model\{Dao\ProductDao, Entity\Product};
+use Model\{Dao\DaoProvider, Entity\Product};
+
 
 require_once "../../vendor/autoload.php";
 
-final class CreateEndpoint extends AbstractController
+final class CreateEndpoint implements IController
 {
     public const ENDPOINT_METHOD = "POST";
 
-    public function __construct(Request $request, Response $response, Middleware $middleware, Validator $validator)
-    {
-        parent::__construct($request, $response, $middleware, $validator);
-    }
+    public function __construct(
+        private Request $request,
+        private Response $response,
+        private Middleware $middleware,
+        private Validator $validator
+    ) {}
 
-    public function handleMiddleware(): void
-    {
-        $this->middleware->checkAllowedMethods([self::ENDPOINT_METHOD]);
-        $this->middleware->checkAuthorization();
-        $this->middleware->checkValidJson();
-        $this->middleware->checkExpectedData($this->validator);
-        $this->middleware->sanitizeData(["sanitize" => ["html", "integer", "float"]]);
-    }
 
-    public function handleRequest(): array
+    public function handle(): void
     {
+        $this->middleware
+            ->checkAllowedMethods([self::ENDPOINT_METHOD])
+            ->checkAuthorization()
+            ->checkValidJson()
+            ->checkExpectedData($this->validator)
+            ->sanitizeData(["sanitize" => ["html", "integer", "float"]]);
+
         $client_data = $this->request->getDecodedData();
         $newProduct = Product::make($client_data);
-        $dao = new ProductDao();
+        $dao = DaoProvider::getProductDao();
         $insertedID = $dao->create($newProduct);
 
-        return ["id" => (int)$insertedID];
-    }
-
-    public function handleResponse(mixed $data): void
-    {
         $this->response
-            ->setPayload($data)
-            ->sendAndDie();
+            ->setPayload(["id" => (int)$insertedID])
+            ->send();
     }
 }
 
-$request = new Request();
+$request = Request::getInstance();
+$response = Response::getInstance(
+    new ResponseConfig(
+        code: 201,
+        message: "Produit créé avec succès",
+        methods: [CreateEndpoint::ENDPOINT_METHOD]
+    )
+);
 $endpoint = new CreateEndpoint(
     $request,
-    new Response(
-        [
-            "code" => 201,
-            "message" => "Produit créé avec succès",
-            "header" => ["methods" => [CreateEndpoint::ENDPOINT_METHOD]]
-        ]
-    ),
-    new Middleware($request),
+    $response,
+    Middleware::getInstance($request),
     new Validator(
         [
             "name" => [
@@ -79,4 +78,6 @@ $endpoint = new CreateEndpoint(
         ]
     )
 );
+
+
 $endpoint->handle();
