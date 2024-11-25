@@ -84,9 +84,9 @@ class Request extends SingletonAbstract implements IRequest
         parse_str($_SERVER["QUERY_STRING"], $this->query_params);                  // Parse query string
         $this->has_query = !empty($this->query_params);                            // Check if has query
 
-        if (isset($_SERVER["CONTENT_TYPE"])) {                                     // Check content type
-            $this->parseRequestBody();                                             // Parse request body
-        }
+        isset($_SERVER["CONTENT_TYPE"])
+            ? $this->parseRequestBody()
+            : Error::HTTP415("Please provide a Content-Type header : application/x-www-form-urlencoded OR application/json");
     }
 
     private function parseRequestBody(): void
