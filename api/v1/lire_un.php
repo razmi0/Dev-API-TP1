@@ -32,21 +32,14 @@ final class ListOneEndpoint  implements IController
                 ["sanitize" => ["html", "integer", "float"]]
             );
 
-        $isIdInQuery = $this->request->getHasQuery();
-        $isIdInBody = $this->request->getHasData();
 
-        if (!$isIdInQuery && !$isIdInBody) {
+        $id = $this->request->getQueryParam("id") ?? $this->request->getDecodedData("id");
+
+        if (!$id)
             Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.");
-        }
-
-        $id = $isIdInQuery
-            ? (int)$this->request->getQueryParam("id")
-            : $this->request->getDecodedData("id");
 
         $dao = DaoProvider::getProductDao();
-        $product = $dao->findById($id);
-
-        return;
+        $product = $dao->findById((int)$id);
 
         $this->response
             ->setPayload(["product" => $product->toArray()])
