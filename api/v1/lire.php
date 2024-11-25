@@ -30,16 +30,10 @@ final class ListEndpoint  implements IController
             ->checkExpectedData($this->validator)
             ->sanitizeData(["sanitize" => ["html", "integer", "float"]]);
 
-        $limit = null;
-
-        if ($this->request->getHasQuery()) {
-            $limit = (int)$this->request->getQueryParam("limit");
-        } elseif ($this->request->getHasData()) {
-            $limit = (int)$this->request->getDecodedData("limit");
-        }
+        $limit = $this->request->getQueryParam("limit") ?? $this->request->getDecodedData("limit");
 
         $dao = DaoProvider::getProductDao();
-        $allProducts = $dao->findAll($limit);
+        $allProducts = $dao->findAll((int)$limit);
         $productsArray = array_map(fn($product) => $product->toArray(), $allProducts);
 
         $this->response
