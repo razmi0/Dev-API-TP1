@@ -3,7 +3,7 @@
 namespace API\Endpoints;
 
 use API\Controllers\IController;
-use HTTP\{Request, Response};
+use HTTP\{Error, Request, Response};
 use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Entity\Product, Dao\DaoProvider};
@@ -36,9 +36,8 @@ final class UpdateEndpoint implements IController
         $dao = DaoProvider::getProductDao();
         $affected_rows = $dao->update($product);
 
-        if ($affected_rows === 0) {
-            $this->response->setCode(204);
-        }
+        if ($affected_rows === 0)
+            Error::HTTP404("Aucune modification n'a été effectuée, le produit n'a pas été trouvé ou n'a pas changé");
 
         $this->response->send();
     }
