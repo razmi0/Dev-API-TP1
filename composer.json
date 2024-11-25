@@ -11,6 +11,7 @@
       "API\\": "api/",
       "API\\Endpoints\\": "api/v1/",
       "HTTP\\": "http/",
+      "HTTP\\Config\\": "http/config/",
       "Model\\": "model/",
       "Model\\DAO\\": "model/dao/",
       "Model\\Entity\\": "model/entity/",
@@ -18,6 +19,7 @@
       "Middleware\\": "middleware/",
       "Middleware\\Validators\\": "middleware/validator/",
       "Utils\\": "utils/",
+      "Utils\\Patterns\\": "utils/patterns/",
       "API\\Controllers\\": "controllers/"
     }
   },
