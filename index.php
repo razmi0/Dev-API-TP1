@@ -11,103 +11,17 @@
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 
+    <link rel="stylesheet" href="styles/index.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=512w&id=13910&format=png">
 </head>
 
 <body>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
+    <!--     -->
+    <!-- NAV -->
+    <!--     -->
 
-
-        input:not([name='description']) {
-            max-width: 50vw;
-        }
-
-        label:has(~input[required]) {
-            position: relative;
-            width: fit-content;
-
-            &:after {
-                content: "*";
-                position: absolute;
-                top: 0;
-                right: -1ch;
-                color: red;
-
-            }
-        }
-
-        button {
-            max-width: fit-content;
-        }
-
-        section[data-endpoint]~section {
-            max-height: 40vh;
-        }
-
-        article {
-            position: relative;
-        }
-
-
-        #error,
-        #message {
-            position: absolute;
-            right: 0;
-            margin-right: 2rem;
-        }
-
-        #error {
-            bottom: 25%;
-        }
-
-        #message {
-            bottom: 15%;
-        }
-
-        pre {
-
-            max-height: 40vh;
-            overflow: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        div[data-ids] {
-            margin-bottom: 1rem;
-            max-height: 20vh;
-
-            button[data-update-ids] {
-                width: fit-content;
-                height: fit-content;
-                padding: 2px 7px;
-                border-radius: 999px;
-                font-size: 0.6rem;
-                display: inline-flex;
-            }
-
-            button[data-update-ids]:has(~ button[data-update-ids]:hover),
-            button[data-update-ids]:hover~button[data-update-ids] {
-                filter: blur(1px) brightness(150%);
-                transition: filter ease-in-out 0.1s 0.1s;
-
-            }
-
-            button[data-update-ids]:hover {
-                transform: scale(2);
-                color: white;
-                border-color: white;
-                transition: transform ease-out;
-            }
-
-        }
-    </style>
     <header>
         <nav class="container">
             <ul>
