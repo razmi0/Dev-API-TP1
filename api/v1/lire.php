@@ -21,8 +21,6 @@ final class ListEndpoint  implements IController
         private Validator $validator
     ) {}
 
-    public function handleMiddleware(): void {}
-
     public function handle(): void
     {
         $this->middleware
