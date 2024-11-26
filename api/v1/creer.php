@@ -9,7 +9,7 @@ use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\{Dao\DaoProvider, Entity\Product};
 
 
-require_once "../../vendor/autoload.php";
+require_once BASE_DIR . "/vendor/autoload.php";
 
 final class CreateEndpoint implements IController
 {

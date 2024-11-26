@@ -15,7 +15,7 @@ use Model\{
 };
 use Model\Entity\User;
 
-require_once "../vendor/autoload.php";
+require_once BASE_DIR . "/vendor/autoload.php";
 
 final class Login implements IController
 {

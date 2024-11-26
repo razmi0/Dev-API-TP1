@@ -8,7 +8,8 @@ use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\Dao\DaoProvider;
 
-require_once "../../vendor/autoload.php";
+
+require_once BASE_DIR . "/vendor/autoload.php";
 
 final class ListEndpoint  implements IController
 {
