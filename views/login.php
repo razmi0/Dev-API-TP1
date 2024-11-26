@@ -18,7 +18,7 @@
     <h1>Login</h1>
     <article style="width : auto;">
 
-        <form action="../controllers/Login.php" method="post" class="signup-form" style="display: flex; flex-grow : 1; gap : 1rem; flex-wrap : wrap;">
+        <form action="/login/submit" method="post" class="signup-form" style="display: flex; flex-grow : 1; gap : 1rem; flex-wrap : wrap;">
             <!-- username -->
             <input type="text" name="username" placeholder="Username" style="margin: 0; width : auto; flex-grow : 1;">
             <!-- email -->
@@ -28,7 +28,6 @@
             <button type="submit" style="margin: 0;">Login</button>
         </form>
 
-        <a href="../views/signup.php">Register</a>
 
 </body>
 

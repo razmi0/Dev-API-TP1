@@ -14,11 +14,11 @@
 
 </head>
 
-<body style="padding: 3rem;">
+<body style="padding: 2rem;">
     <?php include("header.php"); ?>
     <h1>Sign up</h1>
     <article style="width : auto;">
-        <form action="../controllers/Signup.php" method="post" style="display: flex; flex-grow : 1; gap : 1rem; flex-wrap : wrap;">
+        <form action="/signup/submit" method="post" style="display: flex; flex-grow : 1; gap : 1rem; flex-wrap : wrap;">
             <!-- username -->
             <input type="text" name="username" placeholder="Username" style="margin: 0; width : auto; flex-grow : 1;">
             <!-- email -->
@@ -29,7 +29,6 @@
 
         </form>
     </article>
-    <a href="../views/login.php">Login</a>
 
 </body>
 
