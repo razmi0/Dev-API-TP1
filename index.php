@@ -26,7 +26,7 @@
 
 
     <main class="container-fluid">
-        <article class="yes"></article>
+        <article class="neon"></article>
 
         <!--        -->
         <!-- CREATE -->
