@@ -1,5 +1,5 @@
 //@ts-check
-const API_URL = "http://localhost/TP1/api/v1.0/produit";
+const API_URL = "http://localhost:8000/api/v1.0/produit";
 const API_READ_ALL_ENDPOINT = `${API_URL}/list`;
 const API_READ_ONE_ENDPOINT = `${API_URL}/listone`;
 const API_DELETE_ONE_ENDPOINT = `${API_URL}/delete`;
