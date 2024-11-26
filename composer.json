@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "start": "php -S localhost:8080 -t router.php",
     "db:truncate": "php ./bin/truncate.php",
     "db:migrate": "node ./bin/migrate.js",
     "watch:server": "./bin/watch_access_log.sh",
@@ -29,7 +30,6 @@
   "require": {
     "zircote/swagger-php": "^3.0",
     "firebase/php-jwt": "^6.6",
-    "vlucas/phpdotenv": "^5.6",
-    "defuse/php-encryption": "^2.4"
+    "vlucas/phpdotenv": "^5.6"
   }
 }
