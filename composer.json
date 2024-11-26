@@ -21,7 +21,8 @@
       "Middleware\\Validators\\": "middleware/validator/",
       "Utils\\": "utils/",
       "Utils\\Patterns\\": "utils/patterns/",
-      "API\\Controllers\\": "controllers/"
+      "API\\Controllers\\": "controllers/",
+      "API\\Attributes\\": "router/"
     }
   },
   "config": {

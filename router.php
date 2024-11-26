@@ -14,7 +14,7 @@ $requestUri = parse_url($requestUri, PHP_URL_PATH);
 // Define the routes and their corresponding handlers
 $routes = [
     '/' => [
-        'path' => 'index.php',
+        'path' => 'views/index.php',
         'headers' => []
     ],
     '/login' => [

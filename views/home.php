@@ -16,9 +16,9 @@
     <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=512w&id=13910&format=png">
 </head>
 
-<body>
+<body style="padding: 2rem;">
 
-    <?php include("views/header.php"); ?>
+    <?php include("header.php"); ?>
 
     <!--     -->
     <!-- NAV -->
