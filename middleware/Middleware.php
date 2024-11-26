@@ -55,7 +55,10 @@ class Middleware extends SingletonAbstract implements IMiddleware
     {
         $auth_header_value = $this->request->getHeader('Authorization');                        // Get Authorization header
         $auth_cookie_value = $this->request->getCookie('auth_token');                           // Get auth_token cookie
-        $token_value = $auth_header_value ?? $auth_cookie_value ?? false;                       // Get token value
+
+        if ($auth_cookie_value) $token_value = $auth_cookie_value;
+        else if ($auth_header_value) $token_value = $auth_header_value;
+        else $token_value = null;                                                               // Get token value
 
         if (!$token_value)                                                                      // Check if both are missing
             Error::HTTP400("Aucun header Authorization ou cookie auth_token n'a été trouvé");   // Return 400 error
