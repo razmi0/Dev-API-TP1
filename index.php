@@ -27,8 +27,6 @@
 
     <main class="container-fluid">
         <article class="yes"></article>
-        <article class="yes2"></article>
-        <article class="yes3"></article>
 
         <!--        -->
         <!-- CREATE -->
