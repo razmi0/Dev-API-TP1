@@ -9,7 +9,7 @@ use Middleware\{Middleware, Validators\Validator};
 use Model\{Entity\User};
 use Model\Dao\DaoProvider;
 
-require_once "../vendor/autoload.php";
+require_once BASE_DIR . "/vendor/autoload.php";
 
 final class Signup implements IController
 {
@@ -57,10 +57,10 @@ final class Signup implements IController
 $request = Request::getInstance();
 $response = Response::getInstance(
     new ResponseConfig(
-        code: 201,
+        code: 303,
         message: "Utilisateur inscrit avec succès",
         methods: [Signup::ENDPOINT_METHOD],
-        location: "TP1/views/login.php"                        // redirect to login page if successful
+        location: "/login"                        // redirect to login page if successful
     )
 );
 $endpoint = new Signup(
