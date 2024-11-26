@@ -9,8 +9,6 @@ const COMMON_HEADERS = {
   "Content-Type": "application/json",
   Accept: "application/json",
   credentials: "include",
-  Authorization:
-    "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozNSwidXNlcm5hbWUiOiJyYXptaW8iLCJlbWFpbCI6InRob21hcy5jdWVzdGEzMUBnbWFpbC5jb20iLCJpYXQiOjE3MzI1NTUzMTgsImV4cCI6MTczMzE2MDExOH0.BeYq4QLfb7qilfyHJe7394g38WpSo02A8cVb0jlrcE4",
 };
 
 export const fetchReadOne = async (clientData) => {
