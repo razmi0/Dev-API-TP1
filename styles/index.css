@@ -89,9 +89,9 @@ div[data-ids] {
   }
 }
 
-.yes,
-.yes2,
-.yes3 {
+.neon {
+  translate: 0px 500px;
+  height: 300px;
   position: fixed;
   rotate: 270deg;
   text-orientation: sideways-right;
@@ -100,24 +100,6 @@ div[data-ids] {
   width: 1000px;
   margin: 0;
   padding: 0;
-}
-
-.yes {
-  translate: 0px 500px;
-  height: 300px;
-}
-
-.yes2,
-.yes3 {
-  height: 100px;
-}
-
-.yes2 {
-  translate: -350px 500px;
-}
-
-.yes3 {
-  translate: 350px 500px;
 }
 
 .form-container {
