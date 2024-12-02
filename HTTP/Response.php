@@ -2,9 +2,8 @@
 
 namespace HTTP;
 
-const PROJECT_ROOT = __DIR__ . "/../";
 
-require_once PROJECT_ROOT . 'vendor/autoload.php';
+require_once BASE_DIR . '/vendor/autoload.php';
 
 use HTTP\Config\PayloadConfig;
 use HTTP\Config\ResponseConfig;

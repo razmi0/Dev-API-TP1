@@ -8,12 +8,11 @@ use HTTP\Response;
 use Middleware\Middleware;
 use Middleware\Validators\Validator;
 
-const PROJECT_ROOT = __DIR__ . '/../';
 
-require_once PROJECT_ROOT . 'vendor/autoload.php';
+require_once BASE_DIR . '/vendor/autoload.php';
 
 // Load the environment variables
-$dotenv = Dotenv::createImmutable(PROJECT_ROOT, '.env.local');
+$dotenv = Dotenv::createImmutable(BASE_DIR, '.env.local');
 $dotenv->load();
 
 /**

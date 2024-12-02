@@ -3,7 +3,8 @@
 // Define the base directory for your project
 define('BASE_DIR', __DIR__);
 
-
+require_once BASE_DIR . '/vendor/autoload.php';
+require_once BASE_DIR . '/router/start.php';
 
 // Get the requested URI
 $requestUri = $_SERVER['REQUEST_URI'];
@@ -14,7 +15,7 @@ $requestUri = parse_url($requestUri, PHP_URL_PATH);
 // Define the routes and their corresponding handlers
 $routes = [
     '/' => [
-        'path' => 'views/index.php',
+        'path' => 'views/home.php',
         'headers' => []
     ],
     '/login' => [
@@ -34,27 +35,27 @@ $routes = [
         'headers' => []
     ],
     '/api/v1.0/produit/list' => [
-        'path' => 'api/v1/lire.php',
+        'path' => 'api/v1/ListEndpoint.php',
         'headers' => []
     ],
     '/api/v1.0/produit/new' => [
-        'path' => 'api/v1/creer.php',
+        'path' => 'api/v1/CreateEndpoint.php',
         'headers' => []
     ],
     '/api/v1.0/produit/update' => [
-        'path' => 'api/v1/modifier.php',
+        'path' => 'api/v1/UpdateEndpoint.php',
         'headers' => []
     ],
     '/api/v1.0/produit/delete' => [
-        'path' => 'api/v1/supprimer.php',
+        'path' => 'api/v1/DeleteEndpoint.php',
         'headers' => []
     ],
     '/api/v1.0/produit/listone' => [
-        'path' => 'api/v1/lire_un.php',
+        'path' => 'api/v1/ListOneEndpoint.php',
         'headers' => []
     ],
     '/api/v1.0/produit/listmany' => [
-        'path' => 'api/v1/lire_des.php',
+        'path' => 'api/v1/ListManyEndpoint.php',
         'headers' => []
     ],
     // assets
@@ -113,21 +114,3 @@ if ($handler) {
     header("HTTP/1.0 404 Not Found");
     echo "404 Not Found";
 }
-// else {
-//     // Handle special cases with parameters
-//     if (preg_match('/^\/api\/v1\.0\/produit\/delete\/([0-9]+)\/?$/', $requestUri, $matches)) {
-//         $_GET['id'] = $matches[1];
-//         include BASE_DIR . '/api/v1/supprimer.php';
-//     } elseif (preg_match('/^\/api\/v1\.0\/produit\/listone\/([0-9]+)\/?$/', $requestUri, $matches)) {
-//         $_GET['id'] = $matches[1];
-//         include BASE_DIR . '/api/v1/lire_un.php';
-//     } elseif (preg_match('/^\/api\/v1\.0\/produit\/listmany\/((id\[\]=\d+&?)+)\/?$/', $requestUri, $matches)) {
-//         parse_str($matches[1], $queryParams);
-//         $_GET = array_merge($_GET, $queryParams);
-//         include BASE_DIR . '/api/v1/lire_des.php';
-//     } else {
-//         // Handle 404 Not Found
-//         header("HTTP/1.0 404 Not Found");
-//         echo "404 Not Found";
-//     }
-// }

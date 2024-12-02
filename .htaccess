@@ -16,41 +16,41 @@ RewriteRule ^/signup?$ views/signup.php
 
 
 # --Liste de tous les produits-- #
-RewriteRule ^api/v1.0/produit/list/?$ api/v1/lire.php
+RewriteRule ^api/v1.0/produit/list/?$ api/v1/ListEndpoint.php
 # ------------------------------ #
 
 
 # --Créer un nouveau produit-- #
-RewriteRule ^api/v1.0/produit/new/?$ api/v1/creer.php
+RewriteRule ^api/v1.0/produit/new/?$ api/v1/CreateEndpoint.php
 # ------------------------------ #
 
 
 # --Mettre à jour un produit-- #
-RewriteRule ^api/v1.0/produit/update/?$ api/v1/modifier.php
+RewriteRule ^api/v1.0/produit/update/?$ api/v1/UpdateEndpoint.php
 # ------------------------------ #
 
 
 # --Supprimer un produit-- #
 
 # id dans body
-RewriteRule ^api/v1.0/produit/delete/?$ api/v1/supprimer.php
+RewriteRule ^api/v1.0/produit/delete/?$ api/v1/DeleteEndpoint.php
 
 # id dans url
-RewriteRule ^api/v1.0/produit/delete/([0-9]+)/?$ api/v1/supprimer.php?id=$1
+RewriteRule ^api/v1.0/produit/delete/([0-9]+)/?$ api/v1/DeleteEndpoint.php?id=$1
 # ------------------------------ #
 
 
 # --Lire un produit-- # 
 # id dans body
-RewriteRule ^api/v1.0/produit/listone/?$ api/v1/lire_un.php
+RewriteRule ^api/v1.0/produit/listone/?$ api/v1/ListOneEndpoint.php
 # id dans url
-RewriteRule ^api/v1.0/produit/listone/([0-9]+)/?$ api/v1/lire_un.php?id=$1
+RewriteRule ^api/v1.0/produit/listone/([0-9]+)/?$ api/v1/ListOneEndpoint.php?id=$1
 # ------------------------------ #
 
 
 # --Lire une liste défini de produit-- #
 # id dans body
-RewriteRule ^api/v1.0/produit/listmany/?$ api/v1/lire_des.php
+RewriteRule ^api/v1.0/produit/listmany/?$ api/v1/ListManyEndpoint.php
 # id dans url ( match avec id[]=1&id[]=2&id[]=3 ... )
-RewriteRule ^api/v1.0/produit/listmany/((id\[\]=\d+&?)+)/?$ api/v1/lire_des.php?$1
+RewriteRule ^api/v1.0/produit/listmany/((id\[\]=\d+&?)+)/?$ api/v1/ListManyEndpoint.php?$1
 # ------------------------------ #

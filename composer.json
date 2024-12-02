@@ -22,7 +22,7 @@
       "Utils\\": "utils/",
       "Utils\\Patterns\\": "utils/patterns/",
       "API\\Controllers\\": "controllers/",
-      "API\\Attributes\\": "router/"
+      "API\\Routing\\": "router/"
     }
   },
   "config": {

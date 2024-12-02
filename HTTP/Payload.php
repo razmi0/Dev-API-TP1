@@ -4,7 +4,7 @@ namespace HTTP;
 
 use HTTP\Config\PayloadConfig;
 
-require_once PROJECT_ROOT . 'vendor/autoload.php';
+require_once BASE_DIR . '/vendor/autoload.php';
 
 interface IPayload
 {

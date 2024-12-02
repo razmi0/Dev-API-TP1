@@ -3,15 +3,19 @@
 namespace API\Endpoints;
 
 use API\Controllers\IController;
-use HTTP\{Request, Response};
+use API\Routing\Route;
+use HTTP\{Error, Request, Response};
 use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
 use Model\Dao\DaoProvider;
 
-
 require_once BASE_DIR . "/vendor/autoload.php";
 
-final class ListEndpoint  implements IController
+
+
+
+#[Route(methods: ["GET"], path: "/api/v1.0/produit/listone")]
+final class ListOneEndpoint implements IController
 {
     public const ENDPOINT_METHOD = "GET";
 
@@ -29,16 +33,21 @@ final class ListEndpoint  implements IController
             ->checkAuthorization()
             ->checkValidJson()
             ->checkExpectedData($this->validator)
-            ->sanitizeData(["sanitize" => ["html", "integer", "float"]]);
+            ->sanitizeData(
+                ["sanitize" => ["html", "integer", "float"]]
+            );
 
-        $limit = $this->request->getQueryParam("limit") ?? $this->request->getDecodedData("limit");
+
+        $id = $this->request->getQueryParam("id") ?? $this->request->getDecodedData("id");
+
+        if (!$id)
+            Error::HTTP400("Aucun id de produit n'a été fourni dans la requête.");
 
         $dao = DaoProvider::getProductDao();
-        $allProducts = $dao->findAll((int)$limit);
-        $productsArray = array_map(fn($product) => $product->toArray(), $allProducts);
+        $product = $dao->findById((int)$id);
 
         $this->response
-            ->setPayload(["products" => $productsArray])
+            ->setPayload(["product" => $product->toArray()])
             ->send();
     }
 }
@@ -46,24 +55,26 @@ final class ListEndpoint  implements IController
 $request = Request::getInstance();
 $response = Response::getInstance(
     new ResponseConfig(
+        message: "Produit trouvé",
         code: 200,
-        message: "Produits récupérés avec succès",
-        methods: [ListEndpoint::ENDPOINT_METHOD]
+        methods: [ListOneEndpoint::ENDPOINT_METHOD]
     )
 );
-$endpoint = new ListEndpoint(
+$endpoint = new ListOneEndpoint(
     $request,
     $response,
     Middleware::getInstance($request),
-    new Validator([
-        "limit" => [
-            "type" => "integer",
-            "required" => false,
-            "nullable" => true,
-            "range" => [1, null],
-            "regex" => Constant::ID_REGEX
+    new Validator(
+        [
+            "id" => [
+                "type" => "integer",
+                "required" => false,
+                "nullable" => true,
+                "range" => [1, null],
+                "regex" => Constant::ID_REGEX
+            ],
         ]
-    ])
+    )
 );
 
 $endpoint->handle();

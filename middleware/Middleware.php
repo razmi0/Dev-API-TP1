@@ -2,9 +2,8 @@
 
 namespace Middleware;
 
-const PROJECT_ROOT = __DIR__ . "/../";
 
-require_once PROJECT_ROOT . 'vendor/autoload.php';
+require_once BASE_DIR . '/vendor/autoload.php';
 
 use Exception;
 use Firebase\JWT\JWT;

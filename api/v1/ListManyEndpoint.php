@@ -3,6 +3,7 @@
 namespace API\Endpoints;
 
 use API\Controllers\IController;
+use API\Routing\Route;
 use HTTP\{Error, Request, Response};
 use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
@@ -10,6 +11,7 @@ use Model\Dao\DaoProvider;
 
 require_once BASE_DIR . "/vendor/autoload.php";
 
+#[Route(methods: ["GET"], path: "/api/v1.0/produit/listmany")]
 final class ListManyEndpoint  implements IController
 {
     public const ENDPOINT_METHOD = "GET";

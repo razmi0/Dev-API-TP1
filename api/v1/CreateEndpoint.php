@@ -3,6 +3,7 @@
 namespace API\Endpoints;
 
 use API\Controllers\IController;
+use API\Routing\Route;
 use HTTP\{Request, Response};
 use HTTP\Config\ResponseConfig;
 use Middleware\{Middleware, Validators\Validator, Validators\Constant};
@@ -11,6 +12,7 @@ use Model\{Dao\DaoProvider, Entity\Product};
 
 require_once BASE_DIR . "/vendor/autoload.php";
 
+#[Route(methods: ["POST"], path: "/api/v1.0/produit/new")]
 final class CreateEndpoint implements IController
 {
     public const ENDPOINT_METHOD = "POST";
